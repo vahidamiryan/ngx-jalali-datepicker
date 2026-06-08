@@ -1,6 +1,10 @@
 <div class="ndp-panel" [class.ndp-panel--disabled]="disabled()">
   <div class="ndp-months">
-    @for (m of visibleMonths(); track m.getTime(); let first = $first, last = $last) {
+    @for (
+      m of visibleMonths();
+      track m.getTime();
+      let first = $first, last = $last
+    ) {
       <div class="ndp-month-block">
         <div class="ndp-month-title">
           @if (first) {
@@ -9,7 +13,10 @@
               class="ndp-nav"
               aria-label="ماه قبل"
               [disabled]="!canGoPrev()"
-              (click)="prevMonth()">‹</button>
+              (click)="prevMonth()"
+            >
+              ‹
+            </button>
           } @else {
             <span class="ndp-nav-spacer" aria-hidden="true"></span>
           }
@@ -17,7 +24,9 @@
           <span class="ndp-month-title__label">
             {{ monthLabel(m) }}
             @if (secondaryAdapter()) {
-              <small class="ndp-month-title__secondary">{{ secondaryMonthLabel(m) }}</small>
+              <small class="ndp-month-title__secondary">{{
+                secondaryMonthLabel(m)
+              }}</small>
             }
           </span>
 
@@ -27,7 +36,10 @@
               class="ndp-nav"
               aria-label="ماه بعد"
               [disabled]="!canGoNext()"
-              (click)="nextMonth()">›</button>
+              (click)="nextMonth()"
+            >
+              ›
+            </button>
           } @else {
             <span class="ndp-nav-spacer" aria-hidden="true"></span>
           }
@@ -46,7 +58,8 @@
           [focusedKey]="focusedKey()"
           [dayTemplate]="dayTemplate()"
           (daySelect)="onDaySelect($event)"
-          (dayHover)="onDayHover($event)" />
+          (dayHover)="onDayHover($event)"
+        />
       </div>
     }
   </div>
@@ -56,18 +69,46 @@
       <div class="ndp-summary">
         @if (value().start) {
           <span class="ndp-summary__chip">
-            {{ adapter().format(value().start!) }}
-            @if (secondaryAdapter()) {
-              <small class="ndp-summary__secondary">{{ secondaryFormat(value().start!) }}</small>
+            <span class="ndp-summary__text">
+              {{ adapter().format(value().start!) }}
+              @if (secondaryAdapter()) {
+                <small class="ndp-summary__secondary">{{
+                  secondaryFormat(value().start!)
+                }}</small>
+              }
+            </span>
+            @if (mode() === "range") {
+              <button
+                type="button"
+                class="ndp-summary__clear-btn"
+                aria-label="پاک کردن تاریخ شروع"
+                (click)="clearStart()"
+              >
+                ✕
+              </button>
             }
           </span>
         }
         @if (value().end) {
-          <span class="ndp-summary__sep">→</span>
+          <span class="ndp-summary__sep">←</span>
           <span class="ndp-summary__chip">
-            {{ adapter().format(value().end!) }}
-            @if (secondaryAdapter()) {
-              <small class="ndp-summary__secondary">{{ secondaryFormat(value().end!) }}</small>
+            <span class="ndp-summary__text">
+              {{ adapter().format(value().end!) }}
+              @if (secondaryAdapter()) {
+                <small class="ndp-summary__secondary">{{
+                  secondaryFormat(value().end!)
+                }}</small>
+              }
+            </span>
+            @if (mode() === "range") {
+              <button
+                type="button"
+                class="ndp-summary__clear-btn"
+                aria-label="پاک کردن تاریخ پایان"
+                (click)="clearEnd()"
+              >
+                ✕
+              </button>
             }
           </span>
         }
@@ -76,14 +117,21 @@
       <div class="ndp-actions">
         @if (canToggleCalendar()) {
           <button type="button" class="ndp-btn" (click)="toggleCalendar()">
-            {{ calendar() === 'jalali' ? 'میلادی' : 'شمسی' }}
+            {{ calendar() === "jalali" ? "میلادی" : "شمسی" }}
           </button>
         }
         @if (showToday()) {
-          <button type="button" class="ndp-btn" (click)="goToToday()">امروز</button>
+          <button type="button" class="ndp-btn" (click)="goToToday()">
+            امروز
+          </button>
         }
         @if (showClear()) {
-          <button type="button" class="ndp-btn" [disabled]="!value().start" (click)="clear()">
+          <button
+            type="button"
+            class="ndp-btn"
+            [disabled]="!value().start"
+            (click)="clear()"
+          >
             پاک کردن
           </button>
         }
