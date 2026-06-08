@@ -1,0 +1,40 @@
+@let m = view();
+
+<div class="ndp-month" role="grid" [attr.aria-label]="m.label">
+  <div class="ndp-weekdays" role="row">
+    @for (wd of m.weekdays; track $index) {
+      <span class="ndp-weekday" role="columnheader" aria-hidden="false">{{ wd }}</span>
+    }
+  </div>
+
+  <div class="ndp-grid">
+    @for (cell of m.cells; track cell.key) {
+      <button
+        type="button"
+        role="gridcell"
+        class="ndp-day"
+        [attr.data-key]="cell.key"
+        [class.ndp-day--outside]="!cell.inCurrentMonth"
+        [class.ndp-day--today]="cell.isToday"
+        [class.ndp-day--weekend]="cell.isWeekend"
+        [class.ndp-day--selected]="cell.isSelected"
+        [class.ndp-day--start]="cell.isRangeStart"
+        [class.ndp-day--end]="cell.isRangeEnd"
+        [class.ndp-day--in-range]="cell.isInRange"
+        [class.ndp-day--preview]="cell.isPreview"
+        [disabled]="cell.isDisabled"
+        [attr.tabindex]="cell.key === focusedKey() && cell.inCurrentMonth ? 0 : -1"
+        [attr.aria-pressed]="cell.isSelected"
+        [attr.aria-current]="cell.isToday ? 'date' : null"
+        (click)="onSelect(cell)"
+        (mouseenter)="onEnter(cell)"
+        (mouseleave)="onLeave()">
+        @if (dayTemplate(); as tpl) {
+          <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: cell }" />
+        } @else {
+          <span class="ndp-day__label">{{ cell.label }}</span>
+        }
+      </button>
+    }
+  </div>
+</div>

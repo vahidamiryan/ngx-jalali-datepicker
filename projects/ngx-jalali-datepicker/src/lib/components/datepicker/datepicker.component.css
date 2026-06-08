@@ -1,0 +1,171 @@
+:host {
+  /* ── Theme tokens — override any of these from the consuming app ─────────── */
+  --ndp-accent: #3b82f6;
+  --ndp-accent-hover: #2563eb;
+  --ndp-accent-contrast: #ffffff;
+  --ndp-range-bg: #dbeafe;
+  --ndp-range-color: #1d4ed8;
+  --ndp-preview-bg: #eff6ff;
+  --ndp-focus-ring: #3b82f6;
+  --ndp-today-border: #3b82f6;
+  --ndp-weekend-color: #ef4444;
+  --ndp-surface: #ffffff;
+  --ndp-border: #e2e8f0;
+  --ndp-text: #1e293b;
+  --ndp-muted: #94a3b8;
+  --ndp-radius: 14px;
+  --ndp-day-radius: 8px;
+
+  display: inline-block;
+  font-family: inherit;
+  color: var(--ndp-text);
+}
+
+.ndp-panel {
+  background: var(--ndp-surface);
+  border: 1px solid var(--ndp-border);
+  border-radius: var(--ndp-radius);
+  box-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.25);
+  padding: 0.75rem;
+  display: inline-block;
+}
+
+.ndp-panel--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.ndp-months {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.ndp-month-block {
+  min-width: 15rem;
+}
+
+.ndp-month-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-block: 0.25rem 0.5rem;
+}
+
+.ndp-month-title__label {
+  flex: 1;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.ndp-month-title__secondary {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--ndp-muted);
+}
+
+.ndp-summary__secondary {
+  margin-inline-start: 0.3rem;
+  font-weight: 400;
+  color: var(--ndp-muted);
+  display: block;
+}
+
+.ndp-nav {
+  appearance: none;
+  border: none;
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--ndp-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ndp-nav:hover {
+  background: #e2e8f0;
+}
+
+.ndp-nav:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.ndp-nav:disabled:hover {
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+}
+
+.ndp-nav-spacer {
+  width: 2rem;
+  height: 2rem;
+}
+
+.ndp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--ndp-border);
+}
+
+.ndp-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--ndp-muted);
+  min-height: 1.6rem;
+}
+
+.ndp-summary__chip {
+  color: var(--ndp-text);
+  font-weight: 600;
+}
+
+.ndp-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.ndp-btn {
+  appearance: none;
+  border: 1px solid var(--ndp-border);
+  background: transparent;
+  border-radius: 8px;
+  padding: 0.3rem 0.7rem;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: var(--ndp-text);
+  transition: background-color 0.12s ease;
+}
+
+.ndp-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+.ndp-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.ndp-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}

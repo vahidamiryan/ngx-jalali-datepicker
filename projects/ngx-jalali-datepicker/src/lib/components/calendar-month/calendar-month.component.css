@@ -1,0 +1,104 @@
+:host {
+  display: block;
+}
+
+.ndp-weekdays,
+.ndp-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--ndp-cell-gap, 2px);
+}
+
+.ndp-weekday {
+  text-align: center;
+  font-size: var(--ndp-weekday-font-size, 0.72rem);
+  font-weight: 600;
+  color: var(--ndp-weekday-color, #94a3b8);
+  padding-block: 0.35rem;
+  user-select: none;
+}
+
+.ndp-day {
+  /* reset native button */
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  color: var(--ndp-day-color, #1e293b);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ndp-day-radius, 8px);
+  font-size: var(--ndp-day-font-size, 0.85rem);
+  line-height: 1;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.ndp-day:hover:not(:disabled) {
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+}
+
+.ndp-day:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring, #3b82f6);
+}
+
+.ndp-day--outside {
+  color: var(--ndp-day-outside-color, #cbd5e1);
+  pointer-events: none;
+}
+
+.ndp-day--weekend:not(.ndp-day--selected):not(.ndp-day--in-range) {
+  color: var(--ndp-weekend-color, #ef4444);
+}
+
+.ndp-day--today:not(.ndp-day--selected) {
+  border-color: var(--ndp-today-border, #3b82f6);
+  font-weight: 700;
+}
+
+.ndp-day:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+/* range band */
+.ndp-day--in-range,
+.ndp-day--preview {
+  background: var(--ndp-range-bg, #dbeafe);
+  border-radius: 0;
+  color: var(--ndp-range-color, #1d4ed8);
+}
+
+.ndp-day--preview {
+  background: var(--ndp-preview-bg, #eff6ff);
+}
+
+/* selected end-points */
+.ndp-day--selected {
+  background: var(--ndp-accent, #3b82f6);
+  color: var(--ndp-accent-contrast, #ffffff);
+  font-weight: 700;
+}
+
+.ndp-day--selected:hover {
+  background: var(--ndp-accent-hover, #2563eb);
+}
+
+.ndp-day--start {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.ndp-day--end {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+/* a single-day range keeps full rounding */
+.ndp-day--start.ndp-day--end {
+  border-radius: var(--ndp-day-radius, 8px);
+}

@@ -1,0 +1,19 @@
+{
+  "name": "ngx-jalali-datepicker",
+  "version": "0.0.1",
+  "description": "High-performance, customizable, framework-idiomatic date picker for Angular 20+.",
+  "author": "Vahid Amirian",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vahid-amirian/ngx-jalali-datepicker"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/common": "^20.1.0",
+    "@angular/core": "^20.1.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

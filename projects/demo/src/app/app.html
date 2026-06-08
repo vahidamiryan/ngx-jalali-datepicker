@@ -1,0 +1,91 @@
+<main class="page">
+  <header class="page__head">
+    <h1>ngx-jalali-datepicker</h1>
+    <p>تقویم Angular با Signals، معماری Adapter، و هسته‌ی headless — شمسی + میلادی</p>
+  </header>
+
+  <section class="demos">
+    <!-- 1) Single date, dual-script (Jalali + Gregorian) -->
+    <article class="card">
+      <h2>انتخاب تک‌تاریخ (دو خطی)</h2>
+      <p class="hint">تاریخ میلادی زیر هر ماهِ شمسی نمایش داده می‌شود. دکمه‌ی فوتر تقویم را عوض می‌کند.</p>
+      <ndp-datepicker
+        [showSecondaryDate]="true"
+        [value]="single()"
+        (valueChange)="single.set($event)" />
+      <div class="result">مقدار: <code>{{ singleLabel() }}</code></div>
+    </article>
+
+    <!-- 2) Range, two months, dual-script, no past dates -->
+    <article class="card">
+      <h2>انتخاب بازه (دو ماهه + دو خطی)</h2>
+      <p class="hint">پیش‌نمایش با هاور، تاریخ‌های گذشته و ناوبری به ماه‌های گذشته غیرفعال.</p>
+      <ndp-datepicker
+        mode="range"
+        [numberOfMonths]="2"
+        [min]="today"
+        [showSecondaryDate]="true"
+        [value]="range()"
+        (valueChange)="range.set($event)" />
+      <div class="result">مقدار: <code>{{ rangeLabel() }}</code></div>
+    </article>
+
+    <!-- 3) Custom day cell via content projection -->
+    <article class="card">
+      <h2>سلول سفارشی (Content Projection)</h2>
+      <p class="hint">قالب روز با <code>ndpDayCell</code> کاملاً قابل بازنویسی است — اینجا نقطه‌ی تعطیلی.</p>
+      <ndp-datepicker
+        [value]="custom()"
+        (valueChange)="custom.set($event)">
+        <ng-template ndpDayCell let-day>
+          <span class="cell">
+            {{ day.label }}
+            @if (day.isWeekend && day.inCurrentMonth) {
+              <i class="cell__dot"></i>
+            }
+          </span>
+        </ng-template>
+      </ndp-datepicker>
+      <div class="result">مقدار: <code>{{ customLabel() }}</code></div>
+    </article>
+
+    <!-- 4) Dropdown / popover pattern -->
+    <article class="card">
+      <h2>Dropdown (انتخابگر بازشو)</h2>
+      <p class="hint">یک input که با کلیک، پنل تقویم را باز می‌کند؛ با انتخاب تاریخ بسته می‌شود.</p>
+      <div class="dropdown">
+        <button type="button" class="dropdown__trigger" (click)="toggleDrop()">
+          <span>{{ dropLabel() }}</span>
+          <i class="dropdown__caret">▾</i>
+        </button>
+        @if (dropOpen()) {
+          <div class="dropdown__backdrop" (click)="dropOpen.set(false)"></div>
+          <div class="dropdown__panel">
+            <ndp-datepicker
+              [showSecondaryDate]="true"
+              [showFooter]="false"
+              [value]="dropValue()"
+              (valueChange)="dropValue.set($event)"
+              (dateSelected)="onDropSelected()" />
+          </div>
+        }
+      </div>
+    </article>
+
+    <!-- 5) Conversion (pure API, no component) -->
+    <article class="card">
+      <h2>تبدیل میلادی ↔ شمسی</h2>
+      <p class="hint">با <code>JalaaliMath</code> و آداپتورها — بدون نیاز به هیچ UI.</p>
+      <ul class="convert">
+        <li>امروز (میلادی): <code>{{ todayInGregorian }}</code></li>
+        <li>امروز (شمسی، عددی): <code>{{ todayInJalali }}</code></li>
+        <li>امروز (شمسی، کامل): <code>{{ todayInJalaliPretty }}</code></li>
+        <li>۱ فروردین ۱۴۰۴ ⇆ میلادی: <code>{{ nowruz1404 }}</code></li>
+      </ul>
+    </article>
+  </section>
+
+  <footer class="page__foot">
+    <span>کیبورد: ←↑↓→ جابه‌جایی، Enter/Space انتخاب، PageUp/PageDown ماه، Home/End ابتدا/انتهای ماه</span>
+  </footer>
+</main>
