@@ -206,6 +206,24 @@ export class DatepickerComponent implements ControlValueAccessor {
     this.dateSelected.emit(empty);
   }
 
+  protected clearStart(): void {
+    const current = this.value();
+    const next: DateRange = { start: null, end: current.end };
+    this.value.set(next);
+    this.hovered.set(null);
+    this.onChange(next);
+    this.dateSelected.emit(next);
+  }
+
+  protected clearEnd(): void {
+    const current = this.value();
+    const next: DateRange = { start: current.start, end: null };
+    this.value.set(next);
+    this.hovered.set(null);
+    this.onChange(next);
+    this.dateSelected.emit(next);
+  }
+
   protected toggleCalendar(): void {
     const i = this.calendarIds.indexOf(this.calendar());
     this.calendar.set(this.calendarIds[(i + 1) % this.calendarIds.length]);
