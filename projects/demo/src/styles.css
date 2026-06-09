@@ -10,4 +10,20 @@ body {
   margin: 0;
   background: #ffffff;
   color: #0f172a;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Keep the body backdrop in sync with the in-app theme toggle so overscroll /
+   rubber-band areas don't flash white in dark mode. The attribute lives on
+   <app-root>, so we reach the body via :has(). */
+body:has(app-root[data-theme='dark']) {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+@media (prefers-color-scheme: dark) {
+  body:has(app-root[data-theme='auto']) {
+    background: #0f172a;
+    color: #f1f5f9;
+  }
 }
