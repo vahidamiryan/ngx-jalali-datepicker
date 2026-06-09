@@ -13,19 +13,71 @@
   --ndp-border: #e2e8f0;
   --ndp-text: #1e293b;
   --ndp-muted: #94a3b8;
+  --ndp-day-hover-bg: #f1f5f9;
+  /* Calendar-grid tokens — derive from the primary tokens above so they follow
+     light/dark automatically, while still being overridable on their own. */
+  --ndp-day-color: var(--ndp-text);
+  --ndp-weekday-color: var(--ndp-muted);
+  --ndp-day-outside-color: #cbd5e1;
+  --ndp-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.25);
   --ndp-radius: 14px;
   --ndp-day-radius: 8px;
 
   display: inline-block;
   font-family: inherit;
   color: var(--ndp-text);
+  color-scheme: light;
+}
+
+/* ── Dark theme ─────────────────────────────────────────────────────────── */
+:host([data-ndp-theme="dark"]) {
+  color-scheme: dark;
+  --ndp-accent: #60a5fa;
+  --ndp-accent-hover: #93c5fd;
+  --ndp-accent-contrast: #0f172a;
+  --ndp-range-bg: #1e3a5f;
+  --ndp-range-color: #93c5fd;
+  --ndp-preview-bg: #172554;
+  --ndp-focus-ring: #60a5fa;
+  --ndp-today-border: #60a5fa;
+  --ndp-weekend-color: #f87171;
+  --ndp-surface: #1e293b;
+  --ndp-border: #334155;
+  --ndp-text: #f1f5f9;
+  --ndp-muted: #94a3b8;
+  --ndp-day-hover-bg: #334155;
+  --ndp-day-outside-color: #475569;
+  --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* ── Auto theme — follows OS prefers-color-scheme ───────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :host([data-ndp-theme="auto"]) {
+    color-scheme: dark;
+    --ndp-accent: #60a5fa;
+    --ndp-accent-hover: #93c5fd;
+    --ndp-accent-contrast: #0f172a;
+    --ndp-range-bg: #1e3a5f;
+    --ndp-range-color: #93c5fd;
+    --ndp-preview-bg: #172554;
+    --ndp-focus-ring: #60a5fa;
+    --ndp-today-border: #60a5fa;
+    --ndp-weekend-color: #f87171;
+    --ndp-surface: #1e293b;
+    --ndp-border: #334155;
+    --ndp-text: #f1f5f9;
+    --ndp-muted: #94a3b8;
+    --ndp-day-hover-bg: #334155;
+    --ndp-day-outside-color: #475569;
+    --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+  }
 }
 
 .ndp-panel {
   background: var(--ndp-surface);
   border: 1px solid var(--ndp-border);
   border-radius: var(--ndp-radius);
-  box-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.25);
+  box-shadow: var(--ndp-shadow, 0 10px 30px -12px rgba(15, 23, 42, 0.25));
   padding: 0.75rem;
   display: inline-block;
 }
@@ -92,7 +144,7 @@
 }
 
 .ndp-nav:hover {
-  background: #e2e8f0;
+  background: var(--ndp-border);
 }
 
 .ndp-nav:focus-visible {
@@ -165,7 +217,7 @@
 }
 
 .ndp-summary__clear-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--ndp-day-hover-bg, #f1f5f9);
   color: var(--ndp-weekend-color, #ef4444);
 }
 
@@ -193,7 +245,7 @@
 }
 
 .ndp-btn:hover:not(:disabled) {
-  background: #f1f5f9;
+  background: var(--ndp-day-hover-bg);
 }
 
 .ndp-btn:disabled {

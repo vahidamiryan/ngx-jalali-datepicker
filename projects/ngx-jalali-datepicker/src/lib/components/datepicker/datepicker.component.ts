@@ -16,7 +16,7 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CalendarAdapter } from '../../core/calendar-adapter';
 import { NDP_CALENDAR_ADAPTERS } from '../../datepicker.providers';
-import { DateFilterFn, DateRange, DayCell, DatepickerMode } from '../../core/types';
+import { DateFilterFn, DateRange, DayCell, DatepickerMode, NdpTheme } from '../../core/types';
 import { atMidnight, clampDate, dayKey } from '../../core/date-key.util';
 import { applySelection, isSelectionComplete } from '../../core/selection';
 import { CalendarMonthComponent } from '../calendar-month/calendar-month.component';
@@ -37,6 +37,7 @@ import { NdpDayCellTemplate } from '../day-cell.directive';
   styleUrl: './datepicker.component.css',
   host: {
     '[attr.dir]': 'adapter().direction',
+    '[attr.data-ndp-theme]': 'theme()',
     '(keydown)': 'onKeydown($event)',
   },
   providers: [
@@ -49,6 +50,9 @@ export class DatepickerComponent implements ControlValueAccessor {
   private readonly calendarIds: string[];
 
   // ── Public inputs ────────────────────────────────────────────────────────
+  readonly theme = input<NdpTheme>('light');
+  /** Override individual CSS design tokens programmatically, e.g. `{ '--ndp-accent': '#8b5cf6' }`. */
+  readonly customVars = input<Record<string, string>>({});
   readonly mode = input<DatepickerMode>('single');
   readonly numberOfMonths = input(1);
   readonly min = input<Date | null>(null);
@@ -140,6 +144,7 @@ export class DatepickerComponent implements ControlValueAccessor {
   // ── CVA callbacks ──────────────────────────────────────────────────────────
   private onChange: (v: DateRange) => void = () => {};
   private onTouched: () => void = () => {};
+  private _prevCustomVarKeys: string[] = [];
 
   constructor() {
     const adapters = inject(NDP_CALENDAR_ADAPTERS);
@@ -164,6 +169,19 @@ export class DatepickerComponent implements ControlValueAccessor {
           this.activeMonth.set(this.adapter().startOfMonth(s));
         }
       });
+    });
+
+    // Apply custom CSS variable overrides directly on the host element.
+    effect(() => {
+      const vars = this.customVars();
+      const el = this.host.nativeElement;
+      for (const key of this._prevCustomVarKeys) {
+        el.style.removeProperty(key);
+      }
+      for (const [key, value] of Object.entries(vars)) {
+        el.style.setProperty(key, value);
+      }
+      this._prevCustomVarKeys = Object.keys(vars);
     });
   }
 
