@@ -7,9 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Built-in **light / dark / auto themes** via a new `theme` input on
+  `DatepickerComponent` (default `'light'`). `'auto'` follows the OS
+  `prefers-color-scheme`. The dark palette also sets `color-scheme: dark` so
+  native UI (scrollbars, focus rings) adapts. New `NdpTheme` type exported.
+- `customVars` input — override any `--ndp-*` design token programmatically
+  (e.g. `{ '--ndp-accent': '#8b5cf6' }`); applied as inline styles so it wins
+  over both the built-in theme and external stylesheets.
 - `showSummary` input on `DatepickerComponent` (default `true`). Set it to
   `false` to hide just the selected-date summary bar inside the footer while
   keeping the action buttons (Today / Clear / calendar toggle).
+
+### Changed
+- The few remaining hard-coded hover colours (nav and footer buttons) now read
+  from the `--ndp-border` / `--ndp-day-hover-bg` tokens, so they theme correctly
+  in dark mode and respond to custom overrides.
+- Calendar-grid colours are now driven by the theme: `--ndp-day-color` and
+  `--ndp-weekday-color` default to `--ndp-text` / `--ndp-muted`, and the panel
+  shadow is tokenised as `--ndp-shadow` (deeper in dark mode).
+
+### Fixed
+- Day-cell text was invisible in dark mode — the grid used `--ndp-day-color`
+  (a light-only fallback) that the dark palette never set. Day, weekday-header
+  and outside-month colours now follow the active theme.
 
 ### Fixed
 - Selected day no longer widens its grid column or shifts the row. The week
