@@ -3,6 +3,7 @@ import {
   DatepickerComponent,
   NdpDayCellTemplate,
   DateRange,
+  NdpTheme,
   JalaliCalendarAdapter,
   GregorianCalendarAdapter,
   JalaaliMath,
@@ -16,15 +17,45 @@ import {
   templateUrl: './app.html',
   styleUrl: './app.css',
   host: {
-    // Close the dropdown panel on Escape, the conventional popover dismiss key.
+    '[attr.data-theme]': 'theme()',
     '(document:keydown.escape)': 'dropOpen.set(false)',
   },
 })
 export class App {
+  // ── Theme ───────────────────────────────────────────────────────────────────
+  readonly theme = signal<NdpTheme>('light');
+  readonly themeLabel = computed(() => {
+    const t = this.theme();
+    return t === 'light' ? 'روشن' : t === 'dark' ? 'تیره' : 'خودکار';
+  });
+
+  cycleTheme(): void {
+    const order: NdpTheme[] = ['light', 'dark', 'auto'];
+    const i = order.indexOf(this.theme());
+    this.theme.set(order[(i + 1) % order.length]);
+  }
+
+  /**
+   * Custom vars for the themed demo card — a purple accent. The range/preview
+   * bands use translucent purple so a single override looks right on both the
+   * light and dark surface (the band tints whatever sits behind it).
+   */
+  readonly purpleVars: Record<string, string> = {
+    '--ndp-accent': '#8b5cf6',
+    '--ndp-accent-hover': '#7c3aed',
+    '--ndp-accent-contrast': '#ffffff',
+    '--ndp-range-bg': 'rgba(139, 92, 246, 0.18)',
+    '--ndp-range-color': '#8b5cf6',
+    '--ndp-preview-bg': 'rgba(139, 92, 246, 0.10)',
+    '--ndp-focus-ring': '#8b5cf6',
+    '--ndp-today-border': '#8b5cf6',
+  };
+
   // Demo state
   readonly single = signal<DateRange>({ start: null, end: null });
   readonly range = signal<DateRange>({ start: null, end: null });
   readonly custom = signal<DateRange>({ start: null, end: null });
+  readonly themed = signal<DateRange>({ start: null, end: null });
 
   readonly today = (() => {
     const d = new Date();

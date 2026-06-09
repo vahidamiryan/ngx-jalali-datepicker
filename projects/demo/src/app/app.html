@@ -1,7 +1,17 @@
 <main class="page">
   <header class="page__head">
-    <h1>ngx-jalali-datepicker</h1>
-    <p>تقویم Angular با Signals، معماری Adapter، و هسته‌ی headless — شمسی + میلادی</p>
+    <div class="page__head-text">
+      <h1>ngx-jalali-datepicker</h1>
+      <p>تقویم Angular با Signals، معماری Adapter، و هسته‌ی headless — شمسی + میلادی</p>
+    </div>
+    <button type="button" class="theme-toggle" (click)="cycleTheme()" [attr.data-theme]="theme()">
+      <span class="theme-toggle__icon">
+        @if (theme() === 'light') { ☀️ }
+        @else if (theme() === 'dark') { 🌙 }
+        @else { 🌓 }
+      </span>
+      <span>{{ themeLabel() }}</span>
+    </button>
   </header>
 
   <section class="demos">
@@ -11,6 +21,7 @@
       <p class="hint">تاریخ میلادی زیر هر ماهِ شمسی نمایش داده می‌شود. دکمه‌ی فوتر تقویم را عوض می‌کند.</p>
       <ndp-datepicker
         [showSummary]="false"
+        [theme]="theme()"
         [showSecondaryDate]="true"
         [value]="single()"
         (valueChange)="single.set($event)" />
@@ -25,6 +36,7 @@
       <h2>انتخاب بازه (دو ماهه + دو خطی)</h2>
       <p class="hint">پیش‌نمایش با هاور، تاریخ‌های گذشته و ناوبری به ماه‌های گذشته غیرفعال.</p>
       <ndp-datepicker
+        [theme]="theme()"
         mode="range"
         [numberOfMonths]="2"
         [min]="today"
@@ -42,6 +54,7 @@
       <h2>سلول سفارشی (Content Projection)</h2>
       <p class="hint">قالب روز با <code>ndpDayCell</code> کاملاً قابل بازنویسی است — اینجا نقطه‌ی تعطیلی.</p>
       <ndp-datepicker
+        [theme]="theme()"
         [value]="custom()"
         (valueChange)="custom.set($event)">
         <ng-template ndpDayCell let-day>
@@ -77,6 +90,7 @@
           <div class="dropdown__backdrop" (click)="dropOpen.set(false)"></div>
           <div class="dropdown__panel">
             <ndp-datepicker
+              [theme]="theme()"
               [showSecondaryDate]="true"
               [showFooter]="false"
               [value]="dropValue()"
@@ -87,7 +101,24 @@
       </div>
     </article>
 
-    <!-- 5) Conversion (pure API, no component) -->
+    <!-- 5) Custom theme via customVars -->
+    <article class="card">
+      <h2>تم سفارشی (customVars)</h2>
+      <p class="hint">رنگ‌های اکسنت را با <code>[customVars]</code> از کد TypeScript کنترل کنید — بدون نیاز به CSS.</p>
+      <ndp-datepicker
+        [theme]="theme()"
+        [customVars]="purpleVars"
+        [value]="themed()"
+        (valueChange)="themed.set($event)" />
+      <div class="result">
+        <div class="result__row">
+          <span class="result__tag">accent</span>
+          <code style="background: #8b5cf6; color: #fff">#8b5cf6</code>
+        </div>
+      </div>
+    </article>
+
+    <!-- 6) Conversion (pure API, no component) -->
     <article class="card">
       <h2>تبدیل میلادی ↔ شمسی</h2>
       <p class="hint">با <code>JalaaliMath</code> و آداپتورها — بدون نیاز به هیچ UI.</p>
