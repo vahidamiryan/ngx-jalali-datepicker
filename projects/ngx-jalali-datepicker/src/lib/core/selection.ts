@@ -12,6 +12,13 @@ export function applySelection(mode: DatepickerMode, current: DateRange, date: D
   }
 
   // range mode
+  if (current.end && !current.start) {
+    const end = current.end!;
+    return dayKey(date) > dayKey(end)
+      ? { start: end, end: date }
+      : { start: date, end };
+  }
+
   const hasOpenStart = current.start && !current.end;
   if (!hasOpenStart) {
     // No range in progress (nothing selected, or a complete range) → begin a new one.
