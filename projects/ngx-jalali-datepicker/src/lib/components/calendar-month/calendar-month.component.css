@@ -5,7 +5,11 @@
 .ndp-weekdays,
 .ndp-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  /* minmax(0, 1fr) — not bare 1fr — so the seven tracks stay strictly equal.
+     A bare 1fr is minmax(auto, 1fr): its min-content floor lets a cell grow
+     when its label turns bold on selection, stealing width from neighbours
+     and shifting the whole row. */
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: var(--ndp-cell-gap, 2px);
 }
 
@@ -21,6 +25,9 @@
 .ndp-day {
   /* reset native button */
   appearance: none;
+  /* Own the box model so the 1px border doesn't overflow the track in apps
+     that lack a global border-box reset. */
+  box-sizing: border-box;
   border: 1px solid transparent;
   background: transparent;
   font: inherit;
