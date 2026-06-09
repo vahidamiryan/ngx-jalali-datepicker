@@ -1,35 +1,129 @@
+/* ── Page-level design tokens (light defaults) ────────────────────────── */
 :host {
+  --page-bg: #ffffff;
+  --page-text: #1e293b;
+  --page-muted: #64748b;
+  --page-card-bg: #f8fafc;
+  --page-card-border: #e2e8f0;
+  --page-code-bg: #e2e8f0;
+  --page-tag-bg: #eef2f7;
+  --page-tag-color: #64748b;
+  --page-drop-bg: #ffffff;
+  --page-drop-border: #cbd5e1;
+  --page-result-color: #475569;
+  --page-hint-color: #64748b;
+  --page-foot-color: #94a3b8;
+
   display: block;
+  background: var(--page-bg);
+  color: var(--page-text);
+  min-height: 100vh;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* ── Dark theme overrides ─────────────────────────────────────────────── */
+:host([data-theme="dark"]) {
+  --page-bg: #0f172a;
+  --page-text: #f1f5f9;
+  --page-muted: #94a3b8;
+  --page-card-bg: #1e293b;
+  --page-card-border: #334155;
+  --page-code-bg: #334155;
+  --page-tag-bg: #334155;
+  --page-tag-color: #94a3b8;
+  --page-drop-bg: #1e293b;
+  --page-drop-border: #475569;
+  --page-result-color: #cbd5e1;
+  --page-hint-color: #94a3b8;
+  --page-foot-color: #64748b;
+}
+
+/* ── Auto theme — follows OS preference ──────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :host([data-theme="auto"]) {
+    --page-bg: #0f172a;
+    --page-text: #f1f5f9;
+    --page-muted: #94a3b8;
+    --page-card-bg: #1e293b;
+    --page-card-border: #334155;
+    --page-code-bg: #334155;
+    --page-tag-bg: #334155;
+    --page-tag-color: #94a3b8;
+    --page-drop-bg: #1e293b;
+    --page-drop-border: #475569;
+    --page-result-color: #cbd5e1;
+    --page-hint-color: #94a3b8;
+    --page-foot-color: #64748b;
+  }
+}
+
+/* ── Layout ───────────────────────────────────────────────────────────── */
 .page {
   max-width: 1100px;
   margin: 0 auto;
   padding: 2.5rem 1.5rem 4rem;
 }
 
-.page__head h1 {
+.page__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.page__head-text h1 {
   margin: 0;
   font-size: 1.9rem;
   letter-spacing: -0.02em;
 }
 
-.page__head p {
+.page__head-text p {
   margin: 0.4rem 0 0;
-  color: #64748b;
+  color: var(--page-muted);
 }
 
+/* ── Theme toggle button ──────────────────────────────────────────────── */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--page-card-border);
+  border-radius: 999px;
+  background: var(--page-card-bg);
+  color: var(--page-text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  border-color: var(--page-drop-border);
+}
+
+.theme-toggle__icon {
+  font-style: normal;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* ── Demo grid ────────────────────────────────────────────────────────── */
 .demos {
   display: grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1.75rem;
   margin-top: 2.5rem;
   align-items: start;
 }
 
 .card {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--page-card-bg);
+  border: 1px solid var(--page-card-border);
   border-radius: 16px;
   padding: 1.25rem;
 }
@@ -42,14 +136,14 @@
 .hint {
   margin: 0 0 1rem;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--page-hint-color);
   line-height: 1.6;
 }
 
 .result {
   margin-top: 1rem;
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--page-result-color);
   display: grid;
   gap: 0.4rem;
 }
@@ -65,15 +159,15 @@
   min-width: 2.6rem;
   font-size: 0.68rem;
   font-weight: 600;
-  color: #64748b;
-  background: #eef2f7;
+  color: var(--page-tag-color);
+  background: var(--page-tag-bg);
   border-radius: 999px;
   padding: 0.1rem 0.5rem;
   text-align: center;
 }
 
 .result code {
-  background: #e2e8f0;
+  background: var(--page-code-bg);
   padding: 0.15rem 0.45rem;
   border-radius: 6px;
 }
@@ -81,11 +175,11 @@
 .page__foot {
   margin-top: 3rem;
   font-size: 0.78rem;
-  color: #94a3b8;
+  color: var(--page-foot-color);
   text-align: center;
 }
 
-/* Dropdown demo */
+/* ── Dropdown demo ────────────────────────────────────────────────────── */
 .dropdown {
   position: relative;
 }
@@ -97,26 +191,25 @@
   gap: 0.5rem;
   width: 100%;
   padding: 0.6rem 0.85rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--page-drop-border);
   border-radius: 10px;
-  background: #fff;
+  background: var(--page-drop-bg);
   font: inherit;
   font-size: 0.9rem;
   cursor: pointer;
-  color: #1e293b;
+  color: var(--page-text);
 }
 
 .dropdown__trigger:hover {
-  border-color: #94a3b8;
+  border-color: var(--page-muted);
 }
 
-/* No date chosen yet — read the label as a placeholder, not a value. */
 .dropdown__trigger--empty {
-  color: #94a3b8;
+  color: var(--page-muted);
 }
 
 .dropdown__caret {
-  color: #94a3b8;
+  color: var(--page-muted);
   font-style: normal;
 }
 
@@ -133,6 +226,7 @@
   z-index: 20;
 }
 
+/* ── Conversion list ──────────────────────────────────────────────────── */
 .convert {
   list-style: none;
   margin: 0;
@@ -140,16 +234,16 @@
   display: grid;
   gap: 0.55rem;
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--page-result-color);
 }
 
 .convert code {
-  background: #e2e8f0;
+  background: var(--page-code-bg);
   padding: 0.15rem 0.45rem;
   border-radius: 6px;
 }
 
-/* Custom day cell content used by the third demo. */
+/* ── Custom day cell (third demo) ────────────────────────────────────── */
 .cell {
   position: relative;
   display: inline-flex;

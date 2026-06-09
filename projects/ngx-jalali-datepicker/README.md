@@ -10,7 +10,7 @@ Built on **signals**, an **OnPush + zoneless** rendering model, a pluggable
 | Goal | How it's achieved |
 | --- | --- |
 | **Performance** | Every per-day flag (selected / in-range / disabled / preview / today) is precomputed once in a `computed` (`buildMonthView`). Templates read only booleans — no `toDateString()` or `[ngClass]` object literals re-evaluated per cell per change-detection cycle. Comparisons use numeric `yyyymmdd` keys, never string allocations. |
-| **Customizability** | Theme entirely via CSS custom properties (`--ndp-*`). Replace the day cell with content projection (`ng-template ndpDayCell`). Swap or add calendars by implementing `CalendarAdapter`. |
+| **Customizability** | Built-in light / dark / auto themes (`theme` input). Theme entirely via CSS custom properties (`--ndp-*`), set in your stylesheet or programmatically with the `customVars` input. Replace the day cell with content projection (`ng-template ndpDayCell`). Swap or add calendars by implementing `CalendarAdapter`. |
 | **Maintainability** | Pure, testable headless core (`buildMonthView`, `applySelection`, adapters) is fully decoupled from the Angular components. No domain logic (pricing, etc.) baked into the core. |
 | **Correctness** | Jalaali math is a faithful port of the battle-tested `jalaali-js` algorithm and is unit-verified against the platform `Intl` Persian calendar. |
 
@@ -70,6 +70,61 @@ The secondary defaults to the first *other* registered calendar; override it wit
 
 The month heading shows the companion month range (months don't line up 1:1) and
 the footer summary shows the companion full date.
+
+## Theming (light / dark / custom)
+
+The picker ships with three built-in themes selected via the `theme` input:
+
+```html
+<ndp-datepicker theme="light" [(value)]="value" />  <!-- default -->
+<ndp-datepicker theme="dark"  [(value)]="value" />
+<ndp-datepicker theme="auto"  [(value)]="value" />  <!-- follows the OS prefers-color-scheme -->
+```
+
+`theme` only swaps the default palette of design tokens — every colour, radius
+and spacing value is a CSS custom property (`--ndp-*`) you can override.
+
+**Override in CSS** (cascades, so you can scope it to one instance or globally):
+
+```css
+ndp-datepicker {
+  --ndp-accent: #8b5cf6;
+  --ndp-accent-hover: #7c3aed;
+  --ndp-range-bg: rgba(139, 92, 246, 0.18); /* translucent → works on any surface */
+  --ndp-radius: 18px;
+}
+```
+
+**Override programmatically** with the `customVars` input — handy for runtime or
+theme-driven values. These are applied as inline styles, so they win over both
+the built-in theme and your stylesheet:
+
+```ts
+readonly brand: Record<string, string> = {
+  '--ndp-accent': '#8b5cf6',
+  '--ndp-range-bg': 'rgba(139, 92, 246, 0.18)',
+};
+```
+
+```html
+<ndp-datepicker theme="dark" [customVars]="brand" [(value)]="value" />
+```
+
+### Theme tokens
+
+| Token | Purpose |
+| --- | --- |
+| `--ndp-accent` / `--ndp-accent-hover` / `--ndp-accent-contrast` | Selected day fill, its hover, and the text on it. |
+| `--ndp-range-bg` / `--ndp-range-color` | Committed range band background and text. |
+| `--ndp-preview-bg` | Tentative (hover) range band background. |
+| `--ndp-focus-ring` | Keyboard focus ring. |
+| `--ndp-today-border` | "Today" outline. |
+| `--ndp-weekend-color` | Weekend day text. |
+| `--ndp-surface` / `--ndp-border` / `--ndp-text` / `--ndp-muted` | Panel background, borders, primary and muted text. |
+| `--ndp-day-color` / `--ndp-weekday-color` / `--ndp-day-outside-color` | Day text, weekday header text, and faded out-of-month days. Default to `--ndp-text` / `--ndp-muted` so they follow the theme automatically. |
+| `--ndp-day-hover-bg` | Day / nav / button hover background. |
+| `--ndp-shadow` | Panel drop shadow. |
+| `--ndp-radius` / `--ndp-day-radius` | Panel and day-cell corner radius. |
 
 ## Building a dropdown / popover
 
@@ -132,7 +187,7 @@ const greg   = new GregorianCalendarAdapter('en-US').format(new Date()); // "Sat
 - **Components:** `DatepickerComponent` (`ndp-datepicker`), `CalendarMonthComponent` (`ndp-calendar-month`)
 - **Directive:** `NdpDayCellTemplate` (`ng-template[ndpDayCell]`)
 - **Adapters:** `CalendarAdapter` (abstract), `GregorianCalendarAdapter`, `JalaliCalendarAdapter`
-- **Headless core:** `buildMonthView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, types (`DateRange`, `DayCell`, `MonthView`, `DatepickerMode`, `DateFilterFn`)
+- **Headless core:** `buildMonthView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, types (`DateRange`, `DayCell`, `MonthView`, `DatepickerMode`, `DateFilterFn`, `NdpTheme`)
 - **Config:** `provideNgxDatepicker`, `NDP_CALENDAR_ADAPTERS`
 
 ### `DatepickerComponent` inputs
@@ -142,6 +197,8 @@ const greg   = new GregorianCalendarAdapter('en-US').format(new Date()); // "Sat
 | `value` (model) | `DateRange` | `{start:null,end:null}` | Two-way bindable; also a `ControlValueAccessor`. |
 | `calendar` (model) | `string` | first registered | Active calendar id, e.g. `'jalali'`/`'gregorian'`. |
 | `mode` | `'single' \| 'range'` | `'single'` | |
+| `theme` | `'light' \| 'dark' \| 'auto'` | `'light'` | Built-in palette. `'auto'` follows the OS `prefers-color-scheme`. |
+| `customVars` | `Record<string, string>` | `{}` | CSS custom-property overrides applied as inline styles (e.g. `{ '--ndp-accent': '#8b5cf6' }`). |
 | `numberOfMonths` | `number` | `1` | Render N adjacent months. |
 | `min` / `max` | `Date \| null` | `null` | Inclusive bounds. |
 | `dateFilter` | `(d: Date) => boolean` | `null` | Return `true` if a date is **selectable**. |
