@@ -55,6 +55,7 @@ export class DatepickerComponent implements ControlValueAccessor {
   readonly max = input<Date | null>(null);
   readonly dateFilter = input<DateFilterFn | null>(null);
   readonly showFooter = input(true);
+  readonly showSummary = input(true);
   readonly showToday = input(true);
   readonly showClear = input(true);
   readonly showCalendarToggle = input(true);
