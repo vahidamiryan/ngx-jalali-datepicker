@@ -159,7 +159,7 @@
 
 .cell__dot {
   position: absolute;
-  bottom: 2px;
+  bottom: -8px;
   width: 4px;
   height: 4px;
   border-radius: 50%;
