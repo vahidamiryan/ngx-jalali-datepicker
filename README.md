@@ -41,6 +41,9 @@ export const appConfig: ApplicationConfig = {
 <!-- Reactive forms (ControlValueAccessor) -->
 <ndp-datepicker [formControl]="ctrl" />
 
+<!-- Hide the selected-date summary bar but keep the footer action buttons -->
+<ndp-datepicker [showSummary]="false" [(value)]="value" />
+
 <!-- Custom day cell -->
 <ndp-datepicker [(value)]="value">
   <ng-template ndpDayCell let-day>
@@ -144,9 +147,14 @@ const greg   = new GregorianCalendarAdapter('en-US').format(new Date()); // "Sat
 | `dateFilter` | `(d: Date) => boolean` | `null` | Return `true` if a date is **selectable**. |
 | `showSecondaryDate` | `boolean` | `false` | Show each date in a companion calendar (dual-script). |
 | `secondaryCalendar` | `string \| null` | `null` | Companion calendar id; defaults to the first other registered calendar. |
-| `showFooter` / `showToday` / `showClear` / `showCalendarToggle` | `boolean` | `true` | Footer controls. |
+| `showFooter` | `boolean` | `true` | Master toggle for the whole footer (summary bar + action buttons). |
+| `showSummary` | `boolean` | `true` | Show the selected-date summary bar inside the footer. Set `false` to hide just the summary while keeping the action buttons. |
+| `showToday` / `showClear` / `showCalendarToggle` | `boolean` | `true` | Footer action buttons. |
 
 **Output:** `(dateSelected)` emits the `DateRange` on every selection — handy for closing a dropdown.
+
+In **range** mode the summary bar shows a small ✕ next to each endpoint, so the
+start or end can be cleared individually without resetting the whole range.
 
 `min` / `max` also gate month navigation: the prev/next buttons (and `PageUp`/`PageDown`) stop at the bound month, so users can't browse into fully out-of-range months.
 
