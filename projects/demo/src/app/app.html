@@ -13,7 +13,10 @@
         [showSecondaryDate]="true"
         [value]="single()"
         (valueChange)="single.set($event)" />
-      <div class="result">مقدار: <code>{{ singleLabel() }}</code></div>
+      <div class="result">
+        <div class="result__row"><span class="result__tag">کوتاه</span> <code>{{ singleShort() }}</code></div>
+        <div class="result__row"><span class="result__tag">بلند</span> <code>{{ singleLong() }}</code></div>
+      </div>
     </article>
 
     <!-- 2) Range, two months, dual-script, no past dates -->
@@ -27,7 +30,10 @@
         [showSecondaryDate]="true"
         [value]="range()"
         (valueChange)="range.set($event)" />
-      <div class="result">مقدار: <code>{{ rangeLabel() }}</code></div>
+      <div class="result">
+        <div class="result__row"><span class="result__tag">کوتاه</span> <code>{{ rangeShort() }}</code></div>
+        <div class="result__row"><span class="result__tag">بلند</span> <code>{{ rangeLong() }}</code></div>
+      </div>
     </article>
 
     <!-- 3) Custom day cell via content projection -->
@@ -46,7 +52,10 @@
           </span>
         </ng-template>
       </ndp-datepicker>
-      <div class="result">مقدار: <code>{{ customLabel() }}</code></div>
+      <div class="result">
+        <div class="result__row"><span class="result__tag">کوتاه</span> <code>{{ customShort() }}</code></div>
+        <div class="result__row"><span class="result__tag">بلند</span> <code>{{ customLong() }}</code></div>
+      </div>
     </article>
 
     <!-- 4) Dropdown / popover pattern -->
@@ -54,7 +63,12 @@
       <h2>Dropdown (انتخابگر بازشو)</h2>
       <p class="hint">یک input که با کلیک، پنل تقویم را باز می‌کند؛ با انتخاب تاریخ بسته می‌شود.</p>
       <div class="dropdown">
-        <button type="button" class="dropdown__trigger" (click)="toggleDrop()">
+        <button
+          type="button"
+          class="dropdown__trigger"
+          [class.dropdown__trigger--empty]="dropEmpty()"
+          [attr.aria-expanded]="dropOpen()"
+          (click)="toggleDrop()">
           <span>{{ dropLabel() }}</span>
           <i class="dropdown__caret">▾</i>
         </button>
@@ -80,7 +94,8 @@
         <li>امروز (میلادی): <code>{{ todayInGregorian }}</code></li>
         <li>امروز (شمسی، عددی): <code>{{ todayInJalali }}</code></li>
         <li>امروز (شمسی، کامل): <code>{{ todayInJalaliPretty }}</code></li>
-        <li>۱ فروردین ۱۴۰۴ ⇆ میلادی: <code>{{ nowruz1404 }}</code></li>
+        <li>۱ فروردین ۱۴۰۴ → رشته‌ی میلادی (ISO): <code>{{ nowruz1404Iso }}</code></li>
+        <li>۱ فروردین ۱۴۰۴ → شیء <code>Date</code>: <code>{{ nowruz1404Date.toDateString() }}</code></li>
       </ul>
     </article>
   </section>

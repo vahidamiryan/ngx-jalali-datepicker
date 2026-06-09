@@ -50,6 +50,26 @@
   margin-top: 1rem;
   font-size: 0.85rem;
   color: #475569;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.result__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.result__tag {
+  flex: none;
+  min-width: 2.6rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #eef2f7;
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  text-align: center;
 }
 
 .result code {
@@ -88,6 +108,11 @@
 
 .dropdown__trigger:hover {
   border-color: #94a3b8;
+}
+
+/* No date chosen yet — read the label as a placeholder, not a value. */
+.dropdown__trigger--empty {
+  color: #94a3b8;
 }
 
 .dropdown__caret {
@@ -134,7 +159,7 @@
 
 .cell__dot {
   position: absolute;
-  bottom: -6px;
+  bottom: 2px;
   width: 4px;
   height: 4px;
   border-radius: 50%;
