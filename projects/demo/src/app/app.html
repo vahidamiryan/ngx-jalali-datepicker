@@ -10,6 +10,7 @@
       <h2>انتخاب تک‌تاریخ (دو خطی)</h2>
       <p class="hint">تاریخ میلادی زیر هر ماهِ شمسی نمایش داده می‌شود. دکمه‌ی فوتر تقویم را عوض می‌کند.</p>
       <ndp-datepicker
+        [showSummary]="false"
         [showSecondaryDate]="true"
         [value]="single()"
         (valueChange)="single.set($event)" />
