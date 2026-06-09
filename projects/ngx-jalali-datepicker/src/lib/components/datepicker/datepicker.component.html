@@ -66,6 +66,7 @@
 
   @if (showFooter()) {
     <div class="ndp-footer">
+      @if (showSummary()) {
       <div class="ndp-summary">
         @if (value().start) {
           <span class="ndp-summary__chip">
@@ -113,6 +114,7 @@
           </span>
         }
       </div>
+      }
 
       <div class="ndp-actions">
         @if (canToggleCalendar()) {
