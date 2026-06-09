@@ -6,6 +6,9 @@
 /** Selection mode of the picker. */
 export type DatepickerMode = 'single' | 'range';
 
+/** Built-in theme. `'auto'` follows the OS `prefers-color-scheme` media query. */
+export type NdpTheme = 'light' | 'dark' | 'auto';
+
 /** A numeric day key in the form yyyymmdd (Gregorian), used for cheap, allocation-free comparisons. */
 export type DayKey = number;
 
