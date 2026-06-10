@@ -18,7 +18,7 @@
     <!-- 1) Single date, dual-script (Jalali + Gregorian) -->
     <article class="card">
       <h2>انتخاب تک‌تاریخ (دو خطی)</h2>
-      <p class="hint">تاریخ میلادی زیر هر ماهِ شمسی نمایش داده می‌شود. دکمه‌ی فوتر تقویم را عوض می‌کند.</p>
+      <p class="hint">تاریخ میلادی زیر هر ماهِ شمسی نمایش داده می‌شود. روی نام ماه یا سال در هدر بزنید تا با دراپ‌داونِ ناوبری سریع جابه‌جا شوید.</p>
       <ndp-datepicker
         [showSummary]="false"
         [theme]="theme()"
@@ -40,6 +40,7 @@
         mode="range"
         [numberOfMonths]="2"
         [min]="today"
+        [showQuickNav]="false"
         [showSecondaryDate]="true"
         [value]="range()"
         (valueChange)="range.set($event)" />
@@ -49,7 +50,35 @@
       </div>
     </article>
 
-    <!-- 3) Custom day cell via content projection -->
+    <!-- 3) Month picker mode -->
+    <article class="card">
+      <h2>انتخاب ماه (mode="month")</h2>
+      <p class="hint">بدنه‌ی تقویم به گرید ۱۲ ماه تبدیل می‌شود؛ انتخاب، کل ماه را برمی‌گرداند. سال را با دراپ‌داون هدر عوض کنید.</p>
+      <ndp-datepicker
+        [theme]="theme()"
+        mode="month"
+        [value]="month()"
+        (valueChange)="month.set($event)" />
+      <div class="result">
+        <div class="result__row"><span class="result__tag">ماه</span> <code>{{ monthLabel() }}</code></div>
+      </div>
+    </article>
+
+    <!-- 4) Year picker mode -->
+    <article class="card">
+      <h2>انتخاب سال (mode="year")</h2>
+      <p class="hint">گرید سال‌ها با صفحه‌بندی دهه‌ای؛ ‹ › یک صفحه جابه‌جا می‌شود.</p>
+      <ndp-datepicker
+        [theme]="theme()"
+        mode="year"
+        [value]="year()"
+        (valueChange)="year.set($event)" />
+      <div class="result">
+        <div class="result__row"><span class="result__tag">سال</span> <code>{{ yearLabel() }}</code></div>
+      </div>
+    </article>
+
+    <!-- 5) Custom day cell via content projection -->
     <article class="card">
       <h2>سلول سفارشی (Content Projection)</h2>
       <p class="hint">قالب روز با <code>ndpDayCell</code> کاملاً قابل بازنویسی است — اینجا نقطه‌ی تعطیلی.</p>
