@@ -14,8 +14,8 @@
   --ndp-text: #1e293b;
   --ndp-muted: #94a3b8;
   --ndp-day-hover-bg: #f1f5f9;
-  /* Calendar-grid tokens — derive from the primary tokens above so they follow
-     light/dark automatically, while still being overridable on their own. */
+  /* Calendar-grid tokens — derived from the primary tokens so they follow
+     light/dark automatically while remaining individually overridable. */
   --ndp-day-color: var(--ndp-text);
   --ndp-weekday-color: var(--ndp-muted);
   --ndp-day-outside-color: #cbd5e1;
@@ -102,6 +102,121 @@
   justify-content: space-between;
   gap: 0.5rem;
   padding-block: 0.25rem 0.5rem;
+}
+
+/* ── Quick-navigation dropdowns ──────────────────────────────────────────── */
+.ndp-month-title__nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.ndp-quick-nav {
+  display: inline-flex;
+  gap: 0.3rem;
+}
+
+/* Each dropdown button + its menu form an independent positioned unit. */
+.ndp-dropdown {
+  position: relative;
+  display: inline-flex;
+}
+
+.ndp-title-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--ndp-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: background-color 0.12s ease;
+}
+
+.ndp-title-btn:hover {
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+}
+
+.ndp-title-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  border: none;
+  background: transparent;
+}
+
+.ndp-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  /* Center the menu under its trigger button (direction-agnostic). */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  padding: 0.3rem;
+  list-style: none;
+  background: var(--ndp-surface);
+  border: 1px solid var(--ndp-border);
+  border-radius: 10px;
+  box-shadow: var(--ndp-shadow, 0 10px 30px -12px rgba(15, 23, 42, 0.25));
+  max-height: 14rem;
+  overflow-y: auto;
+  /* Don't let the menu clip to the panel's overflow boundary. */
+  white-space: nowrap;
+}
+
+.ndp-menu--month {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.15rem;
+  min-width: 11rem;
+}
+
+.ndp-menu--year {
+  min-width: 7rem;
+}
+
+.ndp-menu__item {
+  appearance: none;
+  width: 100%;
+  text-align: center;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  padding: 0.4rem 0.6rem;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  color: var(--ndp-text);
+  white-space: nowrap;
+  transition: background-color 0.12s ease;
+}
+
+.ndp-menu__item:hover {
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+}
+
+.ndp-menu__item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-menu__item--active {
+  background: var(--ndp-accent);
+  color: var(--ndp-accent-contrast);
+  font-weight: 700;
 }
 
 .ndp-month-title__label {

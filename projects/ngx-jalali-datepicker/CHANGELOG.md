@@ -4,9 +4,29 @@ All notable changes to **@vahidamirian/ngx-jalali-datepicker** are documented in
 this file. The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+**npm:** https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker
+
 ## [Unreleased]
 
 ### Added
+- **Month & year picker modes** — `mode="month"` and `mode="year"` turn the body
+  into a 12-month grid / paged year grid. Selecting commits the whole period:
+  `value.start` is the first day (local midnight) of the chosen month/year, `end`
+  stays null. Full keyboard support (arrows move within the 3-column grid,
+  PageUp/PageDown step the year/page, Enter/Space commit).
+- **Quick navigation** — in day mode the header shows separate month and year
+  dropdowns; click either to jump straight to a month or year without stepping
+  through with the `‹ ›` arrows. `Esc` or an outside click closes the menu.
+  Toggle with the new `showQuickNav` input (default `true`); set `false` for a
+  plain, non-interactive month/year header label.
+- Headless `buildMonthsView` / `buildYearsView` builders and `PeriodCell` /
+  `PeriodView` types, mirroring `buildMonthView` — build a custom month/year UI
+  on the same precomputed core. New `CalendarView` type and reusable
+  `CalendarPeriodComponent` exported.
+- `CalendarAdapter` gains `getMonthNames()`, `getYearLabel()`, `startOfYear()`
+  and `addCalendarYears()`. All have working base-class defaults, so existing
+  custom adapters keep compiling; the built-in adapters override the first two
+  for localized names/digits.
 - Built-in **light / dark / auto themes** via a new `theme` input on
   `DatepickerComponent` (default `'light'`). `'auto'` follows the OS
   `prefers-color-scheme`. The dark palette also sets `color-scheme: dark` so

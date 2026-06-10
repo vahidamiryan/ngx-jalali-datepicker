@@ -80,3 +80,52 @@ describe('DatepickerComponent keyboard navigation bounds', () => {
     expect(dayKey(focusedDate()!)).toBe(dayKey(new Date(2026, 4, 15)));
   });
 });
+
+describe('DatepickerComponent month / year picker modes', () => {
+  let fixture: ComponentFixture<DatepickerComponent>;
+  let component: DatepickerComponent;
+  let ref: ComponentRef<DatepickerComponent>;
+
+  const value = (): { start: Date | null; end: Date | null } => component.value();
+
+  function press(key: string): void {
+    fixture.nativeElement.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+    fixture.detectChanges();
+  }
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [DatepickerComponent],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideNgxDatepicker(new GregorianCalendarAdapter('en-US')),
+      ],
+    });
+    fixture = TestBed.createComponent(DatepickerComponent);
+    component = fixture.componentInstance;
+    ref = fixture.componentRef;
+  });
+
+  it('month mode commits the first day of the chosen month', () => {
+    ref.setInput('mode', 'month');
+    component.writeValue({ start: new Date(2026, 5, 20), end: null }); // focus June 2026
+    fixture.detectChanges();
+
+    press('Enter'); // selects the focused month
+
+    expect(value().start).toBeTruthy();
+    expect(dayKey(value().start!)).toBe(dayKey(new Date(2026, 5, 1)));
+    expect(value().end).toBeNull();
+  });
+
+  it('year mode commits the first day of the chosen year', () => {
+    ref.setInput('mode', 'year');
+    component.writeValue({ start: new Date(2026, 5, 20), end: null });
+    fixture.detectChanges();
+
+    press('ArrowRight'); // move focus to 2027
+    press('Enter');
+
+    expect(dayKey(value().start!)).toBe(dayKey(new Date(2027, 0, 1)));
+  });
+});
