@@ -3,8 +3,17 @@
  * core and the adapter layer can be reused outside the default UI.
  */
 
-/** Selection mode of the picker. */
-export type DatepickerMode = 'single' | 'range';
+/**
+ * Selection mode of the picker.
+ * - `single` / `range`: pick a day (or a day range). Month/year grids act only as
+ *   quick navigation; the committed value is always a day.
+ * - `month` / `year`: pick a whole month or year. The committed `value.start` is the
+ *   first day (local midnight) of the chosen month/year; `end` stays null.
+ */
+export type DatepickerMode = 'single' | 'range' | 'month' | 'year';
+
+/** Which grid the picker body is currently showing. */
+export type CalendarView = 'day' | 'month' | 'year';
 
 /** Built-in theme. `'auto'` follows the OS `prefers-color-scheme` media query. */
 export type NdpTheme = 'light' | 'dark' | 'auto';
@@ -61,3 +70,32 @@ export interface MonthView {
 
 /** Predicate used to disable specific days. Receives the canonical Gregorian date. */
 export type DateFilterFn = (date: Date) => boolean;
+
+/**
+ * A selectable period (a whole month or a whole year) in the month/year picker
+ * grids. Like {@link DayCell}, every flag is precomputed so templates read only
+ * booleans. The `date` is the canonical Gregorian midnight at the start of the
+ * period (first day of the month / first day of the year).
+ */
+export interface PeriodCell {
+  /** Canonical Gregorian instant at the start of the period (local midnight). */
+  date: Date;
+  /** Numeric key for fast equality — `yyyymm` for months, `yyyy` for years (active calendar). */
+  key: number;
+  /** Localized label — month name (e.g. "شهریور" / "August") or year (e.g. "۱۴۰۲" / "2023"). */
+  label: string;
+  /** True when today falls inside this period. */
+  isCurrent: boolean;
+  /** True when the current selection's start falls inside this period. */
+  isSelected: boolean;
+  /** True when the whole period lies outside [min, max]. */
+  isDisabled: boolean;
+}
+
+/** A fully built grid of {@link PeriodCell}s, ready to render. */
+export interface PeriodView {
+  /** Heading for the grid — the year for a months grid, the year span for a years grid. */
+  label: string;
+  /** The period cells in display order (12 months, or one page of years). */
+  cells: PeriodCell[];
+}

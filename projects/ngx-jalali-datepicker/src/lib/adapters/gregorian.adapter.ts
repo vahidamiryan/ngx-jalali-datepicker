@@ -15,6 +15,8 @@ export class GregorianCalendarAdapter extends CalendarAdapter {
   private readonly dayFmt: Intl.DateTimeFormat;
   private readonly fullFmt: Intl.DateTimeFormat;
   private readonly weekdayFmt: Intl.DateTimeFormat;
+  private readonly yearFmt: Intl.DateTimeFormat;
+  private readonly monthNames: readonly string[];
 
   constructor(private readonly locale: string = 'en-US') {
     super();
@@ -22,6 +24,11 @@ export class GregorianCalendarAdapter extends CalendarAdapter {
     this.dayFmt = new Intl.DateTimeFormat(locale, { day: 'numeric' });
     this.fullFmt = new Intl.DateTimeFormat(locale, { weekday: 'long', month: 'long', day: 'numeric' });
     this.weekdayFmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+    this.yearFmt = new Intl.DateTimeFormat(locale, { year: 'numeric' });
+    const monthFmt = new Intl.DateTimeFormat(locale, { month: 'long' });
+    const names: string[] = [];
+    for (let m = 1; m <= 12; m++) names.push(monthFmt.format(this.createDate(2023, m, 1)));
+    this.monthNames = names;
   }
 
   getYear(date: Date): number {
@@ -58,6 +65,14 @@ export class GregorianCalendarAdapter extends CalendarAdapter {
 
   getMonthLabel(date: Date): string {
     return this.monthYearFmt.format(date);
+  }
+
+  override getYearLabel(date: Date): string {
+    return this.yearFmt.format(date);
+  }
+
+  override getMonthNames(): readonly string[] {
+    return this.monthNames;
   }
 
   getDayLabel(date: Date): string {

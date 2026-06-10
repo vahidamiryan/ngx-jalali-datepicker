@@ -1,0 +1,22 @@
+@let v = view();
+
+<div class="ndp-period" role="grid" [attr.aria-label]="v.label">
+  <div class="ndp-period-grid">
+    @for (cell of v.cells; track cell.key) {
+      <button
+        type="button"
+        role="gridcell"
+        class="ndp-period-cell"
+        [attr.data-key]="cell.key"
+        [class.ndp-period-cell--current]="cell.isCurrent"
+        [class.ndp-period-cell--selected]="cell.isSelected"
+        [disabled]="cell.isDisabled"
+        [attr.tabindex]="cell.key === focusedKey() ? 0 : -1"
+        [attr.aria-pressed]="cell.isSelected"
+        [attr.aria-current]="cell.isCurrent ? 'date' : null"
+        (click)="onSelect(cell)">
+        <span class="ndp-period-cell__label">{{ cell.label }}</span>
+      </button>
+    }
+  </div>
+</div>
