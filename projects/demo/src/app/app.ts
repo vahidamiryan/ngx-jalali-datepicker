@@ -36,9 +36,8 @@ export class App {
   }
 
   /**
-   * Custom vars for the themed demo card — a purple accent. The range/preview
-   * bands use translucent purple so a single override looks right on both the
-   * light and dark surface (the band tints whatever sits behind it).
+   * Custom vars for the purple-accent demo card. Translucent range/preview bands
+   * so a single override looks correct on both light and dark surfaces.
    */
   readonly purpleVars: Record<string, string> = {
     '--ndp-accent': '#8b5cf6',
@@ -56,6 +55,8 @@ export class App {
   readonly range = signal<DateRange>({ start: null, end: null });
   readonly custom = signal<DateRange>({ start: null, end: null });
   readonly themed = signal<DateRange>({ start: null, end: null });
+  readonly month = signal<DateRange>({ start: null, end: null });
+  readonly year = signal<DateRange>({ start: null, end: null });
 
   readonly today = (() => {
     const d = new Date();
@@ -75,6 +76,16 @@ export class App {
   readonly rangeLong = computed(() => this.describe(this.range(), this.jLong));
   readonly customShort = computed(() => this.describe(this.custom(), this.jShort));
   readonly customLong = computed(() => this.describe(this.custom(), this.jLong));
+
+  // Month / year picker outputs — labelled via the Jalali adapter (e.g. "خرداد ۱۴۰۴", "۱۴۰۴").
+  readonly monthLabel = computed(() => {
+    const s = this.month().start;
+    return s ? this.jCal.getMonthLabel(s) : '—';
+  });
+  readonly yearLabel = computed(() => {
+    const s = this.year().start;
+    return s ? this.jCal.getYearLabel(s) : '—';
+  });
 
   // ── Dropdown demo ──────────────────────────────────────────────────────────
   private readonly jCal = new JalaliCalendarAdapter();
