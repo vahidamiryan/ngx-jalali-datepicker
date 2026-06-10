@@ -17,12 +17,20 @@ export class JalaliCalendarAdapter extends CalendarAdapter {
   private readonly monthYearFmt: Intl.DateTimeFormat;
   private readonly dayFmt: Intl.DateTimeFormat;
   private readonly fullFmt: Intl.DateTimeFormat;
+  private readonly yearFmt: Intl.DateTimeFormat;
+  private readonly monthNames: readonly string[];
 
   constructor(locale: string = 'fa-IR-u-ca-persian') {
     super();
     this.monthYearFmt = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' });
     this.dayFmt = new Intl.DateTimeFormat(locale, { day: 'numeric' });
     this.fullFmt = new Intl.DateTimeFormat(locale, { weekday: 'long', month: 'long', day: 'numeric' });
+    this.yearFmt = new Intl.DateTimeFormat(locale, { year: 'numeric' });
+    // Build the 12 month names once. 1404 is an ordinary Jalali year; any year works.
+    const monthFmt = new Intl.DateTimeFormat(locale, { month: 'long' });
+    const names: string[] = [];
+    for (let m = 1; m <= 12; m++) names.push(monthFmt.format(this.createDate(1404, m, 1)));
+    this.monthNames = names;
   }
 
   getYear(date: Date): number {
@@ -66,6 +74,14 @@ export class JalaliCalendarAdapter extends CalendarAdapter {
 
   getMonthLabel(date: Date): string {
     return this.monthYearFmt.format(date);
+  }
+
+  override getYearLabel(date: Date): string {
+    return this.yearFmt.format(date);
+  }
+
+  override getMonthNames(): readonly string[] {
+    return this.monthNames;
   }
 
   getDayLabel(date: Date): string {

@@ -1,68 +1,228 @@
 <div class="ndp-panel" [class.ndp-panel--disabled]="disabled()">
-  <div class="ndp-months">
-    @for (
-      m of visibleMonths();
-      track m.getTime();
-      let first = $first, last = $last
-    ) {
-      <div class="ndp-month-block">
-        <div class="ndp-month-title">
-          @if (first) {
+  @if (viewMode() === "day") {
+    <div class="ndp-months">
+      @for (
+        m of visibleMonths();
+        track m.getTime();
+        let first = $first, last = $last
+      ) {
+        <div class="ndp-month-block">
+          <div class="ndp-month-title">
+            @if (first) {
+              <button
+                type="button"
+                class="ndp-nav"
+                aria-label="قبلی"
+                [disabled]="!canGoPrev()"
+                (click)="goPrev()"
+              >
+                ‹
+              </button>
+            } @else {
+              <span class="ndp-nav-spacer" aria-hidden="true"></span>
+            }
+
+            @if (first && showQuickNav()) {
+              <span class="ndp-month-title__nav">
+                <span class="ndp-quick-nav">
+
+                  <!-- Month dropdown -->
+                  <span class="ndp-dropdown">
+                    <button
+                      type="button"
+                      class="ndp-title-btn"
+                      aria-haspopup="listbox"
+                      [attr.aria-expanded]="monthMenuOpen()"
+                      (click)="toggleMonthMenu()"
+                    >
+                      {{ activeMonthName() }} <span aria-hidden="true">▾</span>
+                    </button>
+                    @if (monthMenuOpen()) {
+                      <button
+                        type="button"
+                        class="ndp-menu-backdrop"
+                        aria-label="بستن"
+                        (click)="closeMenus()"
+                      ></button>
+                      <ul class="ndp-menu ndp-menu--month" role="listbox">
+                        @for (opt of monthOptions(); track opt.month) {
+                          <li role="none">
+                            <button
+                              type="button"
+                              role="option"
+                              class="ndp-menu__item"
+                              [class.ndp-menu__item--active]="opt.month === activeMonthNumber()"
+                              [attr.aria-selected]="opt.month === activeMonthNumber()"
+                              (click)="pickMonth(opt.month)"
+                            >
+                              {{ opt.label }}
+                            </button>
+                          </li>
+                        }
+                      </ul>
+                    }
+                  </span>
+
+                  <!-- Year dropdown -->
+                  <span class="ndp-dropdown">
+                    <button
+                      type="button"
+                      class="ndp-title-btn"
+                      aria-haspopup="listbox"
+                      [attr.aria-expanded]="yearMenuOpen()"
+                      (click)="toggleYearMenu()"
+                    >
+                      {{ activeYearLabel() }} <span aria-hidden="true">▾</span>
+                    </button>
+                    @if (yearMenuOpen()) {
+                      <button
+                        type="button"
+                        class="ndp-menu-backdrop"
+                        aria-label="بستن"
+                        (click)="closeMenus()"
+                      ></button>
+                      <ul class="ndp-menu ndp-menu--year" role="listbox">
+                        @for (opt of yearOptions(); track opt.year) {
+                          <li role="none">
+                            <button
+                              type="button"
+                              role="option"
+                              class="ndp-menu__item"
+                              [class.ndp-menu__item--active]="opt.year === activeYearNumber()"
+                              [attr.aria-selected]="opt.year === activeYearNumber()"
+                              (click)="pickYear(opt.year)"
+                            >
+                              {{ opt.label }}
+                            </button>
+                          </li>
+                        }
+                      </ul>
+                    }
+                  </span>
+
+                </span>
+                @if (secondaryAdapter()) {
+                  <small class="ndp-month-title__secondary">{{
+                    secondaryMonthLabel(m)
+                  }}</small>
+                }
+              </span>
+            } @else {
+              <span class="ndp-month-title__label">
+                {{ monthLabel(m) }}
+                @if (secondaryAdapter()) {
+                  <small class="ndp-month-title__secondary">{{
+                    secondaryMonthLabel(m)
+                  }}</small>
+                }
+              </span>
+            }
+
+            @if (last) {
+              <button
+                type="button"
+                class="ndp-nav"
+                aria-label="بعدی"
+                [disabled]="!canGoNext()"
+                (click)="goNext()"
+              >
+                ›
+              </button>
+            } @else {
+              <span class="ndp-nav-spacer" aria-hidden="true"></span>
+            }
+          </div>
+
+          <ndp-calendar-month
+            [adapter]="adapter()"
+            [monthStart]="m"
+            [mode]="mode()"
+            [value]="value()"
+            [hovered]="hovered()"
+            [today]="todayValue()"
+            [min]="min()"
+            [max]="max()"
+            [dateFilter]="dateFilter()"
+            [focusedKey]="focusedKey()"
+            [dayTemplate]="dayTemplate()"
+            (daySelect)="onDaySelect($event)"
+            (dayHover)="onDayHover($event)"
+          />
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="ndp-month-block">
+      <div class="ndp-month-title ndp-month-title--period">
+        <button
+          type="button"
+          class="ndp-nav"
+          aria-label="قبلی"
+          [disabled]="!canGoPrev()"
+          (click)="goPrev()"
+        >
+          ‹
+        </button>
+
+        @if (viewMode() === "month" && showQuickNav()) {
+          <!-- Year dropdown in month-picker mode -->
+          <span class="ndp-dropdown">
             <button
               type="button"
-              class="ndp-nav"
-              aria-label="ماه قبل"
-              [disabled]="!canGoPrev()"
-              (click)="prevMonth()"
+              class="ndp-title-btn"
+              aria-haspopup="listbox"
+              [attr.aria-expanded]="yearMenuOpen()"
+              (click)="toggleYearMenu()"
             >
-              ‹
+              {{ periodHeading() }} <span aria-hidden="true">▾</span>
             </button>
-          } @else {
-            <span class="ndp-nav-spacer" aria-hidden="true"></span>
-          }
-
-          <span class="ndp-month-title__label">
-            {{ monthLabel(m) }}
-            @if (secondaryAdapter()) {
-              <small class="ndp-month-title__secondary">{{
-                secondaryMonthLabel(m)
-              }}</small>
+            @if (yearMenuOpen()) {
+              <button
+                type="button"
+                class="ndp-menu-backdrop"
+                aria-label="بستن"
+                (click)="closeMenus()"
+              ></button>
+              <ul class="ndp-menu ndp-menu--year" role="listbox">
+                @for (opt of yearOptions(); track opt.year) {
+                  <li role="none">
+                    <button
+                      type="button"
+                      role="option"
+                      class="ndp-menu__item"
+                      [class.ndp-menu__item--active]="opt.year === activeYearNumber()"
+                      [attr.aria-selected]="opt.year === activeYearNumber()"
+                      (click)="pickYear(opt.year)"
+                    >
+                      {{ opt.label }}
+                    </button>
+                  </li>
+                }
+              </ul>
             }
           </span>
+        } @else {
+          <span class="ndp-month-title__label">{{ periodHeading() }}</span>
+        }
 
-          @if (last) {
-            <button
-              type="button"
-              class="ndp-nav"
-              aria-label="ماه بعد"
-              [disabled]="!canGoNext()"
-              (click)="nextMonth()"
-            >
-              ›
-            </button>
-          } @else {
-            <span class="ndp-nav-spacer" aria-hidden="true"></span>
-          }
-        </div>
-
-        <ndp-calendar-month
-          [adapter]="adapter()"
-          [monthStart]="m"
-          [mode]="mode()"
-          [value]="value()"
-          [hovered]="hovered()"
-          [today]="todayValue()"
-          [min]="min()"
-          [max]="max()"
-          [dateFilter]="dateFilter()"
-          [focusedKey]="focusedKey()"
-          [dayTemplate]="dayTemplate()"
-          (daySelect)="onDaySelect($event)"
-          (dayHover)="onDayHover($event)"
-        />
+        <button
+          type="button"
+          class="ndp-nav"
+          aria-label="بعدی"
+          [disabled]="!canGoNext()"
+          (click)="goNext()"
+        >
+          ›
+        </button>
       </div>
-    }
-  </div>
+
+      <ndp-calendar-period
+        [view]="viewMode() === 'year' ? yearsView() : monthsView()"
+        [focusedKey]="periodFocusedKey()"
+        (periodSelect)="onPeriodSelect($event)"
+      />
+    </div>
+  }
 
   @if (showFooter()) {
     <div class="ndp-footer">

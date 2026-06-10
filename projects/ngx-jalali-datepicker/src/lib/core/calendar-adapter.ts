@@ -41,6 +41,35 @@ export abstract class CalendarAdapter {
   /** First day (midnight) of the calendar month containing `date`. */
   abstract startOfMonth(date: Date): Date;
 
+  /**
+   * Move by whole calendar years, preserving month/day where possible.
+   * Defaults to a 12-month shift, which is correct for any 12-month calendar
+   * (Gregorian, Jalali, …). Override only for non-twelve-month calendars.
+   */
+  addCalendarYears(date: Date, delta: number): Date {
+    return this.addCalendarMonths(date, delta * 12);
+  }
+
+  /** First day (midnight) of the calendar year containing `date`. */
+  startOfYear(date: Date): Date {
+    return this.createDate(this.getYear(date), 1, 1);
+  }
+
+  /**
+   * Twelve localized month names in calendar order (index 0 = month 1).
+   * Defaults to numeric labels; override for localized names.
+   */
+  getMonthNames(): readonly string[] {
+    const names: string[] = [];
+    for (let m = 1; m <= 12; m++) names.push(String(m));
+    return names;
+  }
+
+  /** Localized year label (digits in the calendar's own numerals). Defaults to ASCII. */
+  getYearLabel(date: Date): string {
+    return String(this.getYear(date));
+  }
+
   /** Localized month + year heading, e.g. "شهریور ۱۴۰۲" or "August 2023". */
   abstract getMonthLabel(date: Date): string;
 

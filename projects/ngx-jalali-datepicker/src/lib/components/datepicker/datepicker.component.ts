@@ -16,10 +16,20 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CalendarAdapter } from '../../core/calendar-adapter';
 import { NDP_CALENDAR_ADAPTERS } from '../../datepicker.providers';
-import { DateFilterFn, DateRange, DayCell, DatepickerMode, NdpTheme } from '../../core/types';
+import {
+  CalendarView,
+  DateFilterFn,
+  DateRange,
+  DayCell,
+  DatepickerMode,
+  NdpTheme,
+  PeriodCell,
+} from '../../core/types';
 import { atMidnight, clampDate, dayKey } from '../../core/date-key.util';
 import { applySelection, isSelectionComplete } from '../../core/selection';
+import { buildMonthsView, buildYearsView, YEARS_PER_PAGE } from '../../core/build-period';
 import { CalendarMonthComponent } from '../calendar-month/calendar-month.component';
+import { CalendarPeriodComponent } from '../calendar-period/calendar-period.component';
 import { NdpDayCellTemplate } from '../day-cell.directive';
 
 /**
@@ -31,7 +41,7 @@ import { NdpDayCellTemplate } from '../day-cell.directive';
 @Component({
   selector: 'ndp-datepicker',
   standalone: true,
-  imports: [CalendarMonthComponent],
+  imports: [CalendarMonthComponent, CalendarPeriodComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './datepicker.component.html',
   styleUrl: './datepicker.component.css',
@@ -63,6 +73,8 @@ export class DatepickerComponent implements ControlValueAccessor {
   readonly showToday = input(true);
   readonly showClear = input(true);
   readonly showCalendarToggle = input(true);
+  /** Show the month/year quick-navigation dropdowns in the header. When false, the header shows a plain (non-interactive) month/year label. */
+  readonly showQuickNav = input(true);
   /** Show the same dates in a second calendar alongside the active one (e.g. Gregorian under Jalali). */
   readonly showSecondaryDate = input(false);
   /** Calendar id to use as the secondary. When null, the first registered calendar other than the active one. */
@@ -81,6 +93,15 @@ export class DatepickerComponent implements ControlValueAccessor {
   protected readonly hovered = signal<Date | null>(null);
   protected readonly focusedDate = signal<Date | null>(null);
   protected readonly disabled = signal(false);
+
+  /** Which grid the body shows. Driven by `mode`: month/year modes pin their grid. */
+  protected readonly viewMode = computed<CalendarView>(() => {
+    const m = this.mode();
+    return m === 'month' || m === 'year' ? m : 'day';
+  });
+  /** Open state of the header quick-navigation menus (day mode only). */
+  protected readonly monthMenuOpen = signal(false);
+  protected readonly yearMenuOpen = signal(false);
 
   private readonly dayCell = contentChild(NdpDayCellTemplate);
   protected readonly dayTemplate = computed(() => this.dayCell()?.template ?? null);
@@ -122,23 +143,111 @@ export class DatepickerComponent implements ControlValueAccessor {
     return otherId ? this.registry.get(otherId)! : null;
   });
 
-  /** Can the view move back a month? False once the first visible month is the `min` month. */
+  // ── Month / year picker views ──────────────────────────────────────────────
+  private readonly periodContext = computed(() => ({
+    value: this.value(),
+    today: this.today(),
+    min: this.min(),
+    max: this.max(),
+  }));
+
+  protected readonly monthsView = computed(() =>
+    buildMonthsView(this.adapter(), this.activeMonth(), this.periodContext()),
+  );
+
+  protected readonly yearsView = computed(() =>
+    buildYearsView(this.adapter(), this.activeMonth(), this.periodContext()),
+  );
+
+  /** Roving-focus key for the active period grid (month or year view). */
+  protected readonly periodFocusedKey = computed<number | null>(() => {
+    const a = this.adapter();
+    const base = this.focusedDate() ?? this.activeMonth();
+    if (this.viewMode() === 'month') return a.getYear(base) * 100 + a.getMonth(base);
+    if (this.viewMode() === 'year') return a.getYear(base);
+    return null;
+  });
+
+  /** Heading shown in month view (the year) and year view (the year span). */
+  protected readonly periodHeading = computed(() =>
+    this.viewMode() === 'year' ? this.yearsView().label : this.monthsView().label,
+  );
+
+  // ── Quick-navigation menus (day mode header dropdowns) ──────────────────────
+  protected readonly monthOptions = computed(() =>
+    this.adapter()
+      .getMonthNames()
+      .map((label, i) => ({ month: i + 1, label })),
+  );
+
+  /** Localized label of the active month, shown on the month dropdown trigger. */
+  protected readonly activeMonthName = computed(() => {
+    const a = this.adapter();
+    return a.getMonthNames()[a.getMonth(this.activeMonth()) - 1];
+  });
+
+  /** Localized label of the active year, shown on the year dropdown trigger. */
+  protected readonly activeYearLabel = computed(() => this.adapter().getYearLabel(this.activeMonth()));
+
+  /** Active month number (1-based), to flag the selected item in the month menu. */
+  protected readonly activeMonthNumber = computed(() => this.adapter().getMonth(this.activeMonth()));
+
+  /** Active year number, to flag the selected item in the year menu. */
+  protected readonly activeYearNumber = computed(() => this.adapter().getYear(this.activeMonth()));
+
+  /** Years offered by the year dropdown — bounded by [min, max] or a generous default span. */
+  protected readonly yearOptions = computed(() => {
+    const a = this.adapter();
+    const todayYear = a.getYear(this.today());
+    const min = this.min();
+    const max = this.max();
+    const lo = min ? a.getYear(atMidnight(min)) : todayYear - 100;
+    const hi = max ? a.getYear(atMidnight(max)) : todayYear + 20;
+    const out: { year: number; label: string }[] = [];
+    for (let y = lo; y <= hi; y++) out.push({ year: y, label: a.getYearLabel(a.createDate(y, 1, 1)) });
+    return out;
+  });
+
+  // ── Navigation guards ───────────────────────────────────────────────────────
+  /** Can the view move back? Meaning depends on the active view (month / year / page). */
   protected readonly canGoPrev = computed(() => {
     const min = this.min();
     if (!min) return true;
     const a = this.adapter();
-    const firstStart = this.visibleMonths()[0];
-    return dayKey(firstStart) > dayKey(a.startOfMonth(atMidnight(min)));
+    const minKey = dayKey(atMidnight(min));
+    switch (this.viewMode()) {
+      case 'month':
+        return a.getYear(this.activeMonth()) > a.getYear(atMidnight(min));
+      case 'year': {
+        const pageStart = Math.floor(a.getYear(this.activeMonth()) / YEARS_PER_PAGE) * YEARS_PER_PAGE;
+        return pageStart > a.getYear(atMidnight(min));
+      }
+      default:
+        return dayKey(this.visibleMonths()[0]) > dayKey(a.startOfMonth(atMidnight(min)));
+    }
   });
 
-  /** Can the view move forward a month? False once the last visible month is the `max` month. */
+  /** Can the view move forward? Meaning depends on the active view (month / year / page). */
   protected readonly canGoNext = computed(() => {
     const max = this.max();
     if (!max) return true;
     const a = this.adapter();
-    const months = this.visibleMonths();
-    const lastStart = months[months.length - 1];
-    return dayKey(lastStart) < dayKey(a.startOfMonth(atMidnight(max)));
+    switch (this.viewMode()) {
+      case 'month':
+        return a.getYear(this.activeMonth()) < a.getYear(atMidnight(max));
+      case 'year': {
+        const pageEnd =
+          Math.floor(a.getYear(this.activeMonth()) / YEARS_PER_PAGE) * YEARS_PER_PAGE +
+          YEARS_PER_PAGE -
+          1;
+        return pageEnd < a.getYear(atMidnight(max));
+      }
+      default: {
+        const months = this.visibleMonths();
+        const lastStart = months[months.length - 1];
+        return dayKey(lastStart) < dayKey(a.startOfMonth(atMidnight(max)));
+      }
+    }
   });
 
   // ── CVA callbacks ──────────────────────────────────────────────────────────
@@ -201,20 +310,84 @@ export class DatepickerComponent implements ControlValueAccessor {
   }
 
   // ── Navigation / footer ─────────────────────────────────────────────────────
-  protected prevMonth(): void {
+  /** Step the view back: by a month (day view), a year (month view), or a page (year view). */
+  protected goPrev(): void {
     if (!this.canGoPrev()) return;
-    this.activeMonth.set(this.adapter().addCalendarMonths(this.activeMonth(), -1));
+    this.activeMonth.set(this.shiftActive(-1));
   }
 
-  protected nextMonth(): void {
+  /** Step the view forward — counterpart to {@link goPrev}. */
+  protected goNext(): void {
     if (!this.canGoNext()) return;
-    this.activeMonth.set(this.adapter().addCalendarMonths(this.activeMonth(), 1));
+    this.activeMonth.set(this.shiftActive(1));
+  }
+
+  /** Move `activeMonth` by one navigation step in the current view's unit. */
+  private shiftActive(dir: -1 | 1): Date {
+    const a = this.adapter();
+    switch (this.viewMode()) {
+      case 'month':
+        return a.addCalendarYears(this.activeMonth(), dir);
+      case 'year':
+        return a.addCalendarYears(this.activeMonth(), dir * YEARS_PER_PAGE);
+      default:
+        return a.addCalendarMonths(this.activeMonth(), dir);
+    }
   }
 
   protected goToToday(): void {
     const t = this.today();
     this.activeMonth.set(this.adapter().startOfMonth(t));
     this.focusedDate.set(t);
+  }
+
+  // ── Month / year picker selection ───────────────────────────────────────────
+  /** Commit a whole month or year (month/year modes) from the body grid. */
+  protected onPeriodSelect(cell: PeriodCell): void {
+    this.commitPeriod(cell.date);
+  }
+
+  /** Commit the period containing `date`, snapping to its month/year start. */
+  private commitPeriod(date: Date): void {
+    const a = this.adapter();
+    const start = this.viewMode() === 'year' ? a.startOfYear(date) : a.startOfMonth(date);
+    const next: DateRange = { start, end: null };
+    this.value.set(next);
+    this.activeMonth.set(start);
+    this.focusedDate.set(start);
+    this.onChange(next);
+    this.onTouched();
+    this.dateSelected.emit(next);
+  }
+
+  // ── Quick-navigation menus ──────────────────────────────────────────────────
+  protected toggleMonthMenu(): void {
+    this.yearMenuOpen.set(false);
+    this.monthMenuOpen.update(v => !v);
+  }
+
+  protected toggleYearMenu(): void {
+    this.monthMenuOpen.set(false);
+    this.yearMenuOpen.update(v => !v);
+  }
+
+  protected closeMenus(): void {
+    this.monthMenuOpen.set(false);
+    this.yearMenuOpen.set(false);
+  }
+
+  /** Jump the active view to `month` of the current year, keeping the day view. */
+  protected pickMonth(month: number): void {
+    const a = this.adapter();
+    this.activeMonth.set(a.createDate(a.getYear(this.activeMonth()), month, 1));
+    this.monthMenuOpen.set(false);
+  }
+
+  /** Jump the active view to `year`, preserving the current month. */
+  protected pickYear(year: number): void {
+    const a = this.adapter();
+    this.activeMonth.set(a.createDate(year, a.getMonth(this.activeMonth()), 1));
+    this.yearMenuOpen.set(false);
   }
 
   protected clear(): void {
@@ -270,6 +443,14 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   // ── Keyboard navigation ──────────────────────────────────────────────────────
   protected onKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && (this.monthMenuOpen() || this.yearMenuOpen())) {
+      this.closeMenus();
+      return;
+    }
+    if (this.viewMode() !== 'day') {
+      this.onPeriodKeydown(event);
+      return;
+    }
     const a = this.adapter();
     const rtl = a.direction === 'rtl';
     const current = this.focusedDate() ?? this.today();
@@ -319,8 +500,66 @@ export class DatepickerComponent implements ControlValueAccessor {
     requestAnimationFrame(() => this.focusActiveCell());
   }
 
+  /** Keyboard navigation for the month / year picker grids (3-column layout). */
+  private onPeriodKeydown(event: KeyboardEvent): void {
+    const a = this.adapter();
+    const rtl = a.direction === 'rtl';
+    const isYear = this.viewMode() === 'year';
+    const current = this.focusedDate() ?? this.activeMonth();
+    // One step is a month (month view) or a year (year view); a row is 3 cells.
+    const step = (units: number) =>
+      isYear ? a.addCalendarYears(current, units) : a.addCalendarMonths(current, units);
+    let next: Date | null = null;
+
+    switch (event.key) {
+      case 'ArrowRight':
+        next = step(rtl ? -1 : 1);
+        break;
+      case 'ArrowLeft':
+        next = step(rtl ? 1 : -1);
+        break;
+      case 'ArrowDown':
+        next = step(3);
+        break;
+      case 'ArrowUp':
+        next = step(-3);
+        break;
+      case 'PageDown':
+        next = isYear ? a.addCalendarYears(current, YEARS_PER_PAGE) : a.addCalendarYears(current, 1);
+        break;
+      case 'PageUp':
+        next = isYear ? a.addCalendarYears(current, -YEARS_PER_PAGE) : a.addCalendarYears(current, -1);
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        this.commitPeriod(current);
+        return;
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    next = clampDate(next, this.min(), this.max());
+    this.focusedDate.set(next);
+    if (!this.isPeriodVisible(next)) this.activeMonth.set(a.startOfMonth(next));
+    requestAnimationFrame(() => this.focusActiveCell());
+  }
+
+  /** True when `date`'s period (year for month view, page for year view) is on screen. */
+  private isPeriodVisible(date: Date): boolean {
+    const a = this.adapter();
+    if (this.viewMode() === 'year') {
+      const page = (y: number) => Math.floor(y / YEARS_PER_PAGE);
+      return page(a.getYear(date)) === page(a.getYear(this.activeMonth()));
+    }
+    return a.getYear(date) === a.getYear(this.activeMonth());
+  }
+
   private focusActiveCell(): void {
-    const key = this.focusedKey();
+    // In the period views the focusable cell is keyed by the period key; in the
+    // day view it's the day key. Either way exactly one cell carries tabindex 0.
+    const key = this.viewMode() === 'day' ? this.focusedKey() : this.periodFocusedKey();
     if (key == null) return;
     // Target the focusable in-month cell (tabindex 0) — the same day may also
     // appear as a non-interactive padding cell in an adjacent month's grid.

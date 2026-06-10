@@ -7,6 +7,7 @@ export * from './lib/core/types';
 export * from './lib/core/date-key.util';
 export * from './lib/core/selection';
 export * from './lib/core/build-month';
+export * from './lib/core/build-period';
 export { CalendarAdapter, CALENDAR_ADAPTER } from './lib/core/calendar-adapter';
 
 // Calendar adapters
@@ -19,5 +20,6 @@ export * from './lib/datepicker.providers';
 
 // Components & directives
 export * from './lib/components/calendar-month/calendar-month.component';
+export * from './lib/components/calendar-period/calendar-period.component';
 export * from './lib/components/datepicker/datepicker.component';
 export * from './lib/components/day-cell.directive';
