@@ -1,0 +1,52 @@
+:host {
+  display: block;
+}
+
+.ndp-period-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+  padding-block: 0.25rem;
+}
+
+.ndp-period-cell {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--ndp-day-radius, 8px);
+  padding: 0.6rem 0.4rem;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--ndp-day-color, var(--ndp-text));
+  transition: background-color 0.12s ease;
+}
+
+.ndp-period-cell:hover:not(:disabled) {
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+}
+
+.ndp-period-cell:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-period-cell--current:not(.ndp-period-cell--selected) {
+  border-color: var(--ndp-today-border);
+  font-weight: 700;
+}
+
+.ndp-period-cell--selected {
+  background: var(--ndp-accent);
+  color: var(--ndp-accent-contrast);
+  font-weight: 700;
+}
+
+.ndp-period-cell--selected:hover:not(:disabled) {
+  background: var(--ndp-accent-hover);
+}
+
+.ndp-period-cell:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
