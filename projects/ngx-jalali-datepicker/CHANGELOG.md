@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Navigation slide animation** — opt-in via the new `animation` input
+  (`'none' | 'slide'`, default `'none'`). With `animation="slide"` the calendar
+  body slides in from the direction of travel on every navigation (prev/next
+  arrows, quick-nav jumps, Today, and keyboard month/page changes), in day,
+  month and year views alike. Direction-aware in RTL, honors
+  `prefers-reduced-motion`, and tunable via the `--ndp-slide-duration`,
+  `--ndp-slide-easing` and `--ndp-slide-distance` tokens. New `NdpAnimation`
+  type exported.
 - **Month & year picker modes** — `mode="month"` and `mode="year"` turn the body
   into a 12-month grid / paged year grid. Selecting commits the whole period:
   `value.start` is the first day (local midnight) of the chosen month/year, `end`
