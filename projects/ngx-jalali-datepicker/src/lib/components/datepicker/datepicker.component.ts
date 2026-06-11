@@ -22,6 +22,7 @@ import {
   DateRange,
   DayCell,
   DatepickerMode,
+  NdpAnimation,
   NdpTheme,
   PeriodCell,
 } from '../../core/types';
@@ -64,6 +65,8 @@ export class DatepickerComponent implements ControlValueAccessor {
   /** Override individual CSS design tokens programmatically, e.g. `{ '--ndp-accent': '#8b5cf6' }`. */
   readonly customVars = input<Record<string, string>>({});
   readonly mode = input<DatepickerMode>('single');
+  /** Body animation when navigating between months / years / pages. `'none'` by default. */
+  readonly animation = input<NdpAnimation>('none');
   readonly numberOfMonths = input(1);
   readonly min = input<Date | null>(null);
   readonly max = input<Date | null>(null);
@@ -102,6 +105,13 @@ export class DatepickerComponent implements ControlValueAccessor {
   /** Open state of the header quick-navigation menus (day mode only). */
   protected readonly monthMenuOpen = signal(false);
   protected readonly yearMenuOpen = signal(false);
+
+  /**
+   * Direction of the in-flight slide animation, or null when idle. Set right
+   * before `activeMonth` moves so the freshly rendered grid mounts with the
+   * direction class already applied; cleared on `animationend`.
+   */
+  protected readonly slideDir = signal<'prev' | 'next' | null>(null);
 
   private readonly dayCell = contentChild(NdpDayCellTemplate);
   protected readonly dayTemplate = computed(() => this.dayCell()?.template ?? null);
@@ -157,6 +167,15 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   protected readonly yearsView = computed(() =>
     buildYearsView(this.adapter(), this.activeMonth(), this.periodContext()),
+  );
+
+  /**
+   * The grid shown in month/year modes. The template keys the period component
+   * on this view's label so navigation recreates it — which is what lets the
+   * slide-in animation replay on every page change.
+   */
+  protected readonly activePeriodView = computed(() =>
+    this.viewMode() === 'year' ? this.yearsView() : this.monthsView(),
   );
 
   /** Roving-focus key for the active period grid (month or year view). */
@@ -313,13 +332,32 @@ export class DatepickerComponent implements ControlValueAccessor {
   /** Step the view back: by a month (day view), a year (month view), or a page (year view). */
   protected goPrev(): void {
     if (!this.canGoPrev()) return;
+    this.beginSlide(-1);
     this.activeMonth.set(this.shiftActive(-1));
   }
 
   /** Step the view forward — counterpart to {@link goPrev}. */
   protected goNext(): void {
     if (!this.canGoNext()) return;
+    this.beginSlide(1);
     this.activeMonth.set(this.shiftActive(1));
+  }
+
+  /** Arm the slide animation for the upcoming view change (no-op when disabled). */
+  private beginSlide(dir: -1 | 1): void {
+    if (this.animation() !== 'slide') return;
+    this.slideDir.set(dir === 1 ? 'next' : 'prev');
+  }
+
+  /** Arm the slide animation toward `target`, inferring the direction from the current view. */
+  private beginSlideTowards(target: Date): void {
+    const delta = dayKey(target) - dayKey(this.activeMonth());
+    if (delta !== 0) this.beginSlide(delta > 0 ? 1 : -1);
+  }
+
+  /** Clears the direction class once the slide finishes so it can re-trigger later. */
+  protected onSlideEnd(): void {
+    this.slideDir.set(null);
   }
 
   /** Move `activeMonth` by one navigation step in the current view's unit. */
@@ -337,7 +375,9 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   protected goToToday(): void {
     const t = this.today();
-    this.activeMonth.set(this.adapter().startOfMonth(t));
+    const target = this.adapter().startOfMonth(t);
+    this.beginSlideTowards(target);
+    this.activeMonth.set(target);
     this.focusedDate.set(t);
   }
 
@@ -379,14 +419,18 @@ export class DatepickerComponent implements ControlValueAccessor {
   /** Jump the active view to `month` of the current year, keeping the day view. */
   protected pickMonth(month: number): void {
     const a = this.adapter();
-    this.activeMonth.set(a.createDate(a.getYear(this.activeMonth()), month, 1));
+    const target = a.createDate(a.getYear(this.activeMonth()), month, 1);
+    this.beginSlideTowards(target);
+    this.activeMonth.set(target);
     this.monthMenuOpen.set(false);
   }
 
   /** Jump the active view to `year`, preserving the current month. */
   protected pickYear(year: number): void {
     const a = this.adapter();
-    this.activeMonth.set(a.createDate(year, a.getMonth(this.activeMonth()), 1));
+    const target = a.createDate(year, a.getMonth(this.activeMonth()), 1);
+    this.beginSlideTowards(target);
+    this.activeMonth.set(target);
     this.yearMenuOpen.set(false);
   }
 
@@ -496,7 +540,11 @@ export class DatepickerComponent implements ControlValueAccessor {
     // the arrows can't land on (and scroll the view to) a fully-disabled month.
     next = clampDate(next, this.min(), this.max());
     this.focusedDate.set(next);
-    if (!this.isVisible(next)) this.activeMonth.set(a.startOfMonth(next));
+    if (!this.isVisible(next)) {
+      const target = a.startOfMonth(next);
+      this.beginSlideTowards(target);
+      this.activeMonth.set(target);
+    }
     requestAnimationFrame(() => this.focusActiveCell());
   }
 
@@ -542,7 +590,11 @@ export class DatepickerComponent implements ControlValueAccessor {
     event.preventDefault();
     next = clampDate(next, this.min(), this.max());
     this.focusedDate.set(next);
-    if (!this.isPeriodVisible(next)) this.activeMonth.set(a.startOfMonth(next));
+    if (!this.isPeriodVisible(next)) {
+      const target = a.startOfMonth(next);
+      this.beginSlideTowards(target);
+      this.activeMonth.set(target);
+    }
     requestAnimationFrame(() => this.focusActiveCell());
   }
 
