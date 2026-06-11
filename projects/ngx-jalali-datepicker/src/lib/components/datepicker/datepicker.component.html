@@ -1,4 +1,10 @@
-<div class="ndp-panel" [class.ndp-panel--disabled]="disabled()">
+<div
+  class="ndp-panel"
+  [class.ndp-panel--disabled]="disabled()"
+  [class.ndp-panel--slide-prev]="slideDir() === 'prev'"
+  [class.ndp-panel--slide-next]="slideDir() === 'next'"
+  (animationend)="onSlideEnd()"
+>
   @if (viewMode() === "day") {
     <div class="ndp-months">
       @for (
@@ -216,11 +222,15 @@
         </button>
       </div>
 
-      <ndp-calendar-period
-        [view]="viewMode() === 'year' ? yearsView() : monthsView()"
-        [focusedKey]="periodFocusedKey()"
-        (periodSelect)="onPeriodSelect($event)"
-      />
+      <!-- Keyed on the view label so navigating to another year / page recreates
+           the grid and the slide-in animation replays. -->
+      @for (view of [activePeriodView()]; track view.label) {
+        <ndp-calendar-period
+          [view]="view"
+          [focusedKey]="periodFocusedKey()"
+          (periodSelect)="onPeriodSelect($event)"
+        />
+      }
     </div>
   }
 

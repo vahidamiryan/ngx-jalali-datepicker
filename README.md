@@ -145,6 +145,7 @@ const greg   = new GregorianCalendarAdapter('en-US').format(new Date()); // "Sat
 | `numberOfMonths` | `number` | `1` | Render N adjacent months. |
 | `min` / `max` | `Date \| null` | `null` | Inclusive bounds. |
 | `dateFilter` | `(d: Date) => boolean` | `null` | Return `true` if a date is **selectable**. |
+| `animation` | `'none' \| 'slide'` | `'none'` | Slide the calendar body in the direction of travel when navigating between months / years / pages. Direction-aware (mirrored in RTL) and disabled automatically under `prefers-reduced-motion`. |
 | `showSecondaryDate` | `boolean` | `false` | Show each date in a companion calendar (dual-script). |
 | `secondaryCalendar` | `string \| null` | `null` | Companion calendar id; defaults to the first other registered calendar. |
 | `showFooter` | `boolean` | `true` | Master toggle for the whole footer (summary bar + action buttons). |
