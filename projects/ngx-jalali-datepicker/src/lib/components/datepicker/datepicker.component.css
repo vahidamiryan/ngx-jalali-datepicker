@@ -387,15 +387,34 @@
   overflow: hidden;
 }
 
+/* Keyframes live inside the same @media block as their animation-name references.
+   Angular's CSS processor namespaces @keyframes at the top level but NOT inside
+   @media blocks. Keeping everything co-located means both the @keyframes names
+   and the animation-name values remain un-namespaced and always match. */
 @media (prefers-reduced-motion: no-preference) {
-  /* "prev" brings the grid in from the inline start, "next" from the inline
-     end — i.e. from the side the user is travelling toward. */
+  @keyframes ndp-slide-from-start {
+    from { transform: translateX(calc(-1 * var(--ndp-slide-distance))); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes ndp-slide-from-end {
+    from { transform: translateX(var(--ndp-slide-distance)); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+  }
+
+  .ndp-panel--slide-prev .ndp-calendar-wrap,
+  .ndp-panel--slide-next .ndp-calendar-wrap {
+    animation-duration: var(--ndp-slide-duration);
+    animation-timing-function: var(--ndp-slide-easing);
+    animation-fill-mode: backwards;
+  }
+
   .ndp-panel--slide-prev .ndp-calendar-wrap {
-    animation: ndp-slide-from-start var(--ndp-slide-duration) var(--ndp-slide-easing);
+    animation-name: ndp-slide-from-start;
   }
 
   .ndp-panel--slide-next .ndp-calendar-wrap {
-    animation: ndp-slide-from-end var(--ndp-slide-duration) var(--ndp-slide-easing);
+    animation-name: ndp-slide-from-end;
   }
 
   /* RTL: forward travel is visually leftward, so swap the entry sides. */
@@ -405,27 +424,5 @@
 
   :host([dir="rtl"]) .ndp-panel--slide-next .ndp-calendar-wrap {
     animation-name: ndp-slide-from-start;
-  }
-}
-
-@keyframes ndp-slide-from-start {
-  from {
-    transform: translateX(calc(-1 * var(--ndp-slide-distance)));
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes ndp-slide-from-end {
-  from {
-    transform: translateX(var(--ndp-slide-distance));
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
   }
 }
