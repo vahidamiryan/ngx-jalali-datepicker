@@ -18,6 +18,13 @@ export type CalendarView = 'day' | 'month' | 'year';
 /** Built-in theme. `'auto'` follows the OS `prefers-color-scheme` media query. */
 export type NdpTheme = 'light' | 'dark' | 'auto';
 
+/**
+ * Navigation animation of the calendar body. `'slide'` slides the grid in the
+ * direction of travel when the view moves to another month / year / page;
+ * `'none'` (the default) swaps instantly. Honors `prefers-reduced-motion`.
+ */
+export type NdpAnimation = 'none' | 'slide';
+
 /** A numeric day key in the form yyyymmdd (Gregorian), used for cheap, allocation-free comparisons. */
 export type DayKey = number;
 

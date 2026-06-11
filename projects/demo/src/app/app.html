@@ -18,10 +18,11 @@
     <!-- 1) Single date, dual-script (Jalali + Gregorian) -->
     <article class="card">
       <h2>انتخاب تک‌تاریخ (دو خطی)</h2>
-      <p class="hint">تاریخ میلادی زیر هر ماهِ شمسی نمایش داده می‌شود. روی نام ماه یا سال در هدر بزنید تا با دراپ‌داونِ ناوبری سریع جابه‌جا شوید.</p>
+      <p class="hint">تاریخ میلادی زیر هر ماهِ شمسی نمایش داده می‌شود. روی نام ماه یا سال در هدر بزنید تا با دراپ‌داونِ ناوبری سریع جابه‌جا شوید. ناوبری ماه‌ها با <code>animation="slide"</code> انیمیشن دارد.</p>
       <ndp-datepicker
         [showSummary]="false"
         [theme]="theme()"
+        animation="slide"
         [showSecondaryDate]="true"
         [value]="single()"
         (valueChange)="single.set($event)" />
@@ -40,6 +41,7 @@
         mode="range"
         [numberOfMonths]="2"
         [min]="today"
+         animation="slide"
         [showQuickNav]="false"
         [showSecondaryDate]="true"
         [value]="range()"
@@ -57,6 +59,7 @@
       <ndp-datepicker
         [theme]="theme()"
         mode="month"
+        animation="slide"
         [value]="month()"
         (valueChange)="month.set($event)" />
       <div class="result">
@@ -71,6 +74,7 @@
       <ndp-datepicker
         [theme]="theme()"
         mode="year"
+        animation="slide"
         [value]="year()"
         (valueChange)="year.set($event)" />
       <div class="result">

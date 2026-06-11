@@ -372,3 +372,58 @@
   outline: none;
   box-shadow: 0 0 0 2px var(--ndp-focus-ring);
 }
+
+/* ── Navigation slide animation (opt-in via [animation]="'slide'") ─────────── */
+/* The duration/easing are themable like every other token. */
+:host {
+  --ndp-slide-duration: 0.22s;
+  --ndp-slide-easing: cubic-bezier(0.25, 0.8, 0.4, 1);
+  --ndp-slide-distance: 1.25rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* "prev" brings the grid in from the inline start, "next" from the inline
+     end — i.e. from the side the user is travelling toward. */
+  .ndp-panel--slide-prev ndp-calendar-month,
+  .ndp-panel--slide-prev ndp-calendar-period {
+    animation: ndp-slide-from-start var(--ndp-slide-duration) var(--ndp-slide-easing);
+  }
+
+  .ndp-panel--slide-next ndp-calendar-month,
+  .ndp-panel--slide-next ndp-calendar-period {
+    animation: ndp-slide-from-end var(--ndp-slide-duration) var(--ndp-slide-easing);
+  }
+
+  /* RTL: forward travel is visually leftward, so swap the entry sides. */
+  :host([dir="rtl"]) .ndp-panel--slide-prev ndp-calendar-month,
+  :host([dir="rtl"]) .ndp-panel--slide-prev ndp-calendar-period {
+    animation-name: ndp-slide-from-end;
+  }
+
+  :host([dir="rtl"]) .ndp-panel--slide-next ndp-calendar-month,
+  :host([dir="rtl"]) .ndp-panel--slide-next ndp-calendar-period {
+    animation-name: ndp-slide-from-start;
+  }
+}
+
+@keyframes ndp-slide-from-start {
+  from {
+    transform: translateX(calc(-1 * var(--ndp-slide-distance)));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes ndp-slide-from-end {
+  from {
+    transform: translateX(var(--ndp-slide-distance));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
