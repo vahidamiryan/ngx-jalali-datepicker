@@ -139,21 +139,23 @@
             }
           </div>
 
-          <ndp-calendar-month
-            [adapter]="adapter()"
-            [monthStart]="m"
-            [mode]="mode()"
-            [value]="value()"
-            [hovered]="hovered()"
-            [today]="todayValue()"
-            [min]="min()"
-            [max]="max()"
-            [dateFilter]="dateFilter()"
-            [focusedKey]="focusedKey()"
-            [dayTemplate]="dayTemplate()"
-            (daySelect)="onDaySelect($event)"
-            (dayHover)="onDayHover($event)"
-          />
+          <div class="ndp-calendar-wrap">
+            <ndp-calendar-month
+              [adapter]="adapter()"
+              [monthStart]="m"
+              [mode]="mode()"
+              [value]="value()"
+              [hovered]="hovered()"
+              [today]="todayValue()"
+              [min]="min()"
+              [max]="max()"
+              [dateFilter]="dateFilter()"
+              [focusedKey]="focusedKey()"
+              [dayTemplate]="dayTemplate()"
+              (daySelect)="onDaySelect($event)"
+              (dayHover)="onDayHover($event)"
+            />
+          </div>
         </div>
       }
     </div>
@@ -224,13 +226,15 @@
 
       <!-- Keyed on the view label so navigating to another year / page recreates
            the grid and the slide-in animation replays. -->
-      @for (view of [activePeriodView()]; track view.label) {
-        <ndp-calendar-period
-          [view]="view"
-          [focusedKey]="periodFocusedKey()"
-          (periodSelect)="onPeriodSelect($event)"
-        />
-      }
+      <div class="ndp-calendar-wrap">
+        @for (view of [activePeriodView()]; track view.label) {
+          <ndp-calendar-period
+            [view]="view"
+            [focusedKey]="periodFocusedKey()"
+            (periodSelect)="onPeriodSelect($event)"
+          />
+        }
+      </div>
     </div>
   }
 
