@@ -1,6 +1,6 @@
 {
   "name": "@vahidamirian/ngx-jalali-datepicker",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "description": "High-performance, customizable, framework-idiomatic date picker for Angular 20+.",
   "keywords": [
     "angular",
