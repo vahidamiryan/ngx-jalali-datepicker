@@ -46,6 +46,9 @@
             "browser": "projects/demo/src/main.ts",
             "polyfills": [],
             "tsConfig": "projects/demo/tsconfig.app.json",
+            "loader": {
+              ".md": "text"
+            },
             "assets": [
               {
                 "glob": "**/*",
@@ -66,8 +69,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "8kB",
-                  "maximumError": "16kB"
+                  "maximumWarning": "20kB",
+                  "maximumError": "40kB"
                 }
               ],
               "outputHashing": "all"

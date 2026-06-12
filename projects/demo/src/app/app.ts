@@ -6,8 +6,12 @@ import {
   NdpTheme,
   JalaliCalendarAdapter,
   GregorianCalendarAdapter,
+  HijriCalendarAdapter,
   JalaaliMath,
+  HijriMath,
 } from 'ngx-jalali-datepicker';
+import changelogRaw from '../../../ngx-jalali-datepicker/CHANGELOG.md';
+import { parseChangelog } from './changelog';
 
 @Component({
   selector: 'app-root',
@@ -57,6 +61,8 @@ export class App {
   readonly themed = signal<DateRange>({ start: null, end: null });
   readonly month = signal<DateRange>({ start: null, end: null });
   readonly year = signal<DateRange>({ start: null, end: null });
+  readonly hijri = signal<DateRange>({ start: null, end: null });
+  readonly triple = signal<DateRange>({ start: null, end: null });
 
   readonly today = (() => {
     const d = new Date();
@@ -87,9 +93,53 @@ export class App {
     return s ? this.jCal.getYearLabel(s) : '—';
   });
 
+  // ── Hijri (tabular Islamic civil) demo ─────────────────────────────────────
+  private readonly hCal = new HijriCalendarAdapter();
+  /** Same calendar, corrected one day toward a locally observed reckoning. */
+  private readonly hCalAdjusted = new HijriCalendarAdapter({ adjustment: -1 });
+
+  // Short ("۱۴۴۷/۱۲/۲۶") and long ("جمعه ۲۶ ذی‌الحجه ۱۴۴۷") Hijri renderings.
+  readonly hijriShort = computed(() => {
+    const s = this.hijri().start;
+    if (!s) return '—';
+    const h = HijriMath.toHijri(s);
+    return `${h.hy}/${h.hm}/${h.hd}`;
+  });
+  readonly hijriLong = computed(() => {
+    const s = this.hijri().start;
+    return s ? `${this.hCal.format(s)} ${this.hCal.getYearLabel(s)}` : '—';
+  });
+
+  /** Today in the pure tabular Hijri calendar vs. with a manual −1 adjustment. */
+  readonly todayInHijriPretty = `${this.hCal.format(this.today)} ${this.hCal.getYearLabel(this.today)}`;
+  readonly todayInHijriAdjusted =
+    `${this.hCalAdjusted.format(this.today)} ${this.hCalAdjusted.getYearLabel(this.today)}`;
+  readonly todayInHijri = (() => {
+    const h = HijriMath.toHijri(this.today);
+    return `${h.hy}/${h.hm}/${h.hd}`;
+  })();
+  /** 1 Ramadan of the current Hijri year as a Gregorian ISO string. */
+  readonly ramadanIso = (() => {
+    const { hy } = HijriMath.toHijri(this.today);
+    const g = HijriMath.toGregorian(hy, 9, 1);
+    return new Date(g.gy, g.gm - 1, g.gd).toLocaleDateString('en-CA');
+  })();
+
   // ── Dropdown demo ──────────────────────────────────────────────────────────
   private readonly jCal = new JalaliCalendarAdapter();
   private readonly gCal = new GregorianCalendarAdapter('en-US');
+
+  readonly copied = signal(false);
+
+  copyInstall(): void {
+    navigator.clipboard.writeText('npm install @vahidamirian/ngx-jalali-datepicker').then(() => {
+      this.copied.set(true);
+      setTimeout(() => this.copied.set(false), 2000);
+    });
+  }
+
+  /** Parsed straight from the library's CHANGELOG.md (bundled as raw text). */
+  readonly changelog = parseChangelog(changelogRaw);
 
   readonly dropOpen = signal(false);
   readonly dropValue = signal<DateRange>({ start: null, end: null });
@@ -108,6 +158,31 @@ export class App {
     // single mode completes on the first click → close the panel
     this.dropOpen.set(false);
   }
+
+  // ── Tri-calendar demo (Jalali primary, Gregorian + Hijri in every cell) ────
+  /** Gregorian day-of-month label for a cell's canonical date. */
+  gregDayLabel(date: Date): string {
+    return this.gCal.getDayLabel(date);
+  }
+
+  /** Hijri day-of-month label for a cell's canonical date. */
+  hijriDayLabel(date: Date): string {
+    return this.hCal.getDayLabel(date);
+  }
+
+  // The selected date written out in all three calendars.
+  readonly tripleJalali = computed(() => {
+    const s = this.triple().start;
+    return s ? this.jLong.format(s) : '—';
+  });
+  readonly tripleGregorian = computed(() => {
+    const s = this.triple().start;
+    return s ? this.gCal.format(s) : '—';
+  });
+  readonly tripleHijri = computed(() => {
+    const s = this.triple().start;
+    return s ? `${this.hCal.format(s)} ${this.hCal.getYearLabel(s)}` : '—';
+  });
 
   // ── Conversion demo (no UI needed — pure adapter / math API) ────────────────
   /** Gregorian → Jalali via the raw math helper. */

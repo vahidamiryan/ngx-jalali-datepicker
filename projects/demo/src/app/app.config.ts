@@ -7,6 +7,7 @@ import {
   provideNgxDatepicker,
   GregorianCalendarAdapter,
   JalaliCalendarAdapter,
+  HijriCalendarAdapter,
 } from 'ngx-jalali-datepicker';
 
 export const appConfig: ApplicationConfig = {
@@ -14,7 +15,11 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     // The library is built on signals — no Zone.js needed.
     provideZonelessChangeDetection(),
-    // Jalali is the default calendar; Gregorian is available via the toggle.
-    provideNgxDatepicker(new JalaliCalendarAdapter(), new GregorianCalendarAdapter('en-US')),
+    // Jalali is the default calendar; Gregorian and Hijri are available via the toggle.
+    provideNgxDatepicker(
+      new JalaliCalendarAdapter(),
+      new GregorianCalendarAdapter('en-US'),
+      new HijriCalendarAdapter(),
+    ),
   ],
 };
