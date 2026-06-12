@@ -13,7 +13,9 @@ export { CalendarAdapter, CALENDAR_ADAPTER } from './lib/core/calendar-adapter';
 // Calendar adapters
 export * from './lib/adapters/gregorian.adapter';
 export * from './lib/adapters/jalali.adapter';
+export * from './lib/adapters/hijri.adapter';
 export * as JalaaliMath from './lib/adapters/jalaali';
+export * as HijriMath from './lib/adapters/hijri';
 
 // Configuration
 export * from './lib/datepicker.providers';
