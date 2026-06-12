@@ -6,7 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 **npm:** https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker
 
-## [Unreleased]
+## [0.0.9]
+
+### Added
+- **Hijri calendar** — new `HijriCalendarAdapter` implementing the tabular
+  Islamic civil calendar (30-year cycle, fully arithmetic, deterministic in
+  every region). Observed-calendar corrections via the `adjustment` config:
+  a fixed number, a function, or a DI service implementing
+  `NdpHijriDayAdjuster`. Headless math exported as `HijriMath`;
+  `provideNgxDatepicker` now also accepts factories so adapters can use
+  `inject()`.
+
+## [0.0.8]
+
+### Fixed
+- Slide animation no longer breaks in production builds: the calendar grids are
+  wrapped in a dedicated element so Angular's emulated view encapsulation keeps
+  targeting them, and the `@keyframes` were moved inside the `@media` block to
+  match the production scoping.
+
+## [0.0.7]
 
 ### Added
 - **Navigation slide animation** — opt-in via the new `animation` input
@@ -17,6 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   `prefers-reduced-motion`, and tunable via the `--ndp-slide-duration`,
   `--ndp-slide-easing` and `--ndp-slide-distance` tokens. New `NdpAnimation`
   type exported.
+
+## [0.0.6]
+
+### Added
 - **Month & year picker modes** — `mode="month"` and `mode="year"` turn the body
   into a 12-month grid / paged year grid. Selecting commits the whole period:
   `value.start` is the first day (local midnight) of the chosen month/year, `end`
@@ -35,6 +58,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   and `addCalendarYears()`. All have working base-class defaults, so existing
   custom adapters keep compiling; the built-in adapters override the first two
   for localized names/digits.
+
+## [0.0.5]
+
+### Added
 - Built-in **light / dark / auto themes** via a new `theme` input on
   `DatepickerComponent` (default `'light'`). `'auto'` follows the OS
   `prefers-color-scheme`. The dark palette also sets `color-scheme: dark` so
@@ -58,8 +85,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Day-cell text was invisible in dark mode — the grid used `--ndp-day-color`
   (a light-only fallback) that the dark palette never set. Day, weekday-header
   and outside-month colours now follow the active theme.
-
-### Fixed
 - Selected day no longer widens its grid column or shifts the row. The week
   grid now uses `repeat(7, minmax(0, 1fr))` (a bare `1fr` is `minmax(auto, 1fr)`,
   whose `min-content` floor let a bold-on-select label steal width from
@@ -86,6 +111,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   rendering, full keyboard navigation, `ControlValueAccessor`, custom day-cell
   content projection, and CSS-variable theming.
 
-[Unreleased]: https://github.com/vahidamiryan/ngx-jalali-datepicker/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/vahidamiryan/ngx-jalali-datepicker/compare/v0.0.8...HEAD
+[0.0.8]: https://github.com/vahidamiryan/ngx-jalali-datepicker/compare/v0.0.7...v0.0.8
+[0.0.7]: https://github.com/vahidamiryan/ngx-jalali-datepicker/compare/v0.0.6...v0.0.7
+[0.0.6]: https://github.com/vahidamiryan/ngx-jalali-datepicker/compare/v0.0.5...v0.0.6
+[0.0.5]: https://github.com/vahidamiryan/ngx-jalali-datepicker/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/vahidamiryan/ngx-jalali-datepicker/releases/tag/v0.0.4
 [0.0.1]: https://github.com/vahidamiryan/ngx-jalali-datepicker/releases/tag/v0.0.1
