@@ -217,7 +217,7 @@
 .page {
   max-width: 1140px;
   margin: 0 auto;
-  padding: 0 1.5rem 5rem;
+  padding: 0 1.5rem 1rem;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -294,7 +294,7 @@
   line-height: 1.05;
   color: var(--page-text);
   direction: ltr;
-  text-align: right;
+  text-align: left;
 }
 
 .hero__sub {
@@ -338,108 +338,6 @@
   transform: translateY(-2px);
   border-color: var(--accent);
   background: var(--accent-subtle);
-}
-
-/* Install command */
-.hero__install {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.5rem 0.85rem;
-  background: var(--page-code-bg);
-  border: 1px solid var(--page-border-strong);
-  border-radius: 10px;
-  margin-bottom: 0.9rem;
-  max-width: 100%;
-  transition: border-color 0.2s ease;
-}
-
-.hero__install:hover {
-  border-color: var(--accent);
-}
-
-.hero__install-prompt {
-  color: var(--page-subtle);
-  font-family: ui-monospace, 'Cascadia Code', monospace;
-  font-size: 0.85rem;
-  user-select: none;
-  flex-shrink: 0;
-}
-
-.hero__install-cmd {
-  font-family: ui-monospace, 'Cascadia Code', monospace;
-  font-size: 0.85rem;
-  color: var(--page-text);
-  background: none;
-  flex: 1;
-  min-width: 0; /* let the flex item actually shrink so the ellipsis kicks in */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.hero__copy {
-  appearance: none;
-  border: 1px solid var(--page-border-strong);
-  border-radius: 6px;
-  background: var(--page-card-bg);
-  color: var(--page-muted);
-  padding: 0.3rem 0.5rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.75rem;
-  font-family: inherit;
-  gap: 0.25rem;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
-  flex-shrink: 0;
-}
-
-.hero__copy:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.hero__copy:active {
-  transform: scale(0.88);
-}
-
-.hero__copy--done {
-  border-color: #22c55e;
-  color: #22c55e;
-}
-
-/* External links */
-.hero__links {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.hero__ext {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--page-muted);
-  text-decoration: none;
-  padding: 0.3rem 0.6rem;
-  border-radius: 6px;
-  transition: color 0.15s ease, background 0.15s ease;
-}
-
-.hero__ext svg {
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.hero__ext:hover {
-  color: var(--page-text);
-  background: var(--page-tag-bg);
-}
-
-.hero__ext:hover svg {
-  transform: translateY(-1px) scale(1.15);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -493,82 +391,7 @@
   background-size: 100% 1.5px;
 }
 
-/* ── Demo groups ──────────────────────────────────────────────────────────── */
-.demo-group {
-  margin-bottom: 1.6rem;
-}
-
-.demo-group__label {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.7rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--page-subtle);
-}
-
-.demo-group__label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--page-border);
-}
-
-/* ── Demos grid ───────────────────────────────────────────────────────────── */
-/* minmax(0, 1fr): a wide child (the two-month picker) must squeeze, never
-   stretch the page beyond the viewport. */
-.demos {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  align-items: start;
-}
-
-.demos--full {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-/* ── Cards ────────────────────────────────────────────────────────────────── */
-.card {
-  background: var(--page-card-bg);
-  border: 1px solid var(--page-card-border);
-  border-radius: 14px;
-  padding: 1rem;
-  transition: border-color 0.22s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.25s ease;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--page-card-border));
-  box-shadow: 0 10px 28px -14px rgba(59, 130, 246, 0.28);
-}
-
-/* A picker wider than the card (two-month range on a phone) scrolls inside
-   the card instead of widening the page. Not applied to every card — the
-   dropdown demo needs overflow visible for its popover panel. */
-.card--scroll {
-  overflow-x: auto;
-}
-
-.card__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.4rem;
-}
-
-.card__title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--page-text);
-}
-
+/* ── Code badge (inline pill, e.g. headless callout) ──────────────────────── */
 .card__badge {
   flex-shrink: 0;
   display: inline-block;
@@ -630,28 +453,6 @@
   border-radius: 6px;
   font-family: ui-monospace, 'Cascadia Code', monospace;
   font-size: 0.78rem;
-}
-
-.result__swatch {
-  border-radius: 6px;
-  padding: 0.15rem 0.55rem;
-  font-size: 0.78rem;
-  font-family: ui-monospace, 'Cascadia Code', monospace;
-}
-
-/* ── Conversion grid ──────────────────────────────────────────────────────── */
-.convert-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
-}
-
-.convert-col__head {
-  margin: 0 0 0.65rem;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--page-text);
 }
 
 .convert {
@@ -1003,16 +804,13 @@
 @media (max-width: 560px) {
   .toolbar {
     padding-inline: 1rem;
+    justify-content: space-between;
   }
 
   .page {
     padding-inline: 1rem;
   }
 
-  .hero {
-    margin-inline: -1rem;
-    padding-inline: 1rem;
-  }
 
   .page-section--alt {
     margin-inline: -1rem;
@@ -1033,21 +831,605 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
+   Buttons (hero CTA + shared)
+   ══════════════════════════════════════════════════════════════════════════ */
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.3rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.18s ease,
+    border-color 0.18s ease, box-shadow 0.2s ease;
+}
+
+.btn--sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 10px 24px -12px rgba(59, 130, 246, 0.7);
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -12px rgba(59, 130, 246, 0.8);
+}
+
+.btn--primary svg {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn--primary:hover svg {
+  transform: translateX(3px);
+}
+
+.btn--ghost {
+  background: var(--page-card-bg);
+  color: var(--page-text);
+  border-color: var(--page-border-strong);
+}
+
+.btn--ghost:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Installation strip
+   ══════════════════════════════════════════════════════════════════════════ */
+.install-strip {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.4rem 0 0.4rem;
+}
+
+.install-strip__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--page-subtle);
+  flex-shrink: 0;
+}
+
+.install-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.55rem 0.5rem 0.85rem;
+  background: var(--page-code-bg);
+  border: 1px solid var(--page-border-strong);
+  border-radius: 10px;
+  flex: 1;
+  min-width: 0;
+  transition: border-color 0.2s ease;
+}
+
+.install-box:hover {
+  border-color: var(--accent);
+}
+
+.install-box__prompt {
+  color: var(--page-subtle);
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 0.85rem;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.install-box__cmd {
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 0.85rem;
+  color: var(--page-text);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Shared copy button ───────────────────────────────────────────────────── */
+.copy-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--page-border-strong);
+  border-radius: 7px;
+  background: var(--page-card-bg);
+  color: var(--page-muted);
+  padding: 0.35rem 0.6rem;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.12s;
+}
+
+.copy-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.copy-btn:active {
+  transform: scale(0.92);
+}
+
+.copy-btn--sm {
+  padding: 0.22rem 0.55rem;
+  font-size: 0.7rem;
+}
+
+.copy-btn--done {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Playground
+   ══════════════════════════════════════════════════════════════════════════ */
+.pg {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  grid-template-areas:
+    'preview config'
+    'code    code';
+  gap: 1rem;
+  align-items: start;
+}
+
+.pg__preview { grid-area: preview; }
+.pg__config  { grid-area: config; }
+.pg__code    { grid-area: code; }
+
+.pg__preview,
+.pg__config {
+  background: var(--page-card-bg);
+  border: 1px solid var(--page-card-border);
+  border-radius: 14px;
+  padding: 1.1rem;
+}
+
+.pg__preview-stage {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.pg__value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--page-border);
+  font-size: 0.82rem;
+}
+
+.pg__value-tag {
+  flex: none;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--page-tag-color);
+  background: var(--page-tag-bg);
+  border-radius: 999px;
+  padding: 0.12rem 0.55rem;
+}
+
+.pg__value code {
+  background: var(--page-code-bg);
+  padding: 0.18rem 0.5rem;
+  border-radius: 6px;
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 0.76rem;
+  overflow-wrap: anywhere;
+}
+
+/* ── Config rows ──────────────────────────────────────────────────────────── */
+.cfg {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.cfg__label {
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 0.78rem;
+  color: var(--page-muted);
+  flex-shrink: 0;
+}
+
+/* Segmented control */
+.seg {
+  display: inline-flex;
+  background: var(--page-code-bg);
+  border: 1px solid var(--page-border);
+  border-radius: 9px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.seg__btn {
+  appearance: none;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--page-muted);
+  padding: 0.3rem 0.6rem;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+  white-space: nowrap;
+}
+
+.seg__btn:hover {
+  color: var(--page-text);
+}
+
+.seg__btn--on {
+  background: var(--page-card-bg);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Switches */
+.cfg__switches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 0.9rem;
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--page-border);
+}
+
+.sw {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  appearance: none;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 0.1rem 0;
+  color: var(--page-muted);
+  text-align: start;
+}
+
+.sw__track {
+  position: relative;
+  flex-shrink: 0;
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--page-border-strong);
+  transition: background 0.2s ease;
+}
+
+.sw__thumb {
+  position: absolute;
+  top: 2px;
+  inset-inline-start: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sw--on .sw__track {
+  background: var(--accent);
+}
+
+/* RTL: thumb travels to the left edge when on */
+.sw--on .sw__thumb {
+  transform: translateX(14px);
+}
+
+.sw__text {
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 0.74rem;
+  line-height: 1.2;
+}
+
+.sw--on .sw__text {
+  color: var(--page-text);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Code blocks
+   ══════════════════════════════════════════════════════════════════════════ */
+.pg__code {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.codeblock {
+  background: var(--page-code-bg);
+  border: 1px solid var(--page-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.codeblock__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.6rem 0.45rem 0.85rem;
+  border-bottom: 1px solid var(--page-border);
+  background: color-mix(in srgb, var(--page-bg) 40%, transparent);
+}
+
+.codeblock__lang {
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--page-subtle);
+}
+
+.codeblock__pre {
+  margin: 0;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--page-text);
+  tab-size: 2;
+}
+
+.codeblock__pre code {
+  font: inherit;
+  white-space: pre;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Tabs + examples
+   ══════════════════════════════════════════════════════════════════════════ */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.2rem;
+}
+
+.tabs__tab {
+  appearance: none;
+  border: 1px solid var(--page-border);
+  background: var(--page-card-bg);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--page-muted);
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.16s ease, border-color 0.16s ease, background 0.16s ease,
+    transform 0.16s ease;
+}
+
+.tabs__tab:hover {
+  color: var(--page-text);
+  border-color: var(--page-border-strong);
+}
+
+.tabs__tab--on {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 8px 20px -12px rgba(59, 130, 246, 0.8);
+}
+
+.ex {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.ex__demo {
+  background: var(--page-card-bg);
+  border: 1px solid var(--page-card-border);
+  border-radius: 14px;
+  padding: 1.1rem;
+  animation: ex-fade 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ex__code {
+  position: sticky;
+  top: 4rem;
+}
+
+@keyframes ex-fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ex__scroll {
+  overflow-x: auto;
+}
+
+.ex__pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 1rem;
+  justify-items: center;
+}
+
+.convert--inline {
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  display: grid;
+}
+
+/* ── Headless callout ─────────────────────────────────────────────────────── */
+.headless {
+  margin-top: 1.4rem;
+  background: var(--page-card-bg);
+  border: 1px solid var(--page-card-border);
+  border-radius: 14px;
+  padding: 1.1rem;
+}
+
+.headless__head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.4rem;
+}
+
+.headless__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--page-text);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   API reference table
+   ══════════════════════════════════════════════════════════════════════════ */
+.api-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--page-card-border);
+  border-radius: 14px;
+}
+
+.api {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  min-width: 640px;
+}
+
+.api thead th {
+  text-align: start;
+  font-weight: 700;
+  color: var(--page-text);
+  background: var(--page-bg-alt);
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--page-border);
+  white-space: nowrap;
+}
+
+.api tbody td {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--page-border);
+  vertical-align: top;
+  color: var(--page-result-color);
+}
+
+.api tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.api tbody tr {
+  transition: background 0.14s ease;
+}
+
+.api tbody tr:hover {
+  background: var(--accent-subtle);
+}
+
+.api code {
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 0.76rem;
+}
+
+.api__name {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.api__type,
+.api__def {
+  color: var(--page-muted);
+}
+
+.api__note {
+  color: var(--page-result-color);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Playground / examples — responsive
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  .pg {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'preview'
+      'config'
+      'code';
+  }
+
+  .pg__code {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ex {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ex__code {
+    position: static;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
    Reduced motion — disable every decorative transform / animation
    ══════════════════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   .card,
   .pill,
+  .btn,
+  .btn svg,
+  .tabs__tab,
   .theme-toggle,
   .theme-toggle__icon,
-  .hero__copy,
-  .hero__ext svg {
+  .copy-btn,
+  .sw__thumb {
     transition: none;
   }
 
   .card:hover,
-  .pill:hover {
+  .pill:hover,
+  .btn:hover {
     transform: none;
+  }
+
+  .ex__demo {
+    animation: none;
   }
 
   .toolbar__link::after,
