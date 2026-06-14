@@ -5,8 +5,10 @@
     ngx-jalali-datepicker
   </span>
   <div class="toolbar__nav">
-    <a class="toolbar__link" data-text="دمو" href="#demos">دمو</a>
-    <a class="toolbar__link" data-text="تغییرات" href="#changelog">تغییرات</a>
+    <a class="toolbar__link" data-text="Playground" href="#playground">Playground</a>
+    <a class="toolbar__link" data-text="Examples" href="#examples">Examples</a>
+    <a class="toolbar__link" data-text="API" href="#api">API</a>
+    <a class="toolbar__link" data-text="Changelog" href="#changelog">Changelog</a>
     <a class="toolbar__link toolbar__link--ext" data-text="npm ↗" href="https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker" target="_blank" dir="ltr">npm ↗</a>
     <a class="toolbar__link toolbar__link--ext" data-text="GitHub ↗" href="https://github.com/vahidamiryan/ngx-jalali-datepicker" target="_blank" dir="ltr">GitHub ↗</a>
   </div>
@@ -24,348 +26,397 @@
   <section class="hero">
     <div class="hero__inner">
       <div class="hero__meta">
-        <span class="hero__ver">v0.0.8</span>
+        <span class="hero__ver">v{{ version }}</span>
         <span class="hero__sep">·</span>
         <span class="hero__fw">Angular 20+</span>
+        <span class="hero__sep">·</span>
+        <span class="hero__fw">Tree-shakeable</span>
         <span class="hero__sep">·</span>
         <span class="hero__fw">MIT</span>
       </div>
 
       <h1 class="hero__title">ngx-jalali-datepicker</h1>
       <p class="hero__sub">
-        تقویم Angular با <strong>Signals</strong>، معماری <strong>Adapter</strong> قابل توسعه
-        و هسته‌ی <strong>headless</strong> — شمسی · میلادی · قمری
+        An Angular date picker built on <strong>signals</strong>, an extensible
+        <strong>adapter</strong> architecture, and a <strong>headless</strong> core —
+        Jalali · Gregorian · Hijri, shipping a tiny bundle with
+        <strong>full tree-shaking</strong>.
       </p>
 
       <div class="hero__pills">
         <span class="pill">⚡ Signals &amp; Zoneless</span>
-        <span class="pill">🗓 سه تقویم</span>
-        <span class="pill">⌨ ناوبری کامل کیبورد</span>
-        <span class="pill">🌙 Dark Mode</span>
-        <span class="pill">🎨 CSS Variables</span>
-        <span class="pill">🔌 Headless Core</span>
+        <span class="pill">🌳 Tree-shakeable</span>
+        <span class="pill">🗓 Three calendars</span>
+        <span class="pill">⌨ Full keyboard nav</span>
+        <span class="pill">🌙 Dark mode</span>
+        <span class="pill">🔌 Headless core</span>
       </div>
 
-      <div class="hero__install" dir="ltr">
-        <span class="hero__install-prompt">$</span>
-        <code class="hero__install-cmd">npm install @vahidamirian/ngx-jalali-datepicker</code>
-        <button type="button" class="hero__copy" (click)="copyInstall()" [class.hero__copy--done]="copied()">
-          @if (copied()) { ✓ } @else {
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          }
-        </button>
-      </div>
-
-      <div class="hero__links">
-        <a class="hero__ext" href="https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker" target="_blank" dir="ltr">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0v24h24V0H0zm6 18V6h6v12H6zm8 0V6h4v12h-4z"/></svg>
-          npm
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="#playground">
+          Try it live
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <a class="hero__ext" href="https://github.com/vahidamiryan/ngx-jalali-datepicker" target="_blank" dir="ltr">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        <a class="btn btn--ghost" href="https://github.com/vahidamiryan/ngx-jalali-datepicker" target="_blank" dir="ltr">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
           GitHub
         </a>
       </div>
     </div>
   </section>
 
-  <!-- ── Demos ──────────────────────────────────────────────────────────────── -->
-  <section id="demos" class="page-section">
+  <!-- ── Installation ──────────────────────────────────────────────────────── -->
+  <section class="install-strip">
+    <span class="install-strip__label">Install</span>
+    <div class="install-box" dir="ltr">
+      <span class="install-box__prompt">$</span>
+      <code class="install-box__cmd">npm install &#64;vahidamirian/ngx-jalali-datepicker</code>
+      <button type="button" class="copy-btn" (click)="copyInstall()" [class.copy-btn--done]="copiedKey() === 'install'">
+        @if (copiedKey() === 'install') { ✓ Copied } @else {
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy
+        }
+      </button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       Live playground
+       ══════════════════════════════════════════════════════════════════════ -->
+  <section id="playground" class="page-section">
     <div class="page-section__head">
-      <h2 class="page-section__title">نمایش ویژگی‌ها</h2>
-      <p class="page-section__sub">هر کارت یک الگوی واقعی است که می‌توانید مستقیم در پروژه‌تان استفاده کنید</p>
+      <h2 class="page-section__title">Live playground</h2>
+      <p class="page-section__sub">Tweak the options — the preview and the generated code update in real time.</p>
     </div>
 
-    <!-- Group 1: Core pickers -->
-    <div class="demo-group">
-      <div class="demo-group__label">
-        <span>پیکرهای اصلی</span>
+    <div class="pg">
+      <!-- Preview -->
+      <div class="pg__preview">
+        <div class="pg__preview-stage">
+          <ndp-datepicker
+            [mode]="pgMode()"
+            [calendar]="pgCalendar()"
+            [theme]="theme()"
+            [numberOfMonths]="pgIsDayMode() ? pgMonths() : 1"
+            [min]="pgMinDate()"
+            [max]="pgMaxDate()"
+            [showSecondaryDate]="pgIsDayMode() && pgSecondary()"
+            [showFooter]="pgFooter()"
+            [showQuickNav]="pgQuickNav()"
+            [animation]="pgSlide() ? 'slide' : 'none'"
+            [value]="pgValue()"
+            (valueChange)="pgValue.set($event)" />
+        </div>
+        <div class="pg__value">
+          <span class="pg__value-tag">value</span>
+          <code>{{ pgValueLabel() }}</code>
+        </div>
       </div>
-      <div class="demos">
 
-        <!-- Single + dual-script -->
-        <article class="card">
-          <div class="card__head">
-            <h3 class="card__title">انتخاب تک‌تاریخ</h3>
-            <span class="card__badge">showSecondaryDate</span>
-          </div>
-          <p class="hint">تاریخ میلادی زیر هر روز شمسی. ناوبری slide-animation. روی ماه یا سال بزنید برای quick-nav.</p>
-          <ndp-datepicker
-            [showSummary]="false"
-            [theme]="theme()"
-            animation="slide"
-            [showSecondaryDate]="true"
-            [value]="single()"
-            (valueChange)="single.set($event)" />
-          <div class="result">
-            <div class="result__row"><span class="result__tag">کوتاه</span><code>{{ singleShort() }}</code></div>
-            <div class="result__row"><span class="result__tag">بلند</span><code>{{ singleLong() }}</code></div>
-          </div>
-        </article>
-
-        <!-- Range -->
-        <article class="card card--scroll">
-          <div class="card__head">
-            <h3 class="card__title">انتخاب بازه — دو ماهه</h3>
-            <span class="card__badge">mode="range"</span>
-          </div>
-          <p class="hint">پیش‌نمایش با hover. تاریخ‌های گذشته و ناوبری به آن‌ها قفل است (<code>min=today</code>). هر سر بازه جداگانه قابل حذف.</p>
-          <ndp-datepicker
-            [theme]="theme()"
-            mode="range"
-            [numberOfMonths]="2"
-            [min]="today"
-            animation="slide"
-            [showQuickNav]="false"
-            [showSecondaryDate]="true"
-            [value]="range()"
-            (valueChange)="range.set($event)" />
-          <div class="result">
-            <div class="result__row"><span class="result__tag">کوتاه</span><code>{{ rangeShort() }}</code></div>
-            <div class="result__row"><span class="result__tag">بلند</span><code>{{ rangeLong() }}</code></div>
-          </div>
-        </article>
-
-        <!-- Month picker -->
-        <article class="card">
-          <div class="card__head">
-            <h3 class="card__title">انتخاب ماه</h3>
-            <span class="card__badge">mode="month"</span>
-          </div>
-          <p class="hint">گرید ۱۲ ماه؛ انتخاب، اول ماه را برمی‌گرداند. سال را با دراپ‌داون هدر عوض کنید.</p>
-          <ndp-datepicker
-            [theme]="theme()"
-            mode="month"
-            animation="slide"
-            [value]="month()"
-            (valueChange)="month.set($event)" />
-          <div class="result">
-            <div class="result__row"><span class="result__tag">ماه</span><code>{{ monthLabel() }}</code></div>
-          </div>
-        </article>
-
-        <!-- Year picker -->
-        <article class="card">
-          <div class="card__head">
-            <h3 class="card__title">انتخاب سال</h3>
-            <span class="card__badge">mode="year"</span>
-          </div>
-          <p class="hint">گرید سال با صفحه‌بندی؛ ‹ › یک صفحه جابه‌جا می‌شود. انتخاب، اول سال را برمی‌گرداند.</p>
-          <ndp-datepicker
-            [theme]="theme()"
-            mode="year"
-            animation="slide"
-            [value]="year()"
-            (valueChange)="year.set($event)" />
-          <div class="result">
-            <div class="result__row"><span class="result__tag">سال</span><code>{{ yearLabel() }}</code></div>
-          </div>
-        </article>
-
-      </div>
-    </div>
-
-    <!-- Group 2: Calendars -->
-    <div class="demo-group">
-      <div class="demo-group__label">
-        <span>تقویم‌ها</span>
-      </div>
-      <div class="demos">
-
-        <!-- Hijri -->
-        <article class="card">
-          <div class="card__head">
-            <h3 class="card__title">تقویم هجری قمری</h3>
-            <span class="card__badge">calendar="hijri"</span>
-          </div>
-          <p class="hint">
-            قمریِ محاسباتی (Islamic Civil) — قطعی و یکسان در همه محیط‌ها.
-            اختلاف رؤیتی با کانفیگ <code>adjustment</code> (عدد، تابع، یا سرویس DI) اعمال می‌شود.
-          </p>
-          <ndp-datepicker
-            [theme]="theme()"
-            calendar="hijri"
-            animation="slide"
-            [showSecondaryDate]="true"
-            [value]="hijri()"
-            (valueChange)="hijri.set($event)" />
-          <div class="result">
-            <div class="result__row"><span class="result__tag">کوتاه</span><code>{{ hijriShort() }}</code></div>
-            <div class="result__row"><span class="result__tag">بلند</span><code>{{ hijriLong() }}</code></div>
-          </div>
-          <ul class="convert">
-            <li>امروز (قمری): <code>{{ todayInHijri }}</code></li>
-            <li>با <code>adjustment: -1</code>: <code>{{ todayInHijriAdjusted }}</code></li>
-            <li>۱ رمضان امسال: <code>{{ ramadanIso }}</code></li>
-          </ul>
-        </article>
-
-        <!-- Tri-calendar -->
-        <article class="card">
-          <div class="card__head">
-            <h3 class="card__title">سه تقویم در یک سلول</h3>
-            <span class="card__badge">ndpDayCell</span>
-          </div>
-          <p class="hint">
-            تقویم اصلی شمسی است. زیر هر عدد، روزِ میلادی و قمری همان سلول با content projection نمایش داده می‌شود.
-          </p>
-          <ndp-datepicker
-            [theme]="theme()"
-            animation="slide"
-            [value]="triple()"
-            (valueChange)="triple.set($event)">
-            <ng-template ndpDayCell let-day>
-              <span class="tri">
-                <span class="tri__main">{{ day.label }}</span>
-                @if (day.inCurrentMonth) {
-                  <span class="tri__sub">
-                    <span>{{ gregDayLabel(day.date) }}</span>
-                    <span class="tri__sep">·</span>
-                    <span>{{ hijriDayLabel(day.date) }}</span>
-                  </span>
-                }
-              </span>
-            </ng-template>
-          </ndp-datepicker>
-          <div class="result">
-            <div class="result__row"><span class="result__tag">شمسی</span><code>{{ tripleJalali() }}</code></div>
-            <div class="result__row"><span class="result__tag">میلادی</span><code>{{ tripleGregorian() }}</code></div>
-            <div class="result__row"><span class="result__tag">قمری</span><code>{{ tripleHijri() }}</code></div>
-          </div>
-        </article>
-
-      </div>
-    </div>
-
-    <!-- Group 3: Customization -->
-    <div class="demo-group">
-      <div class="demo-group__label">
-        <span>سفارشی‌سازی</span>
-      </div>
-      <div class="demos">
-
-        <!-- Custom cell -->
-        <article class="card">
-          <div class="card__head">
-            <h3 class="card__title">سلول سفارشی</h3>
-            <span class="card__badge">ng-template ndpDayCell</span>
-          </div>
-          <p class="hint">قالب روز کاملاً قابل بازنویسی است — اینجا نقطه‌ی قرمز زیر روزهای تعطیل.</p>
-          <ndp-datepicker
-            [theme]="theme()"
-            [value]="custom()"
-            (valueChange)="custom.set($event)">
-            <ng-template ndpDayCell let-day>
-              <span class="cell">
-                {{ day.label }}
-                @if (day.isWeekend && day.inCurrentMonth) {
-                  <i class="cell__dot"></i>
-                }
-              </span>
-            </ng-template>
-          </ndp-datepicker>
-          <div class="result">
-            <div class="result__row"><span class="result__tag">کوتاه</span><code>{{ customShort() }}</code></div>
-            <div class="result__row"><span class="result__tag">بلند</span><code>{{ customLong() }}</code></div>
-          </div>
-        </article>
-
-        <!-- Custom theme -->
-        <article class="card">
-          <div class="card__head">
-            <h3 class="card__title">تم سفارشی</h3>
-            <span class="card__badge">[customVars]</span>
-          </div>
-          <p class="hint">هر توکن <code>--ndp-*</code> را از TypeScript تنظیم کنید — بدون نیاز به CSS override.</p>
-          <ndp-datepicker
-            [theme]="theme()"
-            [customVars]="purpleVars"
-            [value]="themed()"
-            (valueChange)="themed.set($event)" />
-          <div class="result">
-            <div class="result__row">
-              <span class="result__tag">accent</span>
-              <code class="result__swatch" style="background:#8b5cf6; color:#fff">#8b5cf6</code>
-            </div>
-          </div>
-        </article>
-
-        <!-- Dropdown -->
-        <article class="card">
-          <div class="card__head">
-            <h3 class="card__title">Dropdown — بازشو</h3>
-            <span class="card__badge">(dateSelected)</span>
-          </div>
-          <p class="hint">با کلیک باز، با انتخاب تاریخ بسته می‌شود. پیاده‌سازی کاملاً خارج از کامپوننت است.</p>
-          <div class="dropdown">
-            <button
-              type="button"
-              class="dropdown__trigger"
-              [class.dropdown__trigger--empty]="dropEmpty()"
-              [attr.aria-expanded]="dropOpen()"
-              (click)="toggleDrop()">
-              <span>{{ dropLabel() }}</span>
-              <i class="dropdown__caret">▾</i>
-            </button>
-            @if (dropOpen()) {
-              <div class="dropdown__backdrop" (click)="dropOpen.set(false)"></div>
-              <div class="dropdown__panel">
-                <ndp-datepicker
-                  [theme]="theme()"
-                  [showSecondaryDate]="true"
-                  [showFooter]="false"
-                  [value]="dropValue()"
-                  (valueChange)="dropValue.set($event)"
-                  (dateSelected)="onDropSelected()" />
-              </div>
+      <!-- Config -->
+      <div class="pg__config">
+        <div class="cfg">
+          <span class="cfg__label">mode</span>
+          <div class="seg" role="group">
+            @for (m of ['single','range','month','year']; track m) {
+              <button type="button" class="seg__btn" [class.seg__btn--on]="pgMode() === m" (click)="pgMode.set($any(m))">{{ m }}</button>
             }
           </div>
-        </article>
+        </div>
 
+        <div class="cfg">
+          <span class="cfg__label">calendar</span>
+          <div class="seg" role="group">
+            <button type="button" class="seg__btn" [class.seg__btn--on]="pgCalendar() === 'jalali'" (click)="pgCalendar.set('jalali')">Jalali</button>
+            <button type="button" class="seg__btn" [class.seg__btn--on]="pgCalendar() === 'gregorian'" (click)="pgCalendar.set('gregorian')">Gregorian</button>
+            <button type="button" class="seg__btn" [class.seg__btn--on]="pgCalendar() === 'hijri'" (click)="pgCalendar.set('hijri')">Hijri</button>
+          </div>
+        </div>
+
+        <div class="cfg">
+          <span class="cfg__label">theme</span>
+          <div class="seg" role="group">
+            <button type="button" class="seg__btn" [class.seg__btn--on]="theme() === 'light'" (click)="theme.set('light')">Light</button>
+            <button type="button" class="seg__btn" [class.seg__btn--on]="theme() === 'dark'" (click)="theme.set('dark')">Dark</button>
+            <button type="button" class="seg__btn" [class.seg__btn--on]="theme() === 'auto'" (click)="theme.set('auto')">Auto</button>
+          </div>
+        </div>
+
+        @if (pgIsDayMode()) {
+          <div class="cfg">
+            <span class="cfg__label">numberOfMonths</span>
+            <div class="seg" role="group">
+              @for (n of [1,2,3]; track n) {
+                <button type="button" class="seg__btn" [class.seg__btn--on]="pgMonths() === n" (click)="pgMonths.set(n)">{{ n }}</button>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="cfg__switches">
+          <button type="button" class="sw" [class.sw--on]="pgMin()" (click)="pgMin.set(!pgMin())">
+            <span class="sw__track"><span class="sw__thumb"></span></span>
+            <span class="sw__text">min = today</span>
+          </button>
+          <button type="button" class="sw" [class.sw--on]="pgMax()" (click)="pgMax.set(!pgMax())">
+            <span class="sw__track"><span class="sw__thumb"></span></span>
+            <span class="sw__text">max = +1 year</span>
+          </button>
+          @if (pgIsDayMode()) {
+            <button type="button" class="sw" [class.sw--on]="pgSecondary()" (click)="pgSecondary.set(!pgSecondary())">
+              <span class="sw__track"><span class="sw__thumb"></span></span>
+              <span class="sw__text">showSecondaryDate</span>
+            </button>
+            <button type="button" class="sw" [class.sw--on]="pgQuickNav()" (click)="pgQuickNav.set(!pgQuickNav())">
+              <span class="sw__track"><span class="sw__thumb"></span></span>
+              <span class="sw__text">showQuickNav</span>
+            </button>
+          }
+          <button type="button" class="sw" [class.sw--on]="pgFooter()" (click)="pgFooter.set(!pgFooter())">
+            <span class="sw__track"><span class="sw__thumb"></span></span>
+            <span class="sw__text">showFooter</span>
+          </button>
+          <button type="button" class="sw" [class.sw--on]="pgSlide()" (click)="pgSlide.set(!pgSlide())">
+            <span class="sw__track"><span class="sw__thumb"></span></span>
+            <span class="sw__text">animation: slide</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Generated code -->
+      <div class="pg__code">
+        <div class="codeblock">
+          <div class="codeblock__bar">
+            <span class="codeblock__lang">HTML</span>
+            <button type="button" class="copy-btn copy-btn--sm" (click)="copy(generatedHtml(), 'gen-html')" [class.copy-btn--done]="copiedKey() === 'gen-html'">
+              {{ copiedKey() === 'gen-html' ? '✓ Copied' : 'Copy' }}
+            </button>
+          </div>
+          <pre class="codeblock__pre" dir="ltr"><code>{{ generatedHtml() }}</code></pre>
+        </div>
+        <div class="codeblock">
+          <div class="codeblock__bar">
+            <span class="codeblock__lang">TypeScript</span>
+            <button type="button" class="copy-btn copy-btn--sm" (click)="copy(generatedTs(), 'gen-ts')" [class.copy-btn--done]="copiedKey() === 'gen-ts'">
+              {{ copiedKey() === 'gen-ts' ? '✓ Copied' : 'Copy' }}
+            </button>
+          </div>
+          <pre class="codeblock__pre" dir="ltr"><code>{{ generatedTs() }}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       Examples (tabbed)
+       ══════════════════════════════════════════════════════════════════════ -->
+  <section id="examples" class="page-section page-section--alt">
+    <div class="page-section__head">
+      <h2 class="page-section__title">Examples</h2>
+      <p class="page-section__sub">Every example is a real-world pattern — a live demo next to copy-ready code.</p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      @for (tab of exampleTabs; track tab.id) {
+        <button
+          type="button"
+          class="tabs__tab"
+          role="tab"
+          [class.tabs__tab--on]="activeExample() === tab.id"
+          [attr.aria-selected]="activeExample() === tab.id"
+          (click)="activeExample.set(tab.id)">
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <div class="ex">
+      <!-- Live preview pane -->
+      <div class="ex__demo">
+        @switch (activeExample()) {
+
+          @case ('single') {
+            <p class="hint">The Gregorian date appears under each Jalali day. Click the month/year for quick navigation.</p>
+            <ndp-datepicker
+              [showSummary]="false" [theme]="theme()" animation="slide"
+              [showSecondaryDate]="true" [value]="single()" (valueChange)="single.set($event)" />
+            <div class="result">
+              <div class="result__row"><span class="result__tag">Short</span><code>{{ singleShort() }}</code></div>
+              <div class="result__row"><span class="result__tag">Long</span><code>{{ singleLong() }}</code></div>
+            </div>
+          }
+
+          @case ('range') {
+            <p class="hint">Hover preview; the past is locked (<code>min=today</code>). Each end of the range clears independently.</p>
+            <div class="ex__scroll">
+              <ndp-datepicker
+                [theme]="theme()" mode="range" [numberOfMonths]="2" [min]="today"
+                animation="slide" [showQuickNav]="false" [value]="range()" (valueChange)="range.set($event)" />
+            </div>
+            <div class="result">
+              <div class="result__row"><span class="result__tag">Short</span><code>{{ rangeShort() }}</code></div>
+              <div class="result__row"><span class="result__tag">Long</span><code>{{ rangeLong() }}</code></div>
+            </div>
+          }
+
+          @case ('period') {
+            <p class="hint">A 12-month grid and a paged year grid. Selecting commits the start of the month/year.</p>
+            <div class="ex__pair">
+              <ndp-datepicker [theme]="theme()" mode="month" animation="slide" [value]="month()" (valueChange)="month.set($event)" />
+              <ndp-datepicker [theme]="theme()" mode="year" animation="slide" [value]="year()" (valueChange)="year.set($event)" />
+            </div>
+            <div class="result">
+              <div class="result__row"><span class="result__tag">Month</span><code>{{ monthLabel() }}</code></div>
+              <div class="result__row"><span class="result__tag">Year</span><code>{{ yearLabel() }}</code></div>
+            </div>
+          }
+
+          @case ('hijri') {
+            <p class="hint">Tabular Islamic (civil) calendar — deterministic everywhere. Sighting differences via <code>adjustment</code>.</p>
+            <ndp-datepicker
+              [theme]="theme()" calendar="hijri" animation="slide"
+              [showSecondaryDate]="true" [value]="hijri()" (valueChange)="hijri.set($event)" />
+            <div class="result">
+              <div class="result__row"><span class="result__tag">Short</span><code>{{ hijriShort() }}</code></div>
+              <div class="result__row"><span class="result__tag">Long</span><code>{{ hijriLong() }}</code></div>
+            </div>
+            <ul class="convert">
+              <li>Today (Hijri): <code>{{ todayInHijri }}</code></li>
+              <li>With <code>adjustment: -1</code>: <code>{{ todayInHijriAdjusted }}</code></li>
+              <li>1 Ramadan this year: <code>{{ ramadanIso }}</code></li>
+            </ul>
+          }
+
+          @case ('triple') {
+            <p class="hint">Jalali is primary; under each number the same cell's Gregorian and Hijri days are projected in.</p>
+            <ndp-datepicker [theme]="theme()" animation="slide" [value]="triple()" (valueChange)="triple.set($event)">
+              <ng-template ndpDayCell let-day>
+                <span class="tri">
+                  <span class="tri__main">{{ day.label }}</span>
+                  @if (day.inCurrentMonth) {
+                    <span class="tri__sub">
+                      <span>{{ gregDayLabel(day.date) }}</span>
+                      <span class="tri__sep">·</span>
+                      <span>{{ hijriDayLabel(day.date) }}</span>
+                    </span>
+                  }
+                </span>
+              </ng-template>
+            </ndp-datepicker>
+            <div class="result">
+              <div class="result__row"><span class="result__tag">Jalali</span><code>{{ tripleJalali() }}</code></div>
+              <div class="result__row"><span class="result__tag">Gregorian</span><code>{{ tripleGregorian() }}</code></div>
+              <div class="result__row"><span class="result__tag">Hijri</span><code>{{ tripleHijri() }}</code></div>
+            </div>
+          }
+
+          @case ('custom') {
+            <p class="hint">The day cell is fully overridable — here, a red dot under weekend days.</p>
+            <ndp-datepicker [theme]="theme()" [value]="custom()" (valueChange)="custom.set($event)">
+              <ng-template ndpDayCell let-day>
+                <span class="cell">
+                  {{ day.label }}
+                  @if (day.isWeekend && day.inCurrentMonth) { <i class="cell__dot"></i> }
+                </span>
+              </ng-template>
+            </ndp-datepicker>
+            <div class="result">
+              <div class="result__row"><span class="result__tag">Selected</span><code>{{ customShort() }}</code></div>
+            </div>
+          }
+
+          @case ('dropdown') {
+            <p class="hint">Opens on click, closes on selection — implemented entirely outside the component.</p>
+            <div class="dropdown">
+              <button type="button" class="dropdown__trigger" [class.dropdown__trigger--empty]="dropEmpty()" [attr.aria-expanded]="dropOpen()" (click)="toggleDrop()">
+                <span>{{ dropLabel() }}</span>
+                <i class="dropdown__caret">▾</i>
+              </button>
+              @if (dropOpen()) {
+                <div class="dropdown__backdrop" (click)="dropOpen.set(false)"></div>
+                <div class="dropdown__panel">
+                  <ndp-datepicker
+                    [theme]="theme()" [showSecondaryDate]="true" [showFooter]="false"
+                    [value]="dropValue()" (valueChange)="dropValue.set($event)" (dateSelected)="onDropSelected()" />
+                </div>
+              }
+            </div>
+          }
+
+          @case ('forms') {
+            <p class="hint">The component is a <code>ControlValueAccessor</code> — it works directly with <code>[formControl]</code>.</p>
+            <ndp-datepicker [theme]="theme()" animation="slide" [formControl]="dateCtrl" />
+            <div class="result">
+              <div class="result__row"><span class="result__tag">value</span><code>{{ formValueLabel() }}</code></div>
+              <div class="result__row"><span class="result__tag">state</span><code>{{ formDisabled() ? 'disabled' : 'enabled' }}</code></div>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm" (click)="toggleFormDisabled()">
+              {{ formDisabled() ? 'Enable control' : 'Disable control' }}
+            </button>
+          }
+        }
+      </div>
+
+      <!-- Code pane -->
+      <div class="ex__code">
+        <div class="codeblock">
+          <div class="codeblock__bar">
+            <span class="codeblock__lang">{{ activeExample() === 'hijri' || activeExample() === 'forms' ? 'TypeScript' : 'HTML' }}</span>
+            <button type="button" class="copy-btn copy-btn--sm" (click)="copy(exampleCode[activeExample()], 'ex')" [class.copy-btn--done]="copiedKey() === 'ex'">
+              {{ copiedKey() === 'ex' ? '✓ Copied' : 'Copy' }}
+            </button>
+          </div>
+          <pre class="codeblock__pre" dir="ltr"><code>{{ exampleCode[activeExample()] }}</code></pre>
+        </div>
       </div>
     </div>
 
-    <!-- Group 4: Headless API -->
-    <div class="demo-group">
-      <div class="demo-group__label">
-        <span>API بدون UI</span>
+    <!-- Headless API (no UI) -->
+    <div class="headless">
+      <div class="headless__head">
+        <h3 class="headless__title">And it works without any UI</h3>
+        <span class="card__badge">JalaaliMath · HijriMath</span>
       </div>
-      <div class="demos demos--full">
-        <article class="card">
-          <div class="card__head">
-            <h3 class="card__title">تبدیل تاریخ — headless</h3>
-            <span class="card__badge">JalaaliMath · HijriMath</span>
-          </div>
-          <p class="hint">همه‌ی توابع تبدیل مستقیم قابل import هستند — بدون نیاز به کامپوننت یا Angular.</p>
-          <div class="convert-grid">
-            <div class="convert-col">
-              <p class="convert-col__head">شمسی ↔ میلادی</p>
-              <ul class="convert">
-                <li>امروز (میلادی): <code>{{ todayInGregorian }}</code></li>
-                <li>امروز (شمسی، عددی): <code>{{ todayInJalali }}</code></li>
-                <li>امروز (شمسی، کامل): <code>{{ todayInJalaliPretty }}</code></li>
-                <li>۱ فروردین ۱۴۰۴ ← ISO: <code>{{ nowruz1404Iso }}</code></li>
-                <li>۱ فروردین ۱۴۰۴ ← Date: <code>{{ nowruz1404Date.toDateString() }}</code></li>
-              </ul>
-            </div>
-            <div class="convert-col">
-              <p class="convert-col__head">قمری ↔ میلادی</p>
-              <ul class="convert">
-                <li>امروز (قمری): <code>{{ todayInHijri }}</code></li>
-                <li>امروز (قمری، کامل): <code>{{ todayInHijriPretty }}</code></li>
-                <li>با adjustment: -1: <code>{{ todayInHijriAdjusted }}</code></li>
-                <li>۱ رمضان امسال ← ISO: <code>{{ ramadanIso }}</code></li>
-              </ul>
-            </div>
-          </div>
-        </article>
-      </div>
+      <p class="hint">Every conversion helper is directly importable — no component, not even Angular, required.</p>
+      <ul class="convert convert--inline">
+        <li>Today (Gregorian): <code>{{ todayInGregorian }}</code></li>
+        <li>Today (Jalali): <code>{{ todayInJalali }}</code></li>
+        <li>Today (Jalali, full): <code>{{ todayInJalaliPretty }}</code></li>
+        <li>1 Farvardin 1404 → ISO: <code>{{ nowruz1404Iso }}</code></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       API reference
+       ══════════════════════════════════════════════════════════════════════ -->
+  <section id="api" class="page-section">
+    <div class="page-section__head">
+      <h2 class="page-section__title">API reference</h2>
+      <p class="page-section__sub">The most-used inputs and outputs of <code>&lt;ndp-datepicker&gt;</code>.</p>
     </div>
 
+    <div class="api-wrap">
+      <table class="api">
+        <thead>
+          <tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          @for (row of apiRows; track row.name) {
+            <tr>
+              <td><code class="api__name">{{ row.name }}</code></td>
+              <td><code class="api__type">{{ row.type }}</code></td>
+              <td><code class="api__def">{{ row.def }}</code></td>
+              <td class="api__note">{{ row.note }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <!-- ── Changelog — parsed live from the library's CHANGELOG.md ───────────── -->
-  <section id="changelog" class="page-section page-section--alt" dir="ltr">
+  <section id="changelog" class="page-section page-section--alt">
     <div class="page-section__head">
       <h2 class="page-section__title">Changelog</h2>
       <p class="page-section__sub">
@@ -411,16 +462,16 @@
   <footer class="page-footer">
     <div class="page-footer__inner">
       <div class="page-footer__kbd">
-        <strong>کیبورد:</strong>
-        ←↑↓→ جابه‌جایی &nbsp;·&nbsp; Enter/Space انتخاب &nbsp;·&nbsp;
-        PageUp/PageDown ماه &nbsp;·&nbsp; Home/End ابتدا/انتها
+        <strong>Keyboard:</strong>
+        ←↑↓→ move &nbsp;·&nbsp; Enter/Space select &nbsp;·&nbsp;
+        PageUp/PageDown month &nbsp;·&nbsp; Home/End start/end
       </div>
       <div class="page-footer__links">
         <a class="page-footer__link" data-text="npm" href="https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker" target="_blank" dir="ltr">npm</a>
         <span class="page-footer__sep">·</span>
         <a class="page-footer__link" data-text="GitHub" href="https://github.com/vahidamiryan/ngx-jalali-datepicker" target="_blank" dir="ltr">GitHub</a>
         <span class="page-footer__sep">·</span>
-        <span>MIT License · Vahid Amirian</span>
+        <span>MIT License · Vahid Amirian · Angular 20</span>
       </div>
     </div>
   </footer>
