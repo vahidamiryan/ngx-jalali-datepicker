@@ -1,15 +1,17 @@
 import { InjectionToken, Provider } from '@angular/core';
 import { CalendarAdapter } from './core/calendar-adapter';
-import { GregorianCalendarAdapter } from './adapters/gregorian.adapter';
-import { JalaliCalendarAdapter } from './adapters/jalali.adapter';
 
 /**
  * Ordered list of calendars the picker offers. The first entry is the default.
- * Override it to add or reorder calendars without changing any component.
+ *
+ * The token has *no* default value on purpose: a default factory would have to
+ * statically reference concrete adapters, which would pin every calendar (and
+ * its date-conversion math) into every bundle that uses the picker — defeating
+ * tree-shaking. Supply the calendars you actually use with
+ * {@link provideNgxDatepicker}; a consumer that configures only Gregorian then
+ * never ships the Jalali / Hijri adapters or their math.
  */
-export const NDP_CALENDAR_ADAPTERS = new InjectionToken<CalendarAdapter[]>('NDP_CALENDAR_ADAPTERS', {
-  factory: () => [new JalaliCalendarAdapter(), new GregorianCalendarAdapter()],
-});
+export const NDP_CALENDAR_ADAPTERS = new InjectionToken<CalendarAdapter[]>('NDP_CALENDAR_ADAPTERS');
 
 /**
  * An adapter instance, or a factory that builds one. Factories run inside the
