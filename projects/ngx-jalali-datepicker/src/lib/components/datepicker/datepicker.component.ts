@@ -275,7 +275,14 @@ export class DatepickerComponent implements ControlValueAccessor {
   private _prevCustomVarKeys: string[] = [];
 
   constructor() {
-    const adapters = inject(NDP_CALENDAR_ADAPTERS);
+    const adapters = inject(NDP_CALENDAR_ADAPTERS, { optional: true });
+    if (!adapters || adapters.length === 0) {
+      throw new Error(
+        '[ngx-jalali-datepicker] No calendar adapters configured. Add ' +
+          'provideNgxDatepicker(...) to your application (or component) providers, e.g. ' +
+          'provideNgxDatepicker(new JalaliCalendarAdapter(), new GregorianCalendarAdapter()).',
+      );
+    }
     for (const a of adapters) this.registry.set(a.id, a);
     this.calendarIds = adapters.map(a => a.id);
     if (!this.calendar()) this.calendar.set(this.calendarIds[0]);

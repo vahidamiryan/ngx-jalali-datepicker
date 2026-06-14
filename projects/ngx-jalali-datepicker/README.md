@@ -288,6 +288,13 @@ math, never raw `Intl` formatting.
 - **Headless core:** `buildMonthView`, `buildMonthsView`, `buildYearsView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, types (`DateRange`, `DayCell`, `MonthView`, `PeriodCell`, `PeriodView`, `DatepickerMode`, `CalendarView`, `DateFilterFn`, `NdpTheme`, `NdpTheme`)
 - **Config:** `provideNgxDatepicker`, `NDP_CALENDAR_ADAPTERS`
 
+> **Configuration is required.** `provideNgxDatepicker(...)` has no zero-config
+> default on purpose — that is what makes the picker fully tree-shakeable. You
+> ship only the adapters (and their date-conversion math) you actually register,
+> so a Gregorian-only app never bundles the Jalali or Hijri code. Using
+> `<ndp-datepicker>` without a `provideNgxDatepicker(...)` provider throws a
+> descriptive error.
+
 ### `DatepickerComponent` inputs
 
 | Input | Type | Default | Notes |
