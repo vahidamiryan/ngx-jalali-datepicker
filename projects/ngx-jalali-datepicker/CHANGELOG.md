@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 **npm:** https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker
 
+## [1.0.0]
+
+### Changed
+- **BREAKING — calendar configuration is now required.** `NDP_CALENDAR_ADAPTERS`
+  no longer has a built-in default (it previously defaulted to Jalali +
+  Gregorian). That default statically referenced both adapters, which pinned
+  every calendar and its date-conversion math into every bundle using the
+  picker. Now you ship only what you register via `provideNgxDatepicker(...)`,
+  so the library is fully tree-shakeable — a Gregorian-only app no longer
+  bundles the Jalali / Hijri adapters or their math. Rendering
+  `<ndp-datepicker>` without a `provideNgxDatepicker(...)` provider throws a
+  descriptive error.
+  **Migration:** add `provideNgxDatepicker(new JalaliCalendarAdapter(), new GregorianCalendarAdapter())`
+  to your providers (most apps already do).
+
 ## [0.0.9]
 
 ### Added
