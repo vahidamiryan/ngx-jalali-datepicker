@@ -276,7 +276,7 @@
               <div class="input-demo__row">
                 <span class="input-demo__label">Range</span>
                 <ndp-date-input
-                  [theme]="theme()" mode="range" animation="slide"
+                  [theme]="theme()" mode="range" [numberOfMonths]="2" animation="slide"
                   [value]="inputRange()" (valueChange)="inputRange.set($event)" />
               </div>
             </div>

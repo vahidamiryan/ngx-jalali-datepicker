@@ -137,6 +137,7 @@
 
 .ndp-months {
   display: flex;
+  justify-content: center;
   gap: 1.25rem;
 }
 
