@@ -71,6 +71,42 @@ The secondary defaults to the first *other* registered calendar; override it wit
 The month heading shows the companion month range (months don't line up 1:1) and
 the footer summary shows the companion full date.
 
+## Typing dates (input field)
+
+For faster entry than clicking, dates can be typed directly.
+
+**`<ndp-date-input>`** — a text field with a calendar popover. Type to parse, or
+open the panel to pick; selecting writes the text back. It's a
+`ControlValueAccessor` and forwards the usual picker inputs.
+
+```html
+<!-- Single -->
+<ndp-date-input [(value)]="value" />
+
+<!-- Range — shows two fields (start / end), kept in order -->
+<ndp-date-input mode="range" [min]="today" [(value)]="range" />
+```
+
+**`showInput`** — render the same typing field(s) inside the panel itself
+(day modes only):
+
+```html
+<ndp-datepicker [showInput]="true" [(value)]="value" />
+```
+
+Both accept `/`, `-` or `.` separators and Persian/Arabic-Indic digits;
+impossible dates are flagged (`aria-invalid`) without changing the value.
+
+`parse` / `formatInput` also live on `CalendarAdapter`, so you can convert a
+typed string to a `Date` headlessly in any calendar:
+
+```ts
+const cal = new JalaliCalendarAdapter();
+cal.parse('۱۴۰۴/۰۳/۲۸');     // Date or null
+cal.parse('1404/07/31');      // null — Mehr has 30 days
+cal.formatInput(new Date());  // "۱۴۰۴/۰۳/۲۸"
+```
+
 ## Building a dropdown / popover
 
 The component is just a panel — wrap it however you like. In `single` mode it
@@ -188,10 +224,10 @@ math, never raw `Intl` formatting.
 
 ## Public API
 
-- **Components:** `DatepickerComponent` (`ndp-datepicker`), `CalendarMonthComponent` (`ndp-calendar-month`)
+- **Components:** `DatepickerComponent` (`ndp-datepicker`), `DateInputComponent` (`ndp-date-input`), `CalendarMonthComponent` (`ndp-calendar-month`)
 - **Directive:** `NdpDayCellTemplate` (`ng-template[ndpDayCell]`)
 - **Adapters:** `CalendarAdapter` (abstract), `GregorianCalendarAdapter`, `JalaliCalendarAdapter`, `HijriCalendarAdapter` (+ `NdpHijriConfig`, `NdpHijriDayAdjustment`, `NdpHijriDayAdjuster`)
-- **Headless core:** `buildMonthView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, types (`DateRange`, `DayCell`, `MonthView`, `DatepickerMode`, `DateFilterFn`)
+- **Headless core:** `buildMonthView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, `toLatinDigits`, `toPersianDigits`, adapter `parse` / `formatInput`, types (`DateRange`, `DayCell`, `MonthView`, `DatepickerMode`, `DateFilterFn`)
 - **Config:** `provideNgxDatepicker`, `NDP_CALENDAR_ADAPTERS`
 
 ### `DatepickerComponent` inputs
@@ -210,6 +246,7 @@ math, never raw `Intl` formatting.
 | `showFooter` | `boolean` | `true` | Master toggle for the whole footer (summary bar + action buttons). |
 | `showSummary` | `boolean` | `true` | Show the selected-date summary bar inside the footer. Set `false` to hide just the summary while keeping the action buttons. |
 | `showToday` / `showClear` / `showCalendarToggle` | `boolean` | `true` | Footer action buttons. |
+| `showInput` | `boolean` | `false` | Render a typed-date field above the grid (day modes only). See [Typing dates](#typing-dates-input-field). |
 
 **Output:** `(dateSelected)` emits the `DateRange` on every selection — handy for closing a dropdown.
 

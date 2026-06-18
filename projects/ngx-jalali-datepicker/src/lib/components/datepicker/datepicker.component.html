@@ -5,6 +5,42 @@
   [class.ndp-panel--slide-next]="slideDir() === 'next'"
   (animationend)="onSlideEnd()"
 >
+  @if (inputVisible()) {
+    <div class="ndp-input-row">
+      <input
+        #startEl
+        type="text"
+        class="ndp-input-field"
+        [class.ndp-input-field--invalid]="startInvalid()"
+        [value]="startText()"
+        [placeholder]="adapter().getInputFormatHint()"
+        autocomplete="off"
+        inputmode="numeric"
+        [attr.aria-invalid]="startInvalid()"
+        (input)="onInputType('start', startEl.value)"
+        (focus)="onInputFocus('start')"
+        (blur)="onInputBlur()"
+      />
+      @if (mode() === "range") {
+        <span class="ndp-input-row__sep" aria-hidden="true">←</span>
+        <input
+          #endEl
+          type="text"
+          class="ndp-input-field"
+          [class.ndp-input-field--invalid]="endInvalid()"
+          [value]="endText()"
+          [placeholder]="adapter().getInputFormatHint()"
+          autocomplete="off"
+          inputmode="numeric"
+          [attr.aria-invalid]="endInvalid()"
+          (input)="onInputType('end', endEl.value)"
+          (focus)="onInputFocus('end')"
+          (blur)="onInputBlur()"
+        />
+      }
+    </div>
+  }
+
   @if (viewMode() === "day") {
     <div class="ndp-months">
       @for (

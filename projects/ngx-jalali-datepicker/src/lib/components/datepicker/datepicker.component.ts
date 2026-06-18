@@ -78,6 +78,8 @@ export class DatepickerComponent implements ControlValueAccessor {
   readonly showCalendarToggle = input(true);
   /** Show the month/year quick-navigation dropdowns in the header. When false, the header shows a plain (non-interactive) month/year label. */
   readonly showQuickNav = input(true);
+  /** Show a text field above the grid for typing the date directly. Day modes only (single / range). */
+  readonly showInput = input(false);
   /** Show the same dates in a second calendar alongside the active one (e.g. Gregorian under Jalali). */
   readonly showSecondaryDate = input(false);
   /** Calendar id to use as the secondary. When null, the first registered calendar other than the active one. */
@@ -96,6 +98,18 @@ export class DatepickerComponent implements ControlValueAccessor {
   protected readonly hovered = signal<Date | null>(null);
   protected readonly focusedDate = signal<Date | null>(null);
   protected readonly disabled = signal(false);
+
+  // ── Typed-input state (active only when `showInput` is on, in day modes) ─────
+  protected readonly startText = signal('');
+  protected readonly endText = signal('');
+  protected readonly startInvalid = signal(false);
+  protected readonly endInvalid = signal(false);
+  /** Which input field has focus, so the value→text sync doesn't clobber typing. */
+  private readonly typingField = signal<'start' | 'end' | null>(null);
+  /** True when the typing field(s) should render: opt-in and a day mode. */
+  protected readonly inputVisible = computed(
+    () => this.showInput() && (this.mode() === 'single' || this.mode() === 'range'),
+  );
 
   /** Which grid the body shows. Driven by `mode`: month/year modes pin their grid. */
   protected readonly viewMode = computed<CalendarView>(() => {
@@ -306,6 +320,20 @@ export class DatepickerComponent implements ControlValueAccessor {
       });
     });
 
+    // Keep the typed-input field(s) in sync with the value and active calendar,
+    // except while the user is typing in them.
+    effect(() => {
+      const v = this.value();
+      const a = this.adapter();
+      if (this.typingField()) return;
+      untracked(() => {
+        this.startText.set(v.start ? a.formatInput(v.start) : '');
+        this.endText.set(v.end ? a.formatInput(v.end) : '');
+        this.startInvalid.set(false);
+        this.endInvalid.set(false);
+      });
+    });
+
     // Apply custom CSS variable overrides directly on the host element.
     effect(() => {
       const vars = this.customVars();
@@ -333,6 +361,63 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   protected onDayHover(date: Date | null): void {
     this.hovered.set(date);
+  }
+
+  // ── Typed input ──────────────────────────────────────────────────────────────
+  /** Handle text typed into the start/end field: parse, validate, commit. */
+  protected onInputType(which: 'start' | 'end', raw: string): void {
+    (which === 'start' ? this.startText : this.endText).set(raw);
+    const trimmed = raw.trim();
+
+    if (trimmed === '') {
+      this.setInputInvalid(which, false);
+      this.commitTyped(which, null);
+      return;
+    }
+
+    const parsed = this.adapter().parse(raw);
+    if (!parsed) {
+      this.setInputInvalid(which, true);
+      return;
+    }
+    this.setInputInvalid(which, false);
+    this.commitTyped(which, parsed);
+  }
+
+  protected onInputFocus(which: 'start' | 'end'): void {
+    this.typingField.set(which);
+  }
+
+  protected onInputBlur(): void {
+    // Dropping focus re-runs the value→text effect: it reformats a valid value
+    // and discards leftover invalid text.
+    this.typingField.set(null);
+    this.onTouched();
+  }
+
+  /** Write one typed endpoint into the value, keep range order, and navigate to it. */
+  private commitTyped(which: 'start' | 'end', date: Date | null): void {
+    let next: DateRange;
+    if (this.mode() === 'range') {
+      const cur = this.value();
+      let start = which === 'start' ? date : cur.start;
+      let end = which === 'end' ? date : cur.end;
+      if (start && end && dayKey(start) > dayKey(end)) [start, end] = [end, start];
+      next = { start, end };
+    } else {
+      next = { start: date, end: null };
+    }
+    this.value.set(next);
+    this.onChange(next);
+    if (date) {
+      this.focusedDate.set(date);
+      if (!this.isVisible(date)) this.activeMonth.set(this.adapter().startOfMonth(date));
+    }
+    this.dateSelected.emit(next);
+  }
+
+  private setInputInvalid(which: 'start' | 'end', invalid: boolean): void {
+    (which === 'start' ? this.startInvalid : this.endInvalid).set(invalid);
   }
 
   // ── Navigation / footer ─────────────────────────────────────────────────────

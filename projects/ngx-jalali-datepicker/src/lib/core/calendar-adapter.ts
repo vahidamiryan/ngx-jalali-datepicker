@@ -1,4 +1,5 @@
 import { InjectionToken } from '@angular/core';
+import { toLatinDigits } from './date-key.util';
 
 /**
  * Strategy that teaches the picker how to read and build dates in a particular
@@ -89,6 +90,101 @@ export abstract class CalendarAdapter {
 
   /** Whether the given day is a weekend in this calendar. Override per culture. */
   abstract isWeekend(date: Date): boolean;
+
+  // ── Typed-input support (parse / machine-readable format) ──────────────────
+  //
+  // `format()` produces a written-out string ("شنبه ۱۷ خرداد") that can't be
+  // parsed back. These two methods give a compact, round-trippable representation
+  // ("۱۴۰۴/۰۳/۲۸" / "2026/03/21") so a text input can read and write dates.
+  // Both have working defaults built only on the existing abstract members, so
+  // every custom adapter keeps compiling with no changes.
+
+  /**
+   * Compact, editable representation of a date — `YYYY/MM/DD` in this calendar,
+   * with month/day zero-padded and digits in the calendar's own numerals.
+   * The inverse of {@link parse}.
+   */
+  formatInput(date: Date): string {
+    return (
+      `${this.localizeNumber(this.getYear(date))}/` +
+      `${this.localizeNumber(this.getMonth(date), 2)}/` +
+      `${this.localizeNumber(this.getDayOfMonth(date), 2)}`
+    );
+  }
+
+  /**
+   * Parse a `YYYY/MM/DD` string in this calendar into a canonical Gregorian
+   * midnight `Date`, or `null` when the text isn't a valid date. Accepts `/`,
+   * `-` or `.` separators and Persian/Arabic-Indic digits. A round-trip check
+   * rejects impossible dates (month 13, day 31 in a 30-day month, …).
+   */
+  parse(text: string): Date | null {
+    const s = toLatinDigits(text).trim();
+    const m = s.match(/^(\d{1,4})[/\-.](\d{1,2})[/\-.](\d{1,2})$/);
+    if (!m) return null;
+    const year = +m[1];
+    const month = +m[2];
+    const day = +m[3];
+    if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+    const date = this.createDate(year, month, day);
+    if (
+      this.getYear(date) !== year ||
+      this.getMonth(date) !== month ||
+      this.getDayOfMonth(date) !== day
+    ) {
+      return null;
+    }
+    return date;
+  }
+
+  /**
+   * Render an integer in the calendar's own numerals, optionally zero-padded to
+   * `pad` digits. Defaults to ASCII; localized calendars override to emit their
+   * native digits (Persian/Arabic-Indic).
+   */
+  protected localizeNumber(value: number, pad = 0): string {
+    return String(value).padStart(pad, '0');
+  }
+
+  /** Localize a string of ASCII digits into the calendar's own numerals. Defaults to ASCII. */
+  protected localizeDigits(digits: string): string {
+    return digits;
+  }
+
+  /**
+   * Digit counts of the `YYYY/MM/DD` segments, in order — `[4, 2, 2]` for a
+   * four-digit-year calendar. Drives the typed-input auto-formatting so the user
+   * types only digits and the separators appear on their own. Override for
+   * calendars with differently sized fields.
+   */
+  getInputMask(): readonly number[] {
+    return [4, 2, 2];
+  }
+
+  /**
+   * Take whatever the user typed and re-render it as a partial `YYYY/MM/DD`
+   * string: keep only the digits, group them per {@link getInputMask}, join the
+   * groups with `/`, and localize to the calendar's numerals. Lets a field
+   * insert the separators automatically while the user types only digits.
+   */
+  maskInput(text: string): string {
+    const digits = toLatinDigits(text).replace(/\D/g, '');
+    if (!digits) return '';
+    const groups: string[] = [];
+    let i = 0;
+    for (const size of this.getInputMask()) {
+      if (i >= digits.length) break;
+      groups.push(digits.slice(i, i + size));
+      i += size;
+    }
+    // Any overflow digits past the last group are dropped — the date is full.
+    return this.localizeDigits(groups.join('/'));
+  }
+
+  /** Human-readable hint for an input placeholder, e.g. `"YYYY/MM/DD"`. */
+  getInputFormatHint(): string {
+    return 'YYYY/MM/DD';
+  }
 }
 
 /** DI token carrying the active {@link CalendarAdapter}. */
