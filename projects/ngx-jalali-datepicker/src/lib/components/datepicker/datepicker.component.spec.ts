@@ -129,3 +129,58 @@ describe('DatepickerComponent month / year picker modes', () => {
     expect(dayKey(value().start!)).toBe(dayKey(new Date(2027, 0, 1)));
   });
 });
+
+describe('DatepickerComponent typed input (showInput)', () => {
+  let fixture: ComponentFixture<DatepickerComponent>;
+  let component: DatepickerComponent;
+  let ref: ComponentRef<DatepickerComponent>;
+
+  const field = (): HTMLInputElement =>
+    fixture.nativeElement.querySelector('.ndp-input-field');
+
+  function type(text: string): void {
+    const el = field();
+    el.value = text;
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    fixture.detectChanges();
+  }
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [DatepickerComponent],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideNgxDatepicker(new GregorianCalendarAdapter('en-US')),
+      ],
+    });
+    fixture = TestBed.createComponent(DatepickerComponent);
+    component = fixture.componentInstance;
+    ref = fixture.componentRef;
+    ref.setInput('showInput', true);
+    fixture.detectChanges();
+  });
+
+  it('renders the field only when showInput is on', () => {
+    expect(field()).toBeTruthy();
+    ref.setInput('showInput', false);
+    fixture.detectChanges();
+    expect(field()).toBeFalsy();
+  });
+
+  it('commits a typed date to the value', () => {
+    type('2026/03/21');
+    expect(dayKey(component.value().start!)).toBe(dayKey(new Date(2026, 2, 21)));
+  });
+
+  it('flags invalid text without changing the value', () => {
+    type('2026/02/31'); // impossible
+    expect(field().getAttribute('aria-invalid')).toBe('true');
+    expect(component.value().start).toBeNull();
+  });
+
+  it('reflects an external value as formatted text', () => {
+    component.writeValue({ start: new Date(2026, 0, 5), end: null });
+    fixture.detectChanges();
+    expect(field().value).toBe('2026/01/05');
+  });
+});

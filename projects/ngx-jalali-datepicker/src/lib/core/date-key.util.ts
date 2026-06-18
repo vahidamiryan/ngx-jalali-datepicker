@@ -37,3 +37,8 @@ export function toLatinDigits(value: string): string {
     return String(code - 0x0660); // Arabic
   });
 }
+
+/** Convert ASCII digits in a string to Persian (extended Arabic-Indic) digits. */
+export function toPersianDigits(value: string): string {
+  return value.replace(/\d/g, d => String.fromCharCode(0x06f0 + Number(d)));
+}

@@ -24,4 +24,5 @@ export * from './lib/datepicker.providers';
 export * from './lib/components/calendar-month/calendar-month.component';
 export * from './lib/components/calendar-period/calendar-period.component';
 export * from './lib/components/datepicker/datepicker.component';
+export * from './lib/components/date-input/date-input.component';
 export * from './lib/components/day-cell.directive';

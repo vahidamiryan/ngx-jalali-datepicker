@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/c
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import {
   DatepickerComponent,
+  DateInputComponent,
   NdpDayCellTemplate,
   DateRange,
   DatepickerMode,
@@ -16,13 +17,13 @@ import changelogRaw from '../../../ngx-jalali-datepicker/CHANGELOG.md';
 import { parseChangelog } from './changelog';
 
 type PgCalendar = 'jalali' | 'gregorian' | 'hijri';
-type ExampleId = 'single' | 'range' | 'period' | 'hijri' | 'triple' | 'custom' | 'dropdown' | 'forms';
+type ExampleId = 'single' | 'range' | 'input' | 'period' | 'hijri' | 'triple' | 'custom' | 'dropdown' | 'forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatepickerComponent, NdpDayCellTemplate, ReactiveFormsModule],
+  imports: [DatepickerComponent, DateInputComponent, NdpDayCellTemplate, ReactiveFormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
   host: {
@@ -31,10 +32,10 @@ type ExampleId = 'single' | 'range' | 'period' | 'hijri' | 'triple' | 'custom' |
   },
 })
 export class App {
-  readonly version = '1.0.0';
+  readonly version = '1.1.0';
 
   // ── Theme ───────────────────────────────────────────────────────────────────
-  readonly theme = signal<NdpTheme>('light');
+  readonly theme = signal<NdpTheme>('dark');
   readonly themeLabel = computed(() => {
     const t = this.theme();
     return t === 'light' ? 'Light' : t === 'dark' ? 'Dark' : 'Auto';
@@ -79,6 +80,7 @@ export class App {
   readonly pgSecondary = signal(false);
   readonly pgFooter = signal(true);
   readonly pgQuickNav = signal(true);
+  readonly pgInput = signal(false);
   readonly pgSlide = signal(true);
 
   readonly pgValue = signal<DateRange>({ start: null, end: null });
@@ -115,6 +117,7 @@ export class App {
     if (this.pgIsDayMode() && this.pgSecondary()) lines.push(`  [showSecondaryDate]="true"`);
     if (!this.pgFooter()) lines.push(`  [showFooter]="false"`);
     if (this.pgIsDayMode() && !this.pgQuickNav()) lines.push(`  [showQuickNav]="false"`);
+    if (this.pgIsDayMode() && this.pgInput()) lines.push(`  [showInput]="true"`);
     if (this.pgSlide()) lines.push(`  animation="slide"`);
     lines.push(`  [(value)]="value"`);
     return `<ndp-datepicker\n${lines.join('\n')} />`;
@@ -170,6 +173,7 @@ export class App {
   readonly exampleTabs: { id: ExampleId; label: string }[] = [
     { id: 'single', label: 'Single date' },
     { id: 'range', label: 'Range' },
+    { id: 'input', label: 'Date input' },
     { id: 'period', label: 'Month / Year' },
     { id: 'hijri', label: 'Hijri' },
     { id: 'triple', label: 'Tri-calendar' },
@@ -181,6 +185,8 @@ export class App {
 
   readonly single = signal<DateRange>({ start: null, end: null });
   readonly range = signal<DateRange>({ start: null, end: null });
+  readonly inputSingle = signal<DateRange>({ start: null, end: null });
+  readonly inputRange = signal<DateRange>({ start: null, end: null });
   readonly month = signal<DateRange>({ start: null, end: null });
   readonly year = signal<DateRange>({ start: null, end: null });
   readonly hijri = signal<DateRange>({ start: null, end: null });
@@ -192,6 +198,8 @@ export class App {
   readonly rangeShort = computed(() => this.describe(this.range(), this.jShort));
   readonly rangeLong = computed(() => this.describe(this.range(), this.jLong));
   readonly customShort = computed(() => this.describe(this.custom(), this.jShort));
+  readonly inputSingleLong = computed(() => this.describe(this.inputSingle(), this.jLong));
+  readonly inputRangeLong = computed(() => this.describe(this.inputRange(), this.jLong));
 
   readonly monthLabel = computed(() => {
     const s = this.month().start;
@@ -290,6 +298,14 @@ export class App {
   [min]="today"
   animation="slide"
   [(value)]="range" />`,
+    input: `<!-- Field + popover — type "1404/03/28" or pick -->
+<ndp-date-input [(value)]="value" />
+
+<!-- Range: two fields (start / end) -->
+<ndp-date-input mode="range" [(value)]="range" />
+
+<!-- Or type directly inside the panel -->
+<ndp-datepicker [showInput]="true" [(value)]="value" />`,
     period: `<!-- Month grid -->
 <ndp-datepicker mode="month" [(value)]="month" />
 
@@ -367,8 +383,10 @@ readonly apiRows: { name: string; type: string; def: string; note: string }[] = 
   { name: 'dateFilter', type: '(d: Date) => boolean', def: 'null', note: 'Returns true if the date is selectable' },
   { name: 'showSecondaryDate', type: 'boolean', def: 'false', note: 'Show corresponding date in the secondary calendar' },
   { name: 'animation', type: "'none' | 'slide'", def: "'none'", note: 'Navigation animation' },
+  { name: 'showInput', type: 'boolean', def: 'false', note: 'Type the date directly in a field above the grid (day modes)' },
   { name: 'customVars', type: 'Record<string,string>', def: '{}', note: 'Overrides --ndp-* design tokens' },
   { name: '(dateSelected)', type: 'EventEmitter<DateRange>', def: '—', note: 'Emitted when a date is selected' },
+  { name: '<ndp-date-input>', type: 'component', def: '—', note: 'Standalone text field + calendar popover; same inputs, plus placeholder / closeOnSelect' },
 ];
 
   /** Parsed straight from the library's CHANGELOG.md (bundled as raw text). */
