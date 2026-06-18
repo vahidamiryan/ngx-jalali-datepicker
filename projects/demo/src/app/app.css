@@ -1261,6 +1261,11 @@
 }
 
 .ex__demo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
   background: var(--page-card-bg);
   border: 1px solid var(--page-card-border);
   border-radius: 14px;
