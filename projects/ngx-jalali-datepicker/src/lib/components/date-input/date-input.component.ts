@@ -142,16 +142,19 @@ export class DateInputComponent implements ControlValueAccessor {
 
   // ── Typing ───────────────────────────────────────────────────────────────────
   protected onInput(which: Endpoint, raw: string): void {
-    (which === 'start' ? this.startText : this.endText).set(raw);
-    const trimmed = raw.trim();
+    // Re-render to a `YYYY/MM/DD` shape: the user types only digits and the
+    // adapter inserts the separators (and localizes the numerals). Writing this
+    // back into the signal drives the field's `[value]`, so the `/` appears live.
+    const masked = this.adapter().maskInput(raw);
+    (which === 'start' ? this.startText : this.endText).set(masked);
 
-    if (trimmed === '') {
+    if (masked === '') {
       this.setInvalid(which, false);
       this.commitEndpoint(which, null);
       return;
     }
 
-    const parsed = this.adapter().parse(raw);
+    const parsed = this.adapter().parse(masked);
     if (!parsed) {
       this.setInvalid(which, true);
       return;
