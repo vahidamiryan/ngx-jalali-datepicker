@@ -1,4 +1,5 @@
 import { CalendarAdapter } from '../core/calendar-adapter';
+import { toPersianDigits } from '../core/date-key.util';
 import { jalaaliMonthLength, toGregorian, toJalaali } from './jalaali';
 
 /**
@@ -98,5 +99,17 @@ export class JalaliCalendarAdapter extends CalendarAdapter {
 
   isWeekend(date: Date): boolean {
     return date.getDay() === 5; // Friday
+  }
+
+  protected override localizeDigits(digits: string): string {
+    return toPersianDigits(digits);
+  }
+
+  protected override localizeNumber(value: number, pad = 0): string {
+    return toPersianDigits(String(value).padStart(pad, '0'));
+  }
+
+  override getInputFormatHint(): string {
+    return 'سال/ماه/روز';
   }
 }

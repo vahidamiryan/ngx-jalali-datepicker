@@ -1289,6 +1289,27 @@
   justify-items: center;
 }
 
+.input-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.input-demo__row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.input-demo__label {
+  min-width: 3.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted, #94a3b8);
+  text-align: end;
+}
+
 .convert--inline {
   grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
   display: grid;

@@ -189,4 +189,20 @@ export class HijriCalendarAdapter extends CalendarAdapter {
   isWeekend(date: Date): boolean {
     return date.getDay() === 5; // Friday
   }
+
+  protected override localizeDigits(digits: string): string {
+    // Map each ASCII digit through the locale's formatter so masked input reads
+    // in the same numerals as the labels; non-digits (the `/`) pass through.
+    return digits.replace(/\d/g, d => this.digitFmt.format(+d));
+  }
+
+  protected override localizeNumber(value: number, pad = 0): string {
+    // Reuse the construction-time digit formatter (honours `locale`) and pad in
+    // its own numerals so a zero-padded month/day reads natively (e.g. "۰۳").
+    return this.digitFmt.format(value).padStart(pad, this.digitFmt.format(0));
+  }
+
+  override getInputFormatHint(): string {
+    return 'سال/ماه/روز';
+  }
 }

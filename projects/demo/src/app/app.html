@@ -103,6 +103,7 @@
             [showSecondaryDate]="pgIsDayMode() && pgSecondary()"
             [showFooter]="pgFooter()"
             [showQuickNav]="pgQuickNav()"
+            [showInput]="pgIsDayMode() && pgInput()"
             [animation]="pgSlide() ? 'slide' : 'none'"
             [value]="pgValue()"
             (valueChange)="pgValue.set($event)" />
@@ -170,6 +171,10 @@
             <button type="button" class="sw" [class.sw--on]="pgQuickNav()" (click)="pgQuickNav.set(!pgQuickNav())">
               <span class="sw__track"><span class="sw__thumb"></span></span>
               <span class="sw__text">showQuickNav</span>
+            </button>
+            <button type="button" class="sw" [class.sw--on]="pgInput()" (click)="pgInput.set(!pgInput())">
+              <span class="sw__track"><span class="sw__thumb"></span></span>
+              <span class="sw__text">showInput</span>
             </button>
           }
           <button type="button" class="sw" [class.sw--on]="pgFooter()" (click)="pgFooter.set(!pgFooter())">
@@ -256,6 +261,28 @@
             <div class="result">
               <div class="result__row"><span class="result__tag">Short</span><code>{{ rangeShort() }}</code></div>
               <div class="result__row"><span class="result__tag">Long</span><code>{{ rangeLong() }}</code></div>
+            </div>
+          }
+
+          @case ('input') {
+            <p class="hint">Type the date directly (try <code dir="ltr">1404/03/28</code> — Persian or ASCII digits) or open the calendar to pick. An impossible date is flagged without changing the value.</p>
+            <div class="input-demo">
+              <div class="input-demo__row">
+                <span class="input-demo__label">Single</span>
+                <ndp-date-input
+                  [theme]="theme()" animation="slide"
+                  [value]="inputSingle()" (valueChange)="inputSingle.set($event)" />
+              </div>
+              <div class="input-demo__row">
+                <span class="input-demo__label">Range</span>
+                <ndp-date-input
+                  [theme]="theme()" mode="range" animation="slide"
+                  [value]="inputRange()" (valueChange)="inputRange.set($event)" />
+              </div>
+            </div>
+            <div class="result">
+              <div class="result__row"><span class="result__tag">Single</span><code>{{ inputSingleLong() }}</code></div>
+              <div class="result__row"><span class="result__tag">Range</span><code>{{ inputRangeLong() }}</code></div>
             </div>
           }
 

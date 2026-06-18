@@ -87,6 +87,54 @@
   pointer-events: none;
 }
 
+/* ── Typed-input row (opt-in via [showInput]) ────────────────────────────── */
+.ndp-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.ndp-input-field {
+  flex: 1;
+  min-width: 0;
+  appearance: none;
+  background: var(--ndp-surface);
+  border: 1px solid var(--ndp-border);
+  border-radius: 9px;
+  padding: 0.4rem 0.55rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ndp-text);
+  text-align: center;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.ndp-input-field::placeholder {
+  color: var(--ndp-muted);
+}
+
+.ndp-input-field:focus {
+  outline: none;
+  border-color: var(--ndp-accent);
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-input-field--invalid {
+  border-color: var(--ndp-weekend-color);
+  color: var(--ndp-weekend-color);
+}
+
+.ndp-input-field--invalid:focus {
+  box-shadow: 0 0 0 2px var(--ndp-weekend-color);
+}
+
+.ndp-input-row__sep {
+  color: var(--ndp-muted);
+  font-size: 0.85rem;
+  user-select: none;
+}
+
 .ndp-months {
   display: flex;
   gap: 1.25rem;
