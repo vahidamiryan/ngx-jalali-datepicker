@@ -185,6 +185,16 @@ export abstract class CalendarAdapter {
   getInputFormatHint(): string {
     return 'YYYY/MM/DD';
   }
+
+  /**
+   * Public rendering of an integer in the calendar's own numerals, optionally
+   * zero-padded to `pad` digits (e.g. the time-of-day fields render "۰۹" / "09"
+   * through this). Thin wrapper over {@link localizeNumber} so callers outside the
+   * adapter can localize digits without the protected internals.
+   */
+  formatNumber(value: number, pad = 0): string {
+    return this.localizeNumber(value, pad);
+  }
 }
 
 /** DI token carrying the active {@link CalendarAdapter}. */

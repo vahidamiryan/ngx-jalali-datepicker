@@ -1,0 +1,77 @@
+<div class="ndp-time" [class.ndp-time--disabled]="disabled()">
+  <!-- Hours -->
+  <span class="ndp-time__field">
+    <button
+      type="button"
+      class="ndp-time__step"
+      aria-label="افزایش ساعت"
+      tabindex="-1"
+      [disabled]="disabled()"
+      (click)="stepHours(1)"
+    >
+      ▲
+    </button>
+    <input
+      #hoursEl
+      type="text"
+      class="ndp-time__input"
+      inputmode="numeric"
+      autocomplete="off"
+      aria-label="ساعت"
+      maxlength="2"
+      [disabled]="disabled()"
+      [value]="hoursText()"
+      (input)="onHoursInput(hoursEl.value)"
+      (keydown)="onHoursKeydown($event)"
+    />
+    <button
+      type="button"
+      class="ndp-time__step"
+      aria-label="کاهش ساعت"
+      tabindex="-1"
+      [disabled]="disabled()"
+      (click)="stepHours(-1)"
+    >
+      ▼
+    </button>
+  </span>
+
+  <span class="ndp-time__sep" aria-hidden="true">:</span>
+
+  <!-- Minutes -->
+  <span class="ndp-time__field">
+    <button
+      type="button"
+      class="ndp-time__step"
+      aria-label="افزایش دقیقه"
+      tabindex="-1"
+      [disabled]="disabled()"
+      (click)="stepMinutes(1)"
+    >
+      ▲
+    </button>
+    <input
+      #minsEl
+      type="text"
+      class="ndp-time__input"
+      inputmode="numeric"
+      autocomplete="off"
+      aria-label="دقیقه"
+      maxlength="2"
+      [disabled]="disabled()"
+      [value]="minutesText()"
+      (input)="onMinutesInput(minsEl.value)"
+      (keydown)="onMinutesKeydown($event)"
+    />
+    <button
+      type="button"
+      class="ndp-time__step"
+      aria-label="کاهش دقیقه"
+      tabindex="-1"
+      [disabled]="disabled()"
+      (click)="stepMinutes(-1)"
+    >
+      ▼
+    </button>
+  </span>
+</div>

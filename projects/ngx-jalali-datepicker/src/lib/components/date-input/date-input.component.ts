@@ -23,6 +23,7 @@ import {
   NdpTheme,
 } from '../../core/types';
 import { atMidnight, dayKey } from '../../core/date-key.util';
+import { copyTimeOfDay } from '../../core/time.util';
 import { DatepickerComponent } from '../datepicker/datepicker.component';
 
 /** Which endpoint a text field edits. In single mode only `start` is used. */
@@ -70,6 +71,10 @@ export class DateInputComponent implements ControlValueAccessor {
   readonly secondaryCalendar = input<string | null>(null);
   /** Show the panel footer (Today / Clear / calendar toggle). */
   readonly showFooter = input(true);
+  /** Show an hours:minutes time picker in the panel (single mode only). */
+  readonly showTime = input(false);
+  /** Minute increment for the time picker (1–30). */
+  readonly minuteStep = input(1);
 
   /** Placeholder for the field(s). Defaults to the adapter's format hint. */
   readonly placeholder = input<string | null>(null);
@@ -105,7 +110,9 @@ export class DateInputComponent implements ControlValueAccessor {
     () => this.placeholder() ?? this.adapter().getInputFormatHint(),
   );
   private readonly effectiveCloseOnSelect = computed(
-    () => this.closeOnSelect() ?? this.mode() === 'single',
+    // Default: close after a single-mode pick — but stay open when the time picker
+    // is on, so the user can still adjust the clock. An explicit input always wins.
+    () => this.closeOnSelect() ?? (this.mode() === 'single' && !this.showTime()),
   );
 
   // ── CVA callbacks ───────────────────────────────────────────────────────────
@@ -179,7 +186,12 @@ export class DateInputComponent implements ControlValueAccessor {
   private commitEndpoint(which: Endpoint, date: Date | null): void {
     let next: DateRange;
     if (!this.isRange()) {
-      next = { start: date, end: null };
+      // Typed dates parse to midnight; keep the previously chosen time when the
+      // time picker is on so editing the date field doesn't reset the clock.
+      const start = date && this.showTime() && this.value().start
+        ? copyTimeOfDay(date, this.value().start!)
+        : date;
+      next = { start, end: null };
     } else {
       const cur = this.value();
       let start = which === 'start' ? date : cur.start;

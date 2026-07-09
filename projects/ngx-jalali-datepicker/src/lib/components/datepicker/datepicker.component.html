@@ -46,7 +46,7 @@
       @for (
         m of visibleMonths();
         track m.getTime();
-        let first = $first, last = $last
+        let first = $first, last = $last, i = $index
       ) {
         <div class="ndp-month-block">
           <div class="ndp-month-title">
@@ -64,7 +64,7 @@
               <span class="ndp-nav-spacer" aria-hidden="true"></span>
             }
 
-            @if (first && showQuickNav()) {
+            @if (showQuickNav()) {
               <span class="ndp-month-title__nav">
                 <span class="ndp-quick-nav">
 
@@ -74,12 +74,12 @@
                       type="button"
                       class="ndp-title-btn"
                       aria-haspopup="listbox"
-                      [attr.aria-expanded]="monthMenuOpen()"
-                      (click)="toggleMonthMenu()"
+                      [attr.aria-expanded]="monthMenuOpen() === i"
+                      (click)="toggleMonthMenu(i)"
                     >
-                      {{ activeMonthName() }} <span aria-hidden="true">▾</span>
+                      {{ blockMonthName(m) }} <span aria-hidden="true">▾</span>
                     </button>
-                    @if (monthMenuOpen()) {
+                    @if (monthMenuOpen() === i) {
                       <button
                         type="button"
                         class="ndp-menu-backdrop"
@@ -93,9 +93,9 @@
                               type="button"
                               role="option"
                               class="ndp-menu__item"
-                              [class.ndp-menu__item--active]="opt.month === activeMonthNumber()"
-                              [attr.aria-selected]="opt.month === activeMonthNumber()"
-                              (click)="pickMonth(opt.month)"
+                              [class.ndp-menu__item--active]="opt.month === blockMonthNumber(m)"
+                              [attr.aria-selected]="opt.month === blockMonthNumber(m)"
+                              (click)="pickMonth(opt.month, i)"
                             >
                               {{ opt.label }}
                             </button>
@@ -111,12 +111,12 @@
                       type="button"
                       class="ndp-title-btn"
                       aria-haspopup="listbox"
-                      [attr.aria-expanded]="yearMenuOpen()"
-                      (click)="toggleYearMenu()"
+                      [attr.aria-expanded]="yearMenuOpen() === i"
+                      (click)="toggleYearMenu(i)"
                     >
-                      {{ activeYearLabel() }} <span aria-hidden="true">▾</span>
+                      {{ blockYearLabel(m) }} <span aria-hidden="true">▾</span>
                     </button>
-                    @if (yearMenuOpen()) {
+                    @if (yearMenuOpen() === i) {
                       <button
                         type="button"
                         class="ndp-menu-backdrop"
@@ -130,9 +130,9 @@
                               type="button"
                               role="option"
                               class="ndp-menu__item"
-                              [class.ndp-menu__item--active]="opt.year === activeYearNumber()"
-                              [attr.aria-selected]="opt.year === activeYearNumber()"
-                              (click)="pickYear(opt.year)"
+                              [class.ndp-menu__item--active]="opt.year === blockYearNumber(m)"
+                              [attr.aria-selected]="opt.year === blockYearNumber(m)"
+                              (click)="pickYear(opt.year, i)"
                             >
                               {{ opt.label }}
                             </button>
@@ -195,6 +195,16 @@
         </div>
       }
     </div>
+
+    @if (timeVisible()) {
+      <ndp-time-picker
+        [adapter]="adapter()"
+        [time]="currentTime()"
+        [minuteStep]="minuteStep()"
+        [disabled]="disabled()"
+        (timeChange)="onTimeChange($event)"
+      />
+    }
   } @else {
     <div class="ndp-month-block">
       <div class="ndp-month-title ndp-month-title--period">
@@ -215,12 +225,12 @@
               type="button"
               class="ndp-title-btn"
               aria-haspopup="listbox"
-              [attr.aria-expanded]="yearMenuOpen()"
+              [attr.aria-expanded]="yearMenuOpen() === 0"
               (click)="toggleYearMenu()"
             >
               {{ periodHeading() }} <span aria-hidden="true">▾</span>
             </button>
-            @if (yearMenuOpen()) {
+            @if (yearMenuOpen() === 0) {
               <button
                 type="button"
                 class="ndp-menu-backdrop"

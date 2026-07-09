@@ -17,7 +17,7 @@ import changelogRaw from '../../../ngx-jalali-datepicker/CHANGELOG.md';
 import { parseChangelog } from './changelog';
 
 type PgCalendar = 'jalali' | 'gregorian' | 'hijri';
-type ExampleId = 'single' | 'range' | 'input' | 'period' | 'hijri' | 'triple' | 'custom' | 'dropdown' | 'forms';
+type ExampleId = 'single' | 'range' | 'input' | 'time' | 'period' | 'hijri' | 'triple' | 'custom' | 'dropdown' | 'forms';
 
 @Component({
   selector: 'app-root',
@@ -32,7 +32,7 @@ type ExampleId = 'single' | 'range' | 'input' | 'period' | 'hijri' | 'triple' | 
   },
 })
 export class App {
-  readonly version = '1.1.0';
+  readonly version = '1.2.0';
 
   // ── Theme ───────────────────────────────────────────────────────────────────
   readonly theme = signal<NdpTheme>('dark');
@@ -81,7 +81,11 @@ export class App {
   readonly pgFooter = signal(true);
   readonly pgQuickNav = signal(true);
   readonly pgInput = signal(false);
+  readonly pgTime = signal(false);
   readonly pgSlide = signal(true);
+
+  /** Time picker applies only to single-date mode. */
+  readonly pgIsSingle = computed(() => this.pgMode() === 'single');
 
   readonly pgValue = signal<DateRange>({ start: null, end: null });
 
@@ -96,7 +100,10 @@ export class App {
     const v = this.pgValue();
     if (!v.start) return '—';
     const cal = this.calAdapter(this.pgCalendar());
-    const fmt = (d: Date) => `${cal.format(d)}`;
+    const withTime = this.pgIsSingle() && this.pgTime();
+    const clock = (d: Date) =>
+      ` ${cal.formatNumber(d.getHours(), 2)}:${cal.formatNumber(d.getMinutes(), 2)}`;
+    const fmt = (d: Date) => `${cal.format(d)}${withTime ? clock(d) : ''}`;
     return v.end ? `${fmt(v.start)}  ←→  ${fmt(v.end)}` : fmt(v.start);
   });
 
@@ -118,6 +125,7 @@ export class App {
     if (!this.pgFooter()) lines.push(`  [showFooter]="false"`);
     if (this.pgIsDayMode() && !this.pgQuickNav()) lines.push(`  [showQuickNav]="false"`);
     if (this.pgIsDayMode() && this.pgInput()) lines.push(`  [showInput]="true"`);
+    if (this.pgIsSingle() && this.pgTime()) lines.push(`  [showTime]="true"`);
     if (this.pgSlide()) lines.push(`  animation="slide"`);
     lines.push(`  [(value)]="value"`);
     return `<ndp-datepicker\n${lines.join('\n')} />`;
@@ -174,6 +182,7 @@ export class App {
     { id: 'single', label: 'Single date' },
     { id: 'range', label: 'Range' },
     { id: 'input', label: 'Date input' },
+    { id: 'time', label: 'Date + time' },
     { id: 'period', label: 'Month / Year' },
     { id: 'hijri', label: 'Hijri' },
     { id: 'triple', label: 'Tri-calendar' },
@@ -187,6 +196,7 @@ export class App {
   readonly range = signal<DateRange>({ start: null, end: null });
   readonly inputSingle = signal<DateRange>({ start: null, end: null });
   readonly inputRange = signal<DateRange>({ start: null, end: null });
+  readonly time = signal<DateRange>({ start: null, end: null });
   readonly month = signal<DateRange>({ start: null, end: null });
   readonly year = signal<DateRange>({ start: null, end: null });
   readonly hijri = signal<DateRange>({ start: null, end: null });
@@ -200,6 +210,19 @@ export class App {
   readonly customShort = computed(() => this.describe(this.custom(), this.jShort));
   readonly inputSingleLong = computed(() => this.describe(this.inputSingle(), this.jLong));
   readonly inputRangeLong = computed(() => this.describe(this.inputRange(), this.jLong));
+
+  /** Date + time example: "چهارشنبه ۱۹ تیر — ۱۴:۳۰". */
+  readonly timeLabel = computed(() => {
+    const s = this.time().start;
+    if (!s) return '—';
+    const clock = `${this.jCal.formatNumber(s.getHours(), 2)}:${this.jCal.formatNumber(s.getMinutes(), 2)}`;
+    return `${this.jLong.format(s)} — ${clock}`;
+  });
+  /** ISO instant of the picked date+time, to show the time really rides on the value. */
+  readonly timeIso = computed(() => {
+    const s = this.time().start;
+    return s ? s.toLocaleString('sv-SE') : '—';
+  });
 
   readonly monthLabel = computed(() => {
     const s = this.month().start;
@@ -306,6 +329,15 @@ export class App {
 
 <!-- Or type directly inside the panel -->
 <ndp-datepicker [showInput]="true" [(value)]="value" />`,
+    time: `<!-- Time rides on the selected value's Date; picking another
+     day keeps the clock. minuteStep sets the increment. -->
+<ndp-datepicker
+  [showTime]="true"
+  [minuteStep]="5"
+  [(value)]="value" />
+
+<!-- Also works inside the typed field's popover -->
+<ndp-date-input [showTime]="true" [(value)]="value" />`,
     period: `<!-- Month grid -->
 <ndp-datepicker mode="month" [(value)]="month" />
 
@@ -384,6 +416,8 @@ readonly apiRows: { name: string; type: string; def: string; note: string }[] = 
   { name: 'showSecondaryDate', type: 'boolean', def: 'false', note: 'Show corresponding date in the secondary calendar' },
   { name: 'animation', type: "'none' | 'slide'", def: "'none'", note: 'Navigation animation' },
   { name: 'showInput', type: 'boolean', def: 'false', note: 'Type the date directly in a field above the grid (day modes)' },
+  { name: 'showTime', type: 'boolean', def: 'false', note: 'Show an hours:minutes time picker under the grid (single mode)' },
+  { name: 'minuteStep', type: 'number', def: '1', note: 'Minute increment for the time picker stepper (1–30)' },
   { name: 'customVars', type: 'Record<string,string>', def: '{}', note: 'Overrides --ndp-* design tokens' },
   { name: '(dateSelected)', type: 'EventEmitter<DateRange>', def: '—', note: 'Emitted when a date is selected' },
   { name: '<ndp-date-input>', type: 'component', def: '—', note: 'Standalone text field + calendar popover; same inputs, plus placeholder / closeOnSelect' },
