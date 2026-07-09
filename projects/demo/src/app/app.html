@@ -104,6 +104,7 @@
             [showFooter]="pgFooter()"
             [showQuickNav]="pgQuickNav()"
             [showInput]="pgIsDayMode() && pgInput()"
+            [showTime]="pgIsSingle() && pgTime()"
             [animation]="pgSlide() ? 'slide' : 'none'"
             [value]="pgValue()"
             (valueChange)="pgValue.set($event)" />
@@ -175,6 +176,12 @@
             <button type="button" class="sw" [class.sw--on]="pgInput()" (click)="pgInput.set(!pgInput())">
               <span class="sw__track"><span class="sw__thumb"></span></span>
               <span class="sw__text">showInput</span>
+            </button>
+          }
+          @if (pgIsSingle()) {
+            <button type="button" class="sw" [class.sw--on]="pgTime()" (click)="pgTime.set(!pgTime())">
+              <span class="sw__track"><span class="sw__thumb"></span></span>
+              <span class="sw__text">showTime</span>
             </button>
           }
           <button type="button" class="sw" [class.sw--on]="pgFooter()" (click)="pgFooter.set(!pgFooter())">
@@ -283,6 +290,17 @@
             <div class="result">
               <div class="result__row"><span class="result__tag">Single</span><code>{{ inputSingleLong() }}</code></div>
               <div class="result__row"><span class="result__tag">Range</span><code>{{ inputRangeLong() }}</code></div>
+            </div>
+          }
+
+          @case ('time') {
+            <p class="hint">Pick a day, then set the hours &amp; minutes with the stepper (or ↑/↓ keys). The time rides on the value's <code>Date</code> — picking another day keeps the clock. Here <code>minuteStep=5</code>.</p>
+            <ndp-datepicker
+              [theme]="theme()" animation="slide" [showTime]="true" [minuteStep]="5"
+              [value]="time()" (valueChange)="time.set($event)" />
+            <div class="result">
+              <div class="result__row"><span class="result__tag">Selected</span><code>{{ timeLabel() }}</code></div>
+              <div class="result__row"><span class="result__tag">Date value</span><code dir="ltr">{{ timeIso() }}</code></div>
             </div>
           }
 

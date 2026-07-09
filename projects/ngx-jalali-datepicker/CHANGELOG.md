@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 **npm:** https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker
 
+## [1.2.0]
+
+### Added
+- **Time-of-day picker** — new **`showTime`** input on `DatepickerComponent`
+  (default `false`, **single** mode only) renders an hours : minutes stepper
+  under the grid. The selected value's `Date` now carries the chosen time;
+  picking another day keeps the clock, and typing in `<ndp-date-input>` preserves
+  it too. **`minuteStep`** (default `1`, clamped 1–30) sets the minute increment
+  for the steppers and the ↑/↓ arrow keys. `<ndp-date-input>` forwards both inputs
+  and keeps its popover open while time is on. The digits localize to the active
+  calendar's numerals. New standalone **`<ndp-time-picker>`** component and pure
+  `time.util` helpers (`withTimeOfDay`, `getTimeOfDay`, `snapMinutes`, …) are
+  exported for headless reuse; `CalendarAdapter` gains a public `formatNumber()`.
+
+### Fixed
+- **`showQuickNav` in multi-month layouts** — the month/year quick-navigation
+  dropdowns now render on **every** calendar in a two- or three-month layout, not
+  just the first. Each block's dropdowns navigate that block independently, and
+  only one menu is open at a time.
+
 ## [1.1.0]
 
 ### Added

@@ -29,8 +29,10 @@ import {
 import { atMidnight, clampDate, dayKey } from '../../core/date-key.util';
 import { applySelection, isSelectionComplete } from '../../core/selection';
 import { buildMonthsView, buildYearsView, YEARS_PER_PAGE } from '../../core/build-period';
+import { TimeOfDay, getTimeOfDay, withTimeOfDay } from '../../core/time.util';
 import { CalendarMonthComponent } from '../calendar-month/calendar-month.component';
 import { CalendarPeriodComponent } from '../calendar-period/calendar-period.component';
+import { TimePickerComponent } from '../time-picker/time-picker.component';
 import { NdpDayCellTemplate } from '../day-cell.directive';
 
 /**
@@ -42,7 +44,7 @@ import { NdpDayCellTemplate } from '../day-cell.directive';
 @Component({
   selector: 'ndp-datepicker',
   standalone: true,
-  imports: [CalendarMonthComponent, CalendarPeriodComponent],
+  imports: [CalendarMonthComponent, CalendarPeriodComponent, TimePickerComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './datepicker.component.html',
   styleUrl: './datepicker.component.css',
@@ -80,6 +82,10 @@ export class DatepickerComponent implements ControlValueAccessor {
   readonly showQuickNav = input(true);
   /** Show a text field above the grid for typing the date directly. Day modes only (single / range). */
   readonly showInput = input(false);
+  /** Show an hours:minutes time picker under the grid. Single mode only — the selected value carries the chosen time. */
+  readonly showTime = input(false);
+  /** Minute increment for the time picker's stepper and arrow keys (1–30). */
+  readonly minuteStep = input(1);
   /** Show the same dates in a second calendar alongside the active one (e.g. Gregorian under Jalali). */
   readonly showSecondaryDate = input(false);
   /** Calendar id to use as the secondary. When null, the first registered calendar other than the active one. */
@@ -111,14 +117,36 @@ export class DatepickerComponent implements ControlValueAccessor {
     () => this.showInput() && (this.mode() === 'single' || this.mode() === 'range'),
   );
 
+  /** True when the time picker should render: opt-in, single mode, day view. */
+  protected readonly timeVisible = computed(
+    () => this.showTime() && this.mode() === 'single' && this.viewMode() === 'day',
+  );
+
+  /**
+   * Time-of-day shown in the time picker — the selected value's time, or the
+   * current wall-clock time as a sensible default before anything is picked.
+   */
+  protected readonly currentTime = computed<TimeOfDay>(() => {
+    const start = this.value().start;
+    return getTimeOfDay(start ?? new Date());
+  });
+
   /** Which grid the body shows. Driven by `mode`: month/year modes pin their grid. */
   protected readonly viewMode = computed<CalendarView>(() => {
     const m = this.mode();
     return m === 'month' || m === 'year' ? m : 'day';
   });
-  /** Open state of the header quick-navigation menus (day mode only). */
-  protected readonly monthMenuOpen = signal(false);
-  protected readonly yearMenuOpen = signal(false);
+  /**
+   * Open state of the header quick-navigation menus (day mode only). Stores the
+   * index of the month block whose menu is open (or null when closed), so each
+   * calendar in a multi-month layout owns its own dropdown.
+   */
+  protected readonly monthMenuOpen = signal<number | null>(null);
+  protected readonly yearMenuOpen = signal<number | null>(null);
+  /** True when any quick-nav menu is open (note: block index 0 is falsy on its own). */
+  protected readonly anyMenuOpen = computed(
+    () => this.monthMenuOpen() !== null || this.yearMenuOpen() !== null,
+  );
 
   /**
    * Direction of the in-flight slide animation, or null when idle. Set right
@@ -213,19 +241,28 @@ export class DatepickerComponent implements ControlValueAccessor {
       .map((label, i) => ({ month: i + 1, label })),
   );
 
-  /** Localized label of the active month, shown on the month dropdown trigger. */
-  protected readonly activeMonthName = computed(() => {
+  /** Localized month name for a block's month, shown on its month dropdown trigger. */
+  protected blockMonthName(monthStart: Date): string {
     const a = this.adapter();
-    return a.getMonthNames()[a.getMonth(this.activeMonth()) - 1];
-  });
+    return a.getMonthNames()[a.getMonth(monthStart) - 1];
+  }
 
-  /** Localized label of the active year, shown on the year dropdown trigger. */
-  protected readonly activeYearLabel = computed(() => this.adapter().getYearLabel(this.activeMonth()));
+  /** Localized year label for a block's month, shown on its year dropdown trigger. */
+  protected blockYearLabel(monthStart: Date): string {
+    return this.adapter().getYearLabel(monthStart);
+  }
 
-  /** Active month number (1-based), to flag the selected item in the month menu. */
-  protected readonly activeMonthNumber = computed(() => this.adapter().getMonth(this.activeMonth()));
+  /** A block's month number (1-based), to flag the selected item in its month menu. */
+  protected blockMonthNumber(monthStart: Date): number {
+    return this.adapter().getMonth(monthStart);
+  }
 
-  /** Active year number, to flag the selected item in the year menu. */
+  /** A block's year number, to flag the selected item in its year menu. */
+  protected blockYearNumber(monthStart: Date): number {
+    return this.adapter().getYear(monthStart);
+  }
+
+  /** Active year number for the month-picker header dropdown (single-block period view). */
   protected readonly activeYearNumber = computed(() => this.adapter().getYear(this.activeMonth()));
 
   /** Years offered by the year dropdown — bounded by [min, max] or a generous default span. */
@@ -350,12 +387,29 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   // ── Selection ──────────────────────────────────────────────────────────────
   protected onDaySelect(cell: DayCell): void {
-    const next = applySelection(this.mode(), this.value(), cell.date);
+    let next = applySelection(this.mode(), this.value(), cell.date);
+    // In time mode, carry the currently chosen time onto the newly picked day so
+    // clicking a date doesn't reset the clock to midnight.
+    if (this.timeVisible()) {
+      const t = this.currentTime();
+      next = { start: next.start ? withTimeOfDay(next.start, t.hours, t.minutes) : null, end: next.end };
+    }
     this.value.set(next);
     this.focusedDate.set(cell.date);
     this.onChange(next);
     this.onTouched();
     if (isSelectionComplete(this.mode(), next)) this.hovered.set(null);
+    this.dateSelected.emit(next);
+  }
+
+  /** Apply a new time-of-day to the selected day (or today if nothing is picked yet). */
+  protected onTimeChange(time: TimeOfDay): void {
+    const start = this.value().start ?? atMidnight(this.today());
+    const next: DateRange = { start: withTimeOfDay(start, time.hours, time.minutes), end: null };
+    this.value.set(next);
+    this.focusedDate.set(next.start);
+    this.onChange(next);
+    this.onTouched();
     this.dateSelected.emit(next);
   }
 
@@ -493,37 +547,47 @@ export class DatepickerComponent implements ControlValueAccessor {
   }
 
   // ── Quick-navigation menus ──────────────────────────────────────────────────
-  protected toggleMonthMenu(): void {
-    this.yearMenuOpen.set(false);
-    this.monthMenuOpen.update(v => !v);
+  /** Toggle the month menu for block `index`; only one menu is open at a time. */
+  protected toggleMonthMenu(index = 0): void {
+    this.yearMenuOpen.set(null);
+    this.monthMenuOpen.update(v => (v === index ? null : index));
   }
 
-  protected toggleYearMenu(): void {
-    this.monthMenuOpen.set(false);
-    this.yearMenuOpen.update(v => !v);
+  /** Toggle the year menu for block `index`; only one menu is open at a time. */
+  protected toggleYearMenu(index = 0): void {
+    this.monthMenuOpen.set(null);
+    this.yearMenuOpen.update(v => (v === index ? null : index));
   }
 
   protected closeMenus(): void {
-    this.monthMenuOpen.set(false);
-    this.yearMenuOpen.set(false);
+    this.monthMenuOpen.set(null);
+    this.yearMenuOpen.set(null);
   }
 
-  /** Jump the active view to `month` of the current year, keeping the day view. */
-  protected pickMonth(month: number): void {
+  /**
+   * Jump so that block `index` shows `month` of its current year, keeping the
+   * day view. `activeMonth` is the first block, so a later block is offset back
+   * by `index` months to land the pick in that block's slot.
+   */
+  protected pickMonth(month: number, index = 0): void {
     const a = this.adapter();
-    const target = a.createDate(a.getYear(this.activeMonth()), month, 1);
+    const blockMonth = a.addCalendarMonths(this.activeMonth(), index);
+    const picked = a.createDate(a.getYear(blockMonth), month, 1);
+    const target = a.addCalendarMonths(picked, -index);
     this.beginSlideTowards(target);
     this.activeMonth.set(target);
-    this.monthMenuOpen.set(false);
+    this.monthMenuOpen.set(null);
   }
 
-  /** Jump the active view to `year`, preserving the current month. */
-  protected pickYear(year: number): void {
+  /** Jump so that block `index` shows `year`, preserving that block's month. */
+  protected pickYear(year: number, index = 0): void {
     const a = this.adapter();
-    const target = a.createDate(year, a.getMonth(this.activeMonth()), 1);
+    const blockMonth = a.addCalendarMonths(this.activeMonth(), index);
+    const picked = a.createDate(year, a.getMonth(blockMonth), 1);
+    const target = a.addCalendarMonths(picked, -index);
     this.beginSlideTowards(target);
     this.activeMonth.set(target);
-    this.yearMenuOpen.set(false);
+    this.yearMenuOpen.set(null);
   }
 
   protected clear(): void {
@@ -579,7 +643,7 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   // ── Keyboard navigation ──────────────────────────────────────────────────────
   protected onKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Escape' && (this.monthMenuOpen() || this.yearMenuOpen())) {
+    if (event.key === 'Escape' && this.anyMenuOpen()) {
       this.closeMenus();
       return;
     }
