@@ -27,6 +27,8 @@ export class TimePickerComponent {
   readonly minuteStep = input(1);
   /** Disable the whole control (mirrors the panel's disabled state). */
   readonly disabled = input(false);
+  /** Draw the top divider that separates the stepper from a grid above it. */
+  readonly bordered = input(true);
 
   /** Emitted with the new {@link TimeOfDay} whenever hours or minutes change. */
   readonly timeChange = output<TimeOfDay>();

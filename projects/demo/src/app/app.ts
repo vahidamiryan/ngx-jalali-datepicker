@@ -3,6 +3,7 @@ import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import {
   DatepickerComponent,
   DateInputComponent,
+  TimeInputComponent,
   NdpDayCellTemplate,
   DateRange,
   DatepickerMode,
@@ -23,7 +24,7 @@ type ExampleId = 'single' | 'range' | 'input' | 'time' | 'period' | 'hijri' | 't
   selector: 'app-root',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatepickerComponent, DateInputComponent, NdpDayCellTemplate, ReactiveFormsModule],
+  imports: [DatepickerComponent, DateInputComponent, TimeInputComponent, NdpDayCellTemplate, ReactiveFormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
   host: {
@@ -32,7 +33,7 @@ type ExampleId = 'single' | 'range' | 'input' | 'time' | 'period' | 'hijri' | 't
   },
 })
 export class App {
-  readonly version = '1.2.0';
+  readonly version = '1.3.0';
 
   // ── Theme ───────────────────────────────────────────────────────────────────
   readonly theme = signal<NdpTheme>('dark');
@@ -197,6 +198,8 @@ export class App {
   readonly inputSingle = signal<DateRange>({ start: null, end: null });
   readonly inputRange = signal<DateRange>({ start: null, end: null });
   readonly time = signal<DateRange>({ start: null, end: null });
+  /** Standalone time-only field (no calendar) — value is a Date carrying the time. */
+  readonly timeOnly = signal<Date | null>(null);
   readonly month = signal<DateRange>({ start: null, end: null });
   readonly year = signal<DateRange>({ start: null, end: null });
   readonly hijri = signal<DateRange>({ start: null, end: null });
@@ -222,6 +225,12 @@ export class App {
   readonly timeIso = computed(() => {
     const s = this.time().start;
     return s ? s.toLocaleString('sv-SE') : '—';
+  });
+  /** Label for the standalone time-only field. */
+  readonly timeOnlyLabel = computed(() => {
+    const t = this.timeOnly();
+    if (!t) return '—';
+    return `${this.jCal.formatNumber(t.getHours(), 2)}:${this.jCal.formatNumber(t.getMinutes(), 2)}`;
   });
 
   readonly monthLabel = computed(() => {
@@ -337,7 +346,11 @@ export class App {
   [(value)]="value" />
 
 <!-- Also works inside the typed field's popover -->
-<ndp-date-input [showTime]="true" [(value)]="value" />`,
+<ndp-date-input [showTime]="true" [(value)]="value" />
+
+<!-- Time only, no calendar — a Date carrying just the time.
+     Type "0930" or step in the popover. It's a ControlValueAccessor. -->
+<ndp-time-input [minuteStep]="5" [(value)]="timeValue" />`,
     period: `<!-- Month grid -->
 <ndp-datepicker mode="month" [(value)]="month" />
 

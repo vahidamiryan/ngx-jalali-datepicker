@@ -302,6 +302,17 @@
               <div class="result__row"><span class="result__tag">Selected</span><code>{{ timeLabel() }}</code></div>
               <div class="result__row"><span class="result__tag">Date value</span><code dir="ltr">{{ timeIso() }}</code></div>
             </div>
+
+            <p class="hint">Or a <strong>time-only</strong> field with no calendar — type <code dir="ltr">0930</code> or open the popover to step. Its value is a <code>Date</code> carrying just the time.</p>
+            <div class="input-demo__row">
+              <span class="input-demo__label">Time</span>
+              <ndp-time-input
+                [theme]="theme()" [minuteStep]="5"
+                [value]="timeOnly()" (valueChange)="timeOnly.set($event)" />
+            </div>
+            <div class="result">
+              <div class="result__row"><span class="result__tag">Time only</span><code dir="ltr">{{ timeOnlyLabel() }}</code></div>
+            </div>
           }
 
           @case ('period') {

@@ -1,0 +1,51 @@
+<div class="ndp-input" [class.ndp-input--disabled]="disabled()">
+  <div class="ndp-input__fields">
+    <input
+      #el
+      type="text"
+      class="ndp-input__field"
+      [class.ndp-input__field--invalid]="invalid()"
+      [id]="inputId()"
+      [value]="text()"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      autocomplete="off"
+      inputmode="numeric"
+      maxlength="5"
+      aria-haspopup="dialog"
+      [attr.aria-expanded]="open()"
+      [attr.aria-invalid]="invalid()"
+      (input)="onInput(el.value)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+    />
+
+    <button
+      type="button"
+      class="ndp-input__toggle"
+      aria-label="باز کردن انتخاب ساعت"
+      [attr.aria-expanded]="open()"
+      [disabled]="disabled()"
+      (click)="toggle()"
+    >
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+      </svg>
+    </button>
+  </div>
+
+  @if (open()) {
+    <button type="button" class="ndp-input__backdrop" aria-label="بستن" (click)="close()"></button>
+    <div class="ndp-input__popover" role="dialog">
+      <ndp-time-picker
+        [adapter]="adapter()"
+        [time]="currentTime()"
+        [minuteStep]="minuteStep()"
+        [disabled]="disabled()"
+        [bordered]="false"
+        (timeChange)="onTimeChange($event)"
+      />
+    </div>
+  }
+</div>
