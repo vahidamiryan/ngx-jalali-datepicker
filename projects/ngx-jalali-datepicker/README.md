@@ -196,6 +196,35 @@ Both accept `/`, `-` or `.` separators and Persian/Arabic-Indic digits, and an
 impossible date (month 13, the 31st of a 30-day month, …) is flagged
 (`aria-invalid`) without changing the value.
 
+## Time of day
+
+Set `showTime` (single mode only) to render an hours : minutes stepper under the
+grid. The selected value's `Date` carries the chosen time, so `value.start`
+becomes a full timestamp rather than local midnight. Picking another day keeps
+the clock, and typing in `<ndp-date-input>` preserves it too. `minuteStep` (1–30,
+default `1`) sets the increment for the steppers and the `↑`/`↓` arrow keys.
+
+```html
+<!-- Pick a day, then set the time. 5-minute increments. -->
+<ndp-datepicker [showTime]="true" [minuteStep]="5" [(value)]="value" />
+
+<!-- Also available inside the typed field's popover -->
+<ndp-date-input [showTime]="true" [(value)]="value" />
+```
+
+The digits render in the active calendar's own numerals. Read or set the time
+headlessly with the exported helpers:
+
+```ts
+import { getTimeOfDay, withTimeOfDay } from '@vahidamirian/ngx-jalali-datepicker';
+
+getTimeOfDay(value().start!);              // { hours: 14, minutes: 30 }
+withTimeOfDay(value().start!, 9, 0);       // same day at 09:00 (a new Date)
+```
+
+> Only `single` mode carries a time. `range` / `month` / `year` keep their
+> midnight-based value contract, so `showTime` is ignored outside single mode.
+
 ### Parsing without UI
 
 `parse` / `formatInput` live on `CalendarAdapter`, so you can convert a typed
@@ -219,6 +248,7 @@ cal.formatInput(new Date());     // "۱۴۰۴/۰۳/۲۸"
 | `min` / `max` / `dateFilter` | — | — | Forwarded to the panel. |
 | `theme` / `animation` / `numberOfMonths` / `showSecondaryDate` / `secondaryCalendar` / `customVars` | — | — | Forwarded to the panel. |
 | `showFooter` | `boolean` | `true` | Panel footer (Today / Clear / toggle). |
+| `showTime` / `minuteStep` | — | — | Forwarded to the panel (single mode). See [Time of day](#time-of-day). The popover stays open while time is on. |
 | `placeholder` | `string \| null` | adapter hint | Field placeholder. |
 | `inputId` | `string \| null` | `null` | `id` on the start field for an external `<label for>`. |
 | `closeOnSelect` | `boolean \| null` | `null` | Close the popover after a pick. `null` = close in single, stay open in range. |
@@ -342,10 +372,10 @@ math, never raw `Intl` formatting.
 
 ## Public API
 
-- **Components:** `DatepickerComponent` (`ndp-datepicker`), `DateInputComponent` (`ndp-date-input`), `CalendarMonthComponent` (`ndp-calendar-month`), `CalendarPeriodComponent` (`ndp-calendar-period`)
+- **Components:** `DatepickerComponent` (`ndp-datepicker`), `DateInputComponent` (`ndp-date-input`), `TimePickerComponent` (`ndp-time-picker`), `CalendarMonthComponent` (`ndp-calendar-month`), `CalendarPeriodComponent` (`ndp-calendar-period`)
 - **Directive:** `NdpDayCellTemplate` (`ng-template[ndpDayCell]`)
 - **Adapters:** `CalendarAdapter` (abstract), `GregorianCalendarAdapter`, `JalaliCalendarAdapter`, `HijriCalendarAdapter` (+ `NdpHijriConfig`, `NdpHijriDayAdjustment`, `NdpHijriDayAdjuster`)
-- **Headless core:** `buildMonthView`, `buildMonthsView`, `buildYearsView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, `toLatinDigits`, `toPersianDigits`, adapter `parse` / `formatInput`, types (`DateRange`, `DayCell`, `MonthView`, `PeriodCell`, `PeriodView`, `DatepickerMode`, `CalendarView`, `DateFilterFn`, `NdpTheme`, `NdpAnimation`)
+- **Headless core:** `buildMonthView`, `buildMonthsView`, `buildYearsView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, `toLatinDigits`, `toPersianDigits`, `getTimeOfDay`, `withTimeOfDay`, `copyTimeOfDay`, `snapMinutes`, `stepMinutes`, adapter `parse` / `formatInput` / `formatNumber`, types (`DateRange`, `DayCell`, `MonthView`, `PeriodCell`, `PeriodView`, `TimeOfDay`, `DatepickerMode`, `CalendarView`, `DateFilterFn`, `NdpTheme`, `NdpAnimation`)
 - **Config:** `provideNgxDatepicker`, `NDP_CALENDAR_ADAPTERS`
 
 > **Configuration is required.** `provideNgxDatepicker(...)` has no zero-config
@@ -372,6 +402,8 @@ math, never raw `Intl` formatting.
 | `showToday` / `showClear` / `showCalendarToggle` | `boolean` | `true` | Footer action buttons. |
 | `showQuickNav` | `boolean` | `true` | Show the month/year quick-navigation dropdowns in the header. Set `false` for a plain, non-interactive month/year label. |
 | `showInput` | `boolean` | `false` | Render a typed-date field above the grid (day modes only). See [Typing dates](#typing-dates-input-field). |
+| `showTime` | `boolean` | `false` | Render an hours:minutes time picker under the grid (single mode only). The value's `Date` carries the time. See [Time of day](#time-of-day). |
+| `minuteStep` | `number` | `1` | Minute increment for the time picker's stepper and arrow keys (clamped 1–30). |
 
 **Output:** `(dateSelected)` emits the `DateRange` on every selection — handy for closing a dropdown.
 

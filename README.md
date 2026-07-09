@@ -107,6 +107,25 @@ cal.parse('1404/07/31');      // null — Mehr has 30 days
 cal.formatInput(new Date());  // "۱۴۰۴/۰۳/۲۸"
 ```
 
+## Time of day
+
+Set `showTime` (single mode only) to render an hours : minutes stepper under the
+grid. The selected value's `Date` then carries the chosen time instead of local
+midnight; picking another day keeps the clock. `minuteStep` (1–30, default `1`)
+sets the increment for the steppers and the `↑`/`↓` arrow keys.
+
+```html
+<ndp-datepicker [showTime]="true" [minuteStep]="5" [(value)]="value" />
+<ndp-date-input [showTime]="true" [(value)]="value" />
+```
+
+```ts
+import { getTimeOfDay, withTimeOfDay } from 'ngx-jalali-datepicker';
+
+getTimeOfDay(value().start!);          // { hours: 14, minutes: 30 }
+withTimeOfDay(value().start!, 9, 0);   // same day at 09:00 (a new Date)
+```
+
 ## Building a dropdown / popover
 
 The component is just a panel — wrap it however you like. In `single` mode it
@@ -224,10 +243,10 @@ math, never raw `Intl` formatting.
 
 ## Public API
 
-- **Components:** `DatepickerComponent` (`ndp-datepicker`), `DateInputComponent` (`ndp-date-input`), `CalendarMonthComponent` (`ndp-calendar-month`)
+- **Components:** `DatepickerComponent` (`ndp-datepicker`), `DateInputComponent` (`ndp-date-input`), `TimePickerComponent` (`ndp-time-picker`), `CalendarMonthComponent` (`ndp-calendar-month`)
 - **Directive:** `NdpDayCellTemplate` (`ng-template[ndpDayCell]`)
 - **Adapters:** `CalendarAdapter` (abstract), `GregorianCalendarAdapter`, `JalaliCalendarAdapter`, `HijriCalendarAdapter` (+ `NdpHijriConfig`, `NdpHijriDayAdjustment`, `NdpHijriDayAdjuster`)
-- **Headless core:** `buildMonthView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, `toLatinDigits`, `toPersianDigits`, adapter `parse` / `formatInput`, types (`DateRange`, `DayCell`, `MonthView`, `DatepickerMode`, `DateFilterFn`)
+- **Headless core:** `buildMonthView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, `toLatinDigits`, `toPersianDigits`, `getTimeOfDay`, `withTimeOfDay`, `snapMinutes`, `stepMinutes`, adapter `parse` / `formatInput` / `formatNumber`, types (`DateRange`, `DayCell`, `MonthView`, `TimeOfDay`, `DatepickerMode`, `DateFilterFn`)
 - **Config:** `provideNgxDatepicker`, `NDP_CALENDAR_ADAPTERS`
 
 ### `DatepickerComponent` inputs
@@ -247,6 +266,8 @@ math, never raw `Intl` formatting.
 | `showSummary` | `boolean` | `true` | Show the selected-date summary bar inside the footer. Set `false` to hide just the summary while keeping the action buttons. |
 | `showToday` / `showClear` / `showCalendarToggle` | `boolean` | `true` | Footer action buttons. |
 | `showInput` | `boolean` | `false` | Render a typed-date field above the grid (day modes only). See [Typing dates](#typing-dates-input-field). |
+| `showTime` | `boolean` | `false` | Render an hours:minutes time picker under the grid (single mode only). The value's `Date` carries the time. See [Time of day](#time-of-day). |
+| `minuteStep` | `number` | `1` | Minute increment for the time picker's stepper and arrow keys (clamped 1–30). |
 
 **Output:** `(dateSelected)` emits the `DateRange` on every selection — handy for closing a dropdown.
 
