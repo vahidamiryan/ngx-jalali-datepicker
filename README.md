@@ -126,6 +126,15 @@ getTimeOfDay(value().start!);          // { hours: 14, minutes: 30 }
 withTimeOfDay(value().start!, 9, 0);   // same day at 09:00 (a new Date)
 ```
 
+**`<ndp-time-input>`** — a standalone **time-only** field (no calendar): an
+`HH:mm` text input with a stepper popover. Type `0930` or step in the popover. Its
+value is a `Date` carrying just the time, and it's a `ControlValueAccessor`.
+
+```html
+<ndp-time-input [minuteStep]="15" [(value)]="time" /> <!-- value: Date | null -->
+<ndp-time-input [formControl]="timeCtrl" />
+```
+
 ## Building a dropdown / popover
 
 The component is just a panel — wrap it however you like. In `single` mode it
@@ -243,7 +252,7 @@ math, never raw `Intl` formatting.
 
 ## Public API
 
-- **Components:** `DatepickerComponent` (`ndp-datepicker`), `DateInputComponent` (`ndp-date-input`), `TimePickerComponent` (`ndp-time-picker`), `CalendarMonthComponent` (`ndp-calendar-month`)
+- **Components:** `DatepickerComponent` (`ndp-datepicker`), `DateInputComponent` (`ndp-date-input`), `TimePickerComponent` (`ndp-time-picker`), `TimeInputComponent` (`ndp-time-input`), `CalendarMonthComponent` (`ndp-calendar-month`)
 - **Directive:** `NdpDayCellTemplate` (`ng-template[ndpDayCell]`)
 - **Adapters:** `CalendarAdapter` (abstract), `GregorianCalendarAdapter`, `JalaliCalendarAdapter`, `HijriCalendarAdapter` (+ `NdpHijriConfig`, `NdpHijriDayAdjustment`, `NdpHijriDayAdjuster`)
 - **Headless core:** `buildMonthView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, `toLatinDigits`, `toPersianDigits`, `getTimeOfDay`, `withTimeOfDay`, `snapMinutes`, `stepMinutes`, adapter `parse` / `formatInput` / `formatNumber`, types (`DateRange`, `DayCell`, `MonthView`, `TimeOfDay`, `DatepickerMode`, `DateFilterFn`)

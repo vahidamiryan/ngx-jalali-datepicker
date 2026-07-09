@@ -225,6 +225,32 @@ withTimeOfDay(value().start!, 9, 0);       // same day at 09:00 (a new Date)
 > Only `single` mode carries a time. `range` / `month` / `year` keep their
 > midnight-based value contract, so `showTime` is ignored outside single mode.
 
+### Time only (no calendar)
+
+**`<ndp-time-input>`** is a standalone field for picking **just** a time — a text
+input showing `HH:mm` with a stepper popover, no calendar. Type `0930` (Persian
+or ASCII digits) or open the popover to step. Its value is a `Date` carrying the
+time (the day is today unless one is written in), so it drops straight into the
+`Date`-based API and works as a `ControlValueAccessor`.
+
+```html
+<ndp-time-input [(value)]="time" />                 <!-- value: Date | null -->
+<ndp-time-input [minuteStep]="15" [(value)]="time" />
+<ndp-time-input [formControl]="timeCtrl" />          <!-- reactive forms -->
+```
+
+| Input | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `value` (model) | `Date \| null` | `null` | Two-way; also a `ControlValueAccessor`. The date's *time* is what matters. |
+| `minuteStep` | `number` | `1` | Minute increment for the stepper / arrow keys (1–30). |
+| `calendar` (model) | `string` | first registered | Calendar whose numerals the digits render in. |
+| `theme` / `customVars` | — | — | Same theming as the picker. |
+| `placeholder` | `string` | `'HH:mm'` | Field placeholder. |
+| `inputId` | `string \| null` | `null` | `id` on the input for an external `<label for>`. |
+| `closeOnSelect` | `boolean` | `false` | Close the popover after a stepper change. |
+
+**Output:** `(timeSelected)` emits the `Date` on every commit (typed or stepped).
+
 ### Parsing without UI
 
 `parse` / `formatInput` live on `CalendarAdapter`, so you can convert a typed
@@ -372,7 +398,7 @@ math, never raw `Intl` formatting.
 
 ## Public API
 
-- **Components:** `DatepickerComponent` (`ndp-datepicker`), `DateInputComponent` (`ndp-date-input`), `TimePickerComponent` (`ndp-time-picker`), `CalendarMonthComponent` (`ndp-calendar-month`), `CalendarPeriodComponent` (`ndp-calendar-period`)
+- **Components:** `DatepickerComponent` (`ndp-datepicker`), `DateInputComponent` (`ndp-date-input`), `TimePickerComponent` (`ndp-time-picker`), `TimeInputComponent` (`ndp-time-input`), `CalendarMonthComponent` (`ndp-calendar-month`), `CalendarPeriodComponent` (`ndp-calendar-period`)
 - **Directive:** `NdpDayCellTemplate` (`ng-template[ndpDayCell]`)
 - **Adapters:** `CalendarAdapter` (abstract), `GregorianCalendarAdapter`, `JalaliCalendarAdapter`, `HijriCalendarAdapter` (+ `NdpHijriConfig`, `NdpHijriDayAdjustment`, `NdpHijriDayAdjuster`)
 - **Headless core:** `buildMonthView`, `buildMonthsView`, `buildYearsView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, `toLatinDigits`, `toPersianDigits`, `getTimeOfDay`, `withTimeOfDay`, `copyTimeOfDay`, `snapMinutes`, `stepMinutes`, adapter `parse` / `formatInput` / `formatNumber`, types (`DateRange`, `DayCell`, `MonthView`, `PeriodCell`, `PeriodView`, `TimeOfDay`, `DatepickerMode`, `CalendarView`, `DateFilterFn`, `NdpTheme`, `NdpAnimation`)

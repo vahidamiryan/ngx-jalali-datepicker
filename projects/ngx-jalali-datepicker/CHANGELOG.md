@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 **npm:** https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker
 
+## [1.3.0]
+
+### Added
+- **Time-only field** — new standalone **`<ndp-time-input>`** component: a text
+  field showing `HH:mm` with a stepper popover, and **no calendar**. Type `0930`
+  (Persian or ASCII digits) or step in the popover. Its value is a `Date` that
+  carries just the time (day defaults to today), so it stays interchangeable with
+  the rest of the `Date`-based API and is a drop-in `ControlValueAccessor`.
+  Honors `minuteStep`, `theme`, `customVars`, `calendar`, and `closeOnSelect`.
+- `<ndp-time-picker>` gains a **`bordered`** input (default `true`) to drop its
+  top divider when embedded in a card such as the time-input popover.
+
 ## [1.2.0]
 
 ### Added
