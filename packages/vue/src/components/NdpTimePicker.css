@@ -1,0 +1,81 @@
+:host {
+  display: block;
+}
+
+.ndp-time {
+  direction: ltr;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding-block: 0.6rem 0.2rem;
+}
+
+.ndp-time--bordered {
+  border-top: 1px solid var(--ndp-border);
+  margin-top: 0.4rem;
+}
+
+.ndp-time--disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.ndp-time__field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.ndp-time__step {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--ndp-muted);
+  cursor: pointer;
+  line-height: 1;
+  font-size: 0.6rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.ndp-time__step:hover:not(:disabled) {
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+  color: var(--ndp-text);
+}
+
+.ndp-time__step:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.ndp-time__input {
+  width: 2.6rem;
+  text-align: center;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ndp-text);
+  background: var(--ndp-surface);
+  border: 1px solid var(--ndp-border);
+  border-radius: 8px;
+  padding: 0.3rem 0.2rem;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.ndp-time__input:focus {
+  outline: none;
+  border-color: var(--ndp-accent);
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-time__sep {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ndp-text);
+  /* Keep the colon centered against the taller stepper fields. */
+  padding-block: 0.2rem;
+}
