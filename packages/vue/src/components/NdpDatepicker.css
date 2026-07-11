@@ -1,4 +1,4 @@
-:host {
+.ndp-root {
   /* ── Theme tokens — override any of these from the consuming app ─────────── */
   --ndp-accent: #3b82f6;
   --ndp-accent-hover: #2563eb;
@@ -30,7 +30,7 @@
 }
 
 /* ── Dark theme ─────────────────────────────────────────────────────────── */
-:host([data-ndp-theme="dark"]) {
+.ndp-root[data-ndp-theme="dark"] {
   color-scheme: dark;
   --ndp-accent: #60a5fa;
   --ndp-accent-hover: #93c5fd;
@@ -52,7 +52,7 @@
 
 /* ── Auto theme — follows OS prefers-color-scheme ───────────────────────── */
 @media (prefers-color-scheme: dark) {
-  :host([data-ndp-theme="auto"]) {
+  .ndp-root[data-ndp-theme="auto"] {
     color-scheme: dark;
     --ndp-accent: #60a5fa;
     --ndp-accent-hover: #93c5fd;
@@ -424,7 +424,7 @@
 
 /* ── Navigation slide animation (opt-in via [animation]="'slide'") ─────────── */
 /* The duration/easing are themable like every other token. */
-:host {
+.ndp-root {
   --ndp-slide-duration: 0.22s;
   --ndp-slide-easing: cubic-bezier(0.25, 0.8, 0.4, 1);
   --ndp-slide-distance: 1.25rem;
@@ -467,11 +467,11 @@
   }
 
   /* RTL: forward travel is visually leftward, so swap the entry sides. */
-  :host([dir="rtl"]) .ndp-panel--slide-prev .ndp-calendar-wrap {
+  .ndp-root[dir="rtl"] .ndp-panel--slide-prev .ndp-calendar-wrap {
     animation-name: ndp-slide-from-end;
   }
 
-  :host([dir="rtl"]) .ndp-panel--slide-next .ndp-calendar-wrap {
+  .ndp-root[dir="rtl"] .ndp-panel--slide-next .ndp-calendar-wrap {
     animation-name: ndp-slide-from-start;
   }
 }

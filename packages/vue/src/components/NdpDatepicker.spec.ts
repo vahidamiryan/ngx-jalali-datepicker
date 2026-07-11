@@ -25,6 +25,15 @@ describe('NdpDatepicker (Vue)', () => {
     expect(days.length).toBe(42);
   });
 
+  it('puts the .ndp-root theme class on the host so the --ndp-* CSS vars apply', () => {
+    // Regression: the CSS defines every --ndp-* token on a root selector (ported
+    // from Angular's :host). Without .ndp-root on the host element the whole
+    // component renders unstyled (undefined --ndp-surface, --ndp-radius, …).
+    const wrapper = mountPicker();
+    expect(wrapper.element.classList.contains('ndp-root')).toBe(true);
+    expect(wrapper.find('.ndp-root .ndp-panel').exists()).toBe(true);
+  });
+
   it('emits update:modelValue and dateSelected on a day click (single mode)', async () => {
     const wrapper = mountPicker();
     const enabledDay = wrapper.findAll('.ndp-day').find((d) => !d.attributes('disabled') && !d.classes('ndp-day--outside'));

@@ -197,7 +197,7 @@ function onPanelSelected(range: DateRange): void {
 
 <template>
   <div
-    class="ndp-input"
+    class="ndp-root ndp-input"
     :class="{ 'ndp-input--disabled': disabled }"
     :dir="adapter.direction"
     :data-ndp-theme="theme"

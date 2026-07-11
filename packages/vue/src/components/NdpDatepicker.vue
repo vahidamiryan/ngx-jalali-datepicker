@@ -122,6 +122,7 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
 <template>
   <div
     ref="host"
+    class="ndp-root"
     :dir="dp.adapter.value.direction"
     :data-ndp-theme="theme"
     :style="styleVars"
