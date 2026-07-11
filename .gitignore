@@ -6,8 +6,16 @@
 /out-tsc
 /bazel-out
 
+# Per-package build output (npm workspaces monorepo)
+packages/*/dist
+apps/*/dist
+apps/*/.vitepress/dist
+apps/*/.vitepress/cache
+**/*.tsbuildinfo
+
 # Node
 /node_modules
+**/node_modules
 npm-debug.log
 yarn-error.log
 

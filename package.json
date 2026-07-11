@@ -1,12 +1,21 @@
 {
-  "name": "ngx-jalali-datepicker-workspace",
+  "name": "ndp-workspace",
   "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "build": "npm run build -w @ndp/core && npm run build -w @ndp/angular && npm run build -w @ndp/vue",
+    "build:core": "npm run build -w @ndp/core",
+    "build:angular": "npm run build -w @ndp/angular",
+    "build:vue": "npm run build -w @ndp/vue",
+    "test": "npm run test -w @ndp/core && npm run test -w @ndp/vue",
+    "test:core": "npm run test -w @ndp/core",
+    "test:vue": "npm run test -w @ndp/vue",
+    "dev:docs": "npm run dev -w @ndp/docs",
+    "build:docs": "npm run build -w @ndp/docs"
   },
   "prettier": {
     "overrides": [
@@ -18,21 +27,16 @@
       }
     ]
   },
-  "private": true,
-  "dependencies": {
+  "devDependencies": {
+    "@angular/build": "^20.3.27",
+    "@angular/cli": "^20.1.1",
     "@angular/common": "^20.1.0",
     "@angular/compiler": "^20.1.0",
+    "@angular/compiler-cli": "^20.1.0",
     "@angular/core": "^20.1.0",
     "@angular/forms": "^20.1.0",
     "@angular/platform-browser": "^20.1.0",
     "@angular/router": "^20.1.0",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
-  },
-  "devDependencies": {
-    "@angular/build": "^20.3.27",
-    "@angular/cli": "^20.1.1",
-    "@angular/compiler-cli": "^20.1.0",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.8.0",
     "karma": "~6.4.0",
@@ -41,6 +45,8 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "ng-packagr": "^20.3.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
     "typescript": "~5.8.2"
   }
 }

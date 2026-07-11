@@ -13,8 +13,8 @@ import {
   HijriCalendarAdapter,
   JalaaliMath,
   HijriMath,
-} from 'ngx-jalali-datepicker';
-import changelogRaw from '../../../ngx-jalali-datepicker/CHANGELOG.md';
+} from '@ndp/angular';
+import changelogRaw from '../../../../packages/angular/CHANGELOG.md';
 import { parseChangelog } from './changelog';
 
 type PgCalendar = 'jalali' | 'gregorian' | 'hijri';

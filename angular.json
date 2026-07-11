@@ -7,20 +7,20 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "ngx-jalali-datepicker": {
+    "angular": {
       "projectType": "library",
-      "root": "projects/ngx-jalali-datepicker",
-      "sourceRoot": "projects/ngx-jalali-datepicker/src",
+      "root": "packages/angular",
+      "sourceRoot": "packages/angular/src",
       "prefix": "ndp",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "projects/ngx-jalali-datepicker/tsconfig.lib.prod.json"
+              "tsConfig": "packages/angular/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/ngx-jalali-datepicker/tsconfig.lib.json"
+              "tsConfig": "packages/angular/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -28,7 +28,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "tsConfig": "projects/ngx-jalali-datepicker/tsconfig.spec.json"
+            "tsConfig": "packages/angular/tsconfig.spec.json"
           }
         }
       }
