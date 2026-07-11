@@ -1,4 +1,4 @@
-:host {
+.ndp-root {
   /* ── Theme tokens — mirror DatepickerComponent so the field themes too ────── */
   --ndp-accent: #3b82f6;
   --ndp-focus-ring: #3b82f6;
@@ -17,7 +17,7 @@
   color-scheme: light;
 }
 
-:host([data-ndp-theme="dark"]) {
+.ndp-root[data-ndp-theme="dark"] {
   color-scheme: dark;
   --ndp-accent: #60a5fa;
   --ndp-focus-ring: #60a5fa;
@@ -31,7 +31,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :host([data-ndp-theme="auto"]) {
+  .ndp-root[data-ndp-theme="auto"] {
     color-scheme: dark;
     --ndp-accent: #60a5fa;
     --ndp-focus-ring: #60a5fa;
