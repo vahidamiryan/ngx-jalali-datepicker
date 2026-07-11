@@ -1,0 +1,27 @@
+/* Docs-only chrome around the live examples. The picker itself is themed via
+   its own --ndp-* tokens; this only styles the surrounding demo card. */
+.ndp-demo {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: 1rem 0;
+  background: var(--vp-c-bg-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.ndp-demo__value {
+  font-size: 0.85rem;
+  color: var(--vp-c-text-2);
+  font-family: var(--vp-font-family-mono);
+  direction: ltr;
+}
+
+.ndp-demo__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}

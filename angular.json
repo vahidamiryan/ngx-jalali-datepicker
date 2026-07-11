@@ -33,30 +33,30 @@
         }
       }
     },
-    "demo": {
+    "angular-playground": {
       "projectType": "application",
       "schematics": {},
-      "root": "projects/demo",
-      "sourceRoot": "projects/demo/src",
+      "root": "apps/angular-playground",
+      "sourceRoot": "apps/angular-playground/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "browser": "projects/demo/src/main.ts",
+            "browser": "apps/angular-playground/src/main.ts",
             "polyfills": [],
-            "tsConfig": "projects/demo/tsconfig.app.json",
+            "tsConfig": "apps/angular-playground/tsconfig.app.json",
             "loader": {
               ".md": "text"
             },
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/demo/public"
+                "input": "apps/angular-playground/public"
               }
             ],
             "styles": [
-              "projects/demo/src/styles.css"
+              "apps/angular-playground/src/styles.css"
             ]
           },
           "configurations": {
@@ -87,10 +87,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "demo:build:production"
+              "buildTarget": "angular-playground:build:production"
             },
             "development": {
-              "buildTarget": "demo:build:development"
+              "buildTarget": "angular-playground:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -102,15 +102,15 @@
           "builder": "@angular/build:karma",
           "options": {
             "polyfills": [],
-            "tsConfig": "projects/demo/tsconfig.spec.json",
+            "tsConfig": "apps/angular-playground/tsconfig.spec.json",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/demo/public"
+                "input": "apps/angular-playground/public"
               }
             ],
             "styles": [
-              "projects/demo/src/styles.css"
+              "apps/angular-playground/src/styles.css"
             ]
           }
         }
