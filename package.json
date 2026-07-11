@@ -15,7 +15,9 @@
     "test:core": "npm run test -w @ndp/core",
     "test:vue": "npm run test -w @ndp/vue",
     "dev:docs": "npm run dev -w @ndp/docs",
-    "build:docs": "npm run build -w @ndp/docs"
+    "build:docs": "npm run build -w @ndp/docs",
+    "start:playground": "ng serve angular-playground",
+    "build:playground": "ng build angular-playground"
   },
   "prettier": {
     "overrides": [
