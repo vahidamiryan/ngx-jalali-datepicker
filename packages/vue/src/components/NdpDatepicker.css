@@ -1,0 +1,477 @@
+:host {
+  /* ── Theme tokens — override any of these from the consuming app ─────────── */
+  --ndp-accent: #3b82f6;
+  --ndp-accent-hover: #2563eb;
+  --ndp-accent-contrast: #ffffff;
+  --ndp-range-bg: #dbeafe;
+  --ndp-range-color: #1d4ed8;
+  --ndp-preview-bg: #eff6ff;
+  --ndp-focus-ring: #3b82f6;
+  --ndp-today-border: #3b82f6;
+  --ndp-weekend-color: #ef4444;
+  --ndp-surface: #ffffff;
+  --ndp-border: #e2e8f0;
+  --ndp-text: #1e293b;
+  --ndp-muted: #94a3b8;
+  --ndp-day-hover-bg: #f1f5f9;
+  /* Calendar-grid tokens — derived from the primary tokens so they follow
+     light/dark automatically while remaining individually overridable. */
+  --ndp-day-color: var(--ndp-text);
+  --ndp-weekday-color: var(--ndp-muted);
+  --ndp-day-outside-color: #cbd5e1;
+  --ndp-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.25);
+  --ndp-radius: 14px;
+  --ndp-day-radius: 8px;
+
+  display: inline-block;
+  font-family: inherit;
+  color: var(--ndp-text);
+  color-scheme: light;
+}
+
+/* ── Dark theme ─────────────────────────────────────────────────────────── */
+:host([data-ndp-theme="dark"]) {
+  color-scheme: dark;
+  --ndp-accent: #60a5fa;
+  --ndp-accent-hover: #93c5fd;
+  --ndp-accent-contrast: #0f172a;
+  --ndp-range-bg: #1e3a5f;
+  --ndp-range-color: #93c5fd;
+  --ndp-preview-bg: #172554;
+  --ndp-focus-ring: #60a5fa;
+  --ndp-today-border: #60a5fa;
+  --ndp-weekend-color: #f87171;
+  --ndp-surface: #1e293b;
+  --ndp-border: #334155;
+  --ndp-text: #f1f5f9;
+  --ndp-muted: #94a3b8;
+  --ndp-day-hover-bg: #334155;
+  --ndp-day-outside-color: #475569;
+  --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* ── Auto theme — follows OS prefers-color-scheme ───────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :host([data-ndp-theme="auto"]) {
+    color-scheme: dark;
+    --ndp-accent: #60a5fa;
+    --ndp-accent-hover: #93c5fd;
+    --ndp-accent-contrast: #0f172a;
+    --ndp-range-bg: #1e3a5f;
+    --ndp-range-color: #93c5fd;
+    --ndp-preview-bg: #172554;
+    --ndp-focus-ring: #60a5fa;
+    --ndp-today-border: #60a5fa;
+    --ndp-weekend-color: #f87171;
+    --ndp-surface: #1e293b;
+    --ndp-border: #334155;
+    --ndp-text: #f1f5f9;
+    --ndp-muted: #94a3b8;
+    --ndp-day-hover-bg: #334155;
+    --ndp-day-outside-color: #475569;
+    --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+  }
+}
+
+.ndp-panel {
+  background: var(--ndp-surface);
+  border: 1px solid var(--ndp-border);
+  border-radius: var(--ndp-radius);
+  box-shadow: var(--ndp-shadow, 0 10px 30px -12px rgba(15, 23, 42, 0.25));
+  padding: 0.75rem;
+  display: inline-block;
+}
+
+.ndp-panel--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ── Typed-input row (opt-in via [showInput]) ────────────────────────────── */
+.ndp-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.ndp-input-field {
+  flex: 1;
+  min-width: 0;
+  appearance: none;
+  background: var(--ndp-surface);
+  border: 1px solid var(--ndp-border);
+  border-radius: 9px;
+  padding: 0.4rem 0.55rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ndp-text);
+  text-align: center;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.ndp-input-field::placeholder {
+  color: var(--ndp-muted);
+}
+
+.ndp-input-field:focus {
+  outline: none;
+  border-color: var(--ndp-accent);
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-input-field--invalid {
+  border-color: var(--ndp-weekend-color);
+  color: var(--ndp-weekend-color);
+}
+
+.ndp-input-field--invalid:focus {
+  box-shadow: 0 0 0 2px var(--ndp-weekend-color);
+}
+
+.ndp-input-row__sep {
+  color: var(--ndp-muted);
+  font-size: 0.85rem;
+  user-select: none;
+}
+
+.ndp-months {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.ndp-month-block {
+  min-width: 15rem;
+}
+
+.ndp-month-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-block: 0.25rem 0.5rem;
+}
+
+/* ── Quick-navigation dropdowns ──────────────────────────────────────────── */
+.ndp-month-title__nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.ndp-quick-nav {
+  display: inline-flex;
+  gap: 0.3rem;
+}
+
+/* Each dropdown button + its menu form an independent positioned unit. */
+.ndp-dropdown {
+  position: relative;
+  display: inline-flex;
+}
+
+.ndp-title-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--ndp-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: background-color 0.12s ease;
+}
+
+.ndp-title-btn:hover {
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+}
+
+.ndp-title-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  border: none;
+  background: transparent;
+}
+
+.ndp-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  /* Center the menu under its trigger button (direction-agnostic). */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  padding: 0.3rem;
+  list-style: none;
+  background: var(--ndp-surface);
+  border: 1px solid var(--ndp-border);
+  border-radius: 10px;
+  box-shadow: var(--ndp-shadow, 0 10px 30px -12px rgba(15, 23, 42, 0.25));
+  max-height: 14rem;
+  overflow-y: auto;
+  /* Don't let the menu clip to the panel's overflow boundary. */
+  white-space: nowrap;
+}
+
+.ndp-menu--month {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.15rem;
+  min-width: 11rem;
+}
+
+.ndp-menu--year {
+  min-width: 7rem;
+}
+
+.ndp-menu__item {
+  appearance: none;
+  width: 100%;
+  text-align: center;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  padding: 0.4rem 0.6rem;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  color: var(--ndp-text);
+  white-space: nowrap;
+  transition: background-color 0.12s ease;
+}
+
+.ndp-menu__item:hover {
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+}
+
+.ndp-menu__item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-menu__item--active {
+  background: var(--ndp-accent);
+  color: var(--ndp-accent-contrast);
+  font-weight: 700;
+}
+
+.ndp-month-title__label {
+  flex: 1;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.ndp-month-title__secondary {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--ndp-muted);
+}
+
+.ndp-summary__secondary {
+  margin-inline-start: 0.3rem;
+  font-weight: 400;
+  color: var(--ndp-muted);
+  display: block;
+}
+
+.ndp-nav {
+  appearance: none;
+  border: none;
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--ndp-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ndp-nav:hover {
+  background: var(--ndp-border);
+}
+
+.ndp-nav:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.ndp-nav:disabled:hover {
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+}
+
+.ndp-nav-spacer {
+  width: 2rem;
+  height: 2rem;
+}
+
+.ndp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--ndp-border);
+}
+
+.ndp-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--ndp-muted);
+  min-height: 1.6rem;
+}
+
+.ndp-summary__chip {
+  color: var(--ndp-text);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ndp-summary__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.ndp-summary__clear-btn {
+    width: 20px;
+    height: 20px;
+    appearance: none;
+    border: none;
+    padding: 0.2rem;
+    margin: 0;
+    cursor: pointer;
+    color: var(--ndp-muted);
+    font-size: 0.75rem;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    background: transparent;
+}
+
+.ndp-summary__clear-btn:hover {
+  background: var(--ndp-day-hover-bg, #f1f5f9);
+  color: var(--ndp-weekend-color, #ef4444);
+}
+
+.ndp-summary__clear-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.ndp-btn {
+  appearance: none;
+  border: 1px solid var(--ndp-border);
+  background: transparent;
+  border-radius: 8px;
+  padding: 0.3rem 0.7rem;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: var(--ndp-text);
+  transition: background-color 0.12s ease;
+}
+
+.ndp-btn:hover:not(:disabled) {
+  background: var(--ndp-day-hover-bg);
+}
+
+.ndp-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.ndp-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+/* ── Navigation slide animation (opt-in via [animation]="'slide'") ─────────── */
+/* The duration/easing are themable like every other token. */
+:host {
+  --ndp-slide-duration: 0.22s;
+  --ndp-slide-easing: cubic-bezier(0.25, 0.8, 0.4, 1);
+  --ndp-slide-distance: 1.25rem;
+}
+
+/* The wrapper div around each calendar grid — animated, not the child component
+   host itself, which avoids Angular view-encapsulation issues in production. */
+.ndp-calendar-wrap {
+  overflow: hidden;
+}
+
+/* Keyframes live inside the same @media block as their animation-name references.
+   Angular's CSS processor namespaces @keyframes at the top level but NOT inside
+   @media blocks. Keeping everything co-located means both the @keyframes names
+   and the animation-name values remain un-namespaced and always match. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes ndp-slide-from-start {
+    from { transform: translateX(calc(-1 * var(--ndp-slide-distance))); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes ndp-slide-from-end {
+    from { transform: translateX(var(--ndp-slide-distance)); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+  }
+
+  .ndp-panel--slide-prev .ndp-calendar-wrap,
+  .ndp-panel--slide-next .ndp-calendar-wrap {
+    animation-duration: var(--ndp-slide-duration);
+    animation-timing-function: var(--ndp-slide-easing);
+    animation-fill-mode: backwards;
+  }
+
+  .ndp-panel--slide-prev .ndp-calendar-wrap {
+    animation-name: ndp-slide-from-start;
+  }
+
+  .ndp-panel--slide-next .ndp-calendar-wrap {
+    animation-name: ndp-slide-from-end;
+  }
+
+  /* RTL: forward travel is visually leftward, so swap the entry sides. */
+  :host([dir="rtl"]) .ndp-panel--slide-prev .ndp-calendar-wrap {
+    animation-name: ndp-slide-from-end;
+  }
+
+  :host([dir="rtl"]) .ndp-panel--slide-next .ndp-calendar-wrap {
+    animation-name: ndp-slide-from-start;
+  }
+}
