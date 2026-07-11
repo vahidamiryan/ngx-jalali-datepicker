@@ -1,0 +1,57 @@
+name: Release (publish to npm)
+
+# Publishes @ndp/core, @ndp/angular and @ndp/vue to npm. Trigger manually and
+# choose which packages to publish, or push a tag like v1.2.3 to publish all.
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'Space-separated packages to publish (default: all)'
+        required: false
+        default: '@ndp/core @ndp/angular @ndp/vue'
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm provenance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      # Build in dependency order. @ndp/core must be built first because the
+      # framework packages resolve its types/JS.
+      - name: Build core
+        run: npm run build -w @ndp/core
+      - name: Build Angular
+        run: npx ng build angular
+      - name: Build Vue
+        run: npm run build -w @ndp/vue
+
+      # Publish. @ndp/core ships from packages/core; @ndp/angular from the
+      # ng-packagr output in dist/angular; @ndp/vue from packages/vue.
+      - name: Publish @ndp/core
+        run: npm publish -w @ndp/core --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @ndp/angular
+        run: npm publish ./dist/angular --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @ndp/vue
+        run: npm publish -w @ndp/vue --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

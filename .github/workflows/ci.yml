@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Build core (@ndp/core)
+        run: npm run build -w @ndp/core
+
+      - name: Test core
+        run: npm run test -w @ndp/core
+
+      - name: Build Angular (@ndp/angular)
+        run: npx ng build angular
+
+      - name: Test Angular (headless)
+        run: npx ng test angular --watch=false --browsers=ChromeHeadless
+
+      - name: Build Vue (@ndp/vue)
+        run: npm run build -w @ndp/vue
+
+      - name: Test Vue
+        run: npm run test -w @ndp/vue
+
+      - name: Typecheck Vue
+        run: npm run typecheck -w @ndp/vue
+
+      - name: Build docs
+        run: npm run build -w @ndp/docs
