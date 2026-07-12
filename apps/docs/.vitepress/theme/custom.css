@@ -25,3 +25,22 @@
   gap: 1rem;
   align-items: flex-start;
 }
+
+/* ── Live Angular islands (AngularDemo.vue) ─────────────────────────────── */
+.ndp-angular-demo {
+  margin: 1rem 0;
+}
+
+.ndp-angular-demo__status {
+  border: 1px dashed var(--vp-c-divider);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  color: var(--vp-c-text-2);
+  font-size: 0.9rem;
+  background: var(--vp-c-bg-soft);
+}
+
+.ndp-angular-demo__status--error {
+  border-color: var(--vp-c-danger-1);
+  color: var(--vp-c-danger-1);
+}

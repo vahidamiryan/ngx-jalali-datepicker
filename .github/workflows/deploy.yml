@@ -29,6 +29,9 @@ jobs:
       - name: Build core package (docs alias source, but build validates it)
         run: npm run build -w @ndp/core
 
+      - name: Build Angular package (docs mounts its FESM bundle as live islands)
+        run: npm run build -w @ndp/angular
+
       - name: Build VitePress Docs
         run: npm run build -w @ndp/docs
 
