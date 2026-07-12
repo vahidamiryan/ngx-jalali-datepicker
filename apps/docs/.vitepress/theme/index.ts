@@ -15,10 +15,13 @@ import '../../../../packages/vue/src/components/NdpTimePicker.css';
 import '../../../../packages/vue/src/components/NdpDateInput.css';
 import '../../../../packages/vue/src/components/NdpTimeInput.css';
 import './custom.css';
+import AngularDemo from './AngularDemo.vue';
 
 export default {
   extends: DefaultTheme,
   enhanceApp({ app }) {
+    // Live Angular islands used on the Angular docs page (client-only inside).
+    app.component('AngularDemo', AngularDemo);
     // Register every Vue component globally and configure the three calendars so
     // the live examples throughout the docs just work.
     app.use(NdpVue);
