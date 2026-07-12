@@ -1,12 +1,12 @@
 /**
  * Bootstraps small, real Angular apps ("islands") inside the docs so the Angular
  * page shows genuinely live pickers — the same idea as the inline Vue examples,
- * but running the actual @ndp/angular components. Each island is an isolated
+ * but running the actual @vahidamiryan/ngx-jalali-datepicker components. Each island is an isolated
  * `bootstrapApplication` call rendered into a host element supplied by the
  * `AngularDemo.vue` wrapper. Client-only: never imported during SSR.
  */
 // The JIT compiler must load before any @Component is processed: the islands use
-// runtime string templates, which AOT-built @ndp/angular doesn't ship a compiler
+// runtime string templates, which AOT-built @vahidamiryan/ngx-jalali-datepicker doesn't ship a compiler
 // for. Importing it here registers the JIT resource loader globally.
 import '@angular/compiler';
 import {
@@ -18,9 +18,10 @@ import {
 } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-// The built, template-inlined @ndp/angular bundle (FESM). Using the build output
+// The built, template-inlined Angular package (FESM). Using the build output
 // keeps us off ng-packagr's templateUrl/styleUrl source form, which Vite can't
-// compile directly.
+// compile directly. Resolved via a Vite alias to dist/angular so the FESM file
+// name (derived from the package name) never has to be hard-coded here.
 import {
   DatepickerComponent,
   DateInputComponent,
@@ -31,7 +32,7 @@ import {
   GregorianCalendarAdapter,
   HijriCalendarAdapter,
   type DateRange,
-} from '../../../../dist/angular/fesm2022/ndp-angular.mjs';
+} from '@ndp-angular-dist';
 
 const today = (() => {
   const d = new Date();

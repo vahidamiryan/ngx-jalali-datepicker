@@ -1,5 +1,5 @@
 {
-  "name": "@ndp/core",
+  "name": "@vahidamiryan/datepicker-core",
   "version": "1.0.0",
   "description": "Framework-agnostic headless core for the NDP date picker: Jalali/Gregorian/Hijri calendar math, adapters, and render-ready view builders. Zero framework dependencies.",
   "keywords": [

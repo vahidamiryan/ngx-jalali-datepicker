@@ -27,13 +27,13 @@ jobs:
         run: npm ci
 
       - name: Build core package (docs alias source, but build validates it)
-        run: npm run build -w @ndp/core
+        run: npm run build -w @vahidamiryan/datepicker-core
 
       - name: Build Angular package (docs mounts its FESM bundle as live islands)
-        run: npm run build -w @ndp/angular
+        run: npm run build -w @vahidamiryan/ngx-jalali-datepicker
 
       - name: Build VitePress Docs
-        run: npm run build -w @ndp/docs
+        run: npm run build -w @vahidamiryan/docs
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

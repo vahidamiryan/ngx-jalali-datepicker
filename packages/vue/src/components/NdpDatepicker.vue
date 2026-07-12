@@ -2,7 +2,7 @@
 /**
  * The orchestrator panel. Owns selection / navigation / focus via the shared
  * `useDatepicker` composable (a faithful port of the Angular DatepickerComponent
- * state machine on top of @ndp/core). Two-way bindable via `v-model` (value) and
+ * state machine on top of @vahidamiryan/datepicker-core). Two-way bindable via `v-model` (value) and
  * `v-model:calendar`. A `#day` scoped slot customizes the day cell — the Vue
  * equivalent of Angular's `ndpDayCell` content projection.
  */
@@ -13,7 +13,7 @@ import type {
   DatepickerMode,
   NdpAnimation,
   NdpTheme,
-} from '@ndp/core';
+} from '@vahidamiryan/datepicker-core';
 import { useCalendarAdapters, type NdpCalendarAdapterSource } from '../adapters';
 import { useDatepicker } from '../composables/useDatepicker';
 import NdpCalendarMonth from './NdpCalendarMonth.vue';

@@ -1,6 +1,6 @@
 name: Release (publish to npm)
 
-# Publishes @ndp/core, @ndp/angular and @ndp/vue to npm. Trigger manually and
+# Publishes @vahidamiryan/datepicker-core, @vahidamiryan/ngx-jalali-datepicker and @vahidamiryan/vue-datepicker to npm. Trigger manually and
 # choose which packages to publish, or push a tag like v1.2.3 to publish all.
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
       packages:
         description: 'Space-separated packages to publish (default: all)'
         required: false
-        default: '@ndp/core @ndp/angular @ndp/vue'
+        default: '@vahidamiryan/datepicker-core @vahidamiryan/ngx-jalali-datepicker @vahidamiryan/vue-datepicker'
   push:
     tags:
       - 'v*'
@@ -30,28 +30,28 @@ jobs:
       - name: Install
         run: npm ci
 
-      # Build in dependency order. @ndp/core must be built first because the
+      # Build in dependency order. @vahidamiryan/datepicker-core must be built first because the
       # framework packages resolve its types/JS.
       - name: Build core
-        run: npm run build -w @ndp/core
+        run: npm run build -w @vahidamiryan/datepicker-core
       - name: Build Angular
         run: npx ng build angular
       - name: Build Vue
-        run: npm run build -w @ndp/vue
+        run: npm run build -w @vahidamiryan/vue-datepicker
 
-      # Publish. @ndp/core ships from packages/core; @ndp/angular from the
-      # ng-packagr output in dist/angular; @ndp/vue from packages/vue.
-      - name: Publish @ndp/core
-        run: npm publish -w @ndp/core --access public --provenance
+      # Publish. @vahidamiryan/datepicker-core ships from packages/core; @vahidamiryan/ngx-jalali-datepicker from the
+      # ng-packagr output in dist/angular; @vahidamiryan/vue-datepicker from packages/vue.
+      - name: Publish @vahidamiryan/datepicker-core
+        run: npm publish -w @vahidamiryan/datepicker-core --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @ndp/angular
+      - name: Publish @vahidamiryan/ngx-jalali-datepicker
         run: npm publish ./dist/angular --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @ndp/vue
-        run: npm publish -w @ndp/vue --access public --provenance
+      - name: Publish @vahidamiryan/vue-datepicker
+        run: npm publish -w @vahidamiryan/vue-datepicker --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

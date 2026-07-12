@@ -12,17 +12,17 @@ import {
   untracked,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { CalendarAdapter } from '@ndp/core';
+import { CalendarAdapter } from '@vahidamiryan/datepicker-core';
 import { NDP_CALENDAR_ADAPTERS } from '../../datepicker.providers';
-import { NdpTheme } from '@ndp/core';
-import { atMidnight, toLatinDigits } from '@ndp/core';
+import { NdpTheme } from '@vahidamiryan/datepicker-core';
+import { atMidnight, toLatinDigits } from '@vahidamiryan/datepicker-core';
 import {
   TimeOfDay,
   getTimeOfDay,
   snapMinutes,
   withTimeOfDay,
   wrapHours,
-} from '@ndp/core';
+} from '@vahidamiryan/datepicker-core';
 import { TimePickerComponent } from '../time-picker/time-picker.component';
 
 /**

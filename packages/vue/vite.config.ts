@@ -8,7 +8,7 @@ export default defineConfig({
     alias: {
       // During dev/build the workspace core is consumed from source so the two
       // packages stay in lockstep without a rebuild.
-      '@ndp/core': resolve(__dirname, '../core/src/index.ts'),
+      '@vahidamiryan/datepicker-core': resolve(__dirname, '../core/src/index.ts'),
     },
   },
   build: {
@@ -20,9 +20,9 @@ export default defineConfig({
       fileName: (format) => (format === 'es' ? 'ndp-vue.js' : 'ndp-vue.umd.cjs'),
     },
     rollupOptions: {
-      // Vue is a peer dependency — never bundle it. @ndp/core IS bundled so the
+      // Vue is a peer dependency — never bundle it. @vahidamiryan/datepicker-core IS bundled so the
       // published package is self-contained beyond Vue itself (it's tiny and
-      // tree-shakeable). Consumers may still install @ndp/core to share it.
+      // tree-shakeable). Consumers may still install @vahidamiryan/datepicker-core to share it.
       external: ['vue'],
       output: {
         globals: { vue: 'Vue' },

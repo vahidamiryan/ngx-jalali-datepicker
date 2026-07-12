@@ -1,5 +1,5 @@
 {
-  "name": "@ndp/docs",
+  "name": "@vahidamiryan/docs",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -13,7 +13,7 @@
     "vue": "^3.5.0"
   },
   "dependencies": {
-    "@ndp/core": "^1.0.0",
-    "@ndp/vue": "^1.0.0"
+    "@vahidamiryan/datepicker-core": "^1.0.0",
+    "@vahidamiryan/vue-datepicker": "^1.0.0"
   }
 }

@@ -1,9 +1,9 @@
 /*
- * Public API of @ndp/core — the framework-agnostic headless core.
+ * Public API of @vahidamiryan/datepicker-core — the framework-agnostic headless core.
  *
  * Everything here is pure TypeScript with zero framework dependencies: types,
- * calendar math/adapters, and the render-ready view builders. Both @ndp/angular
- * and @ndp/vue consume this package so a single source of truth drives every
+ * calendar math/adapters, and the render-ready view builders. Both @vahidamiryan/ngx-jalali-datepicker
+ * and @vahidamiryan/vue-datepicker consume this package so a single source of truth drives every
  * framework — bug-fixes and new calendars apply everywhere automatically.
  */
 

@@ -1,5 +1,5 @@
 import { inject, type App, type InjectionKey } from 'vue';
-import type { CalendarAdapter } from '@ndp/core';
+import type { CalendarAdapter } from '@vahidamiryan/datepicker-core';
 
 /**
  * An adapter instance, or a factory that builds one. Factories run lazily when
@@ -22,8 +22,8 @@ function resolveAdapters(sources: NdpCalendarAdapterSource[]): CalendarAdapter[]
  *
  * ```ts
  * import { createApp } from 'vue';
- * import { NdpDatepickerPlugin } from '@ndp/vue';
- * import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@ndp/core';
+ * import { NdpDatepickerPlugin } from '@vahidamiryan/vue-datepicker';
+ * import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamiryan/datepicker-core';
  *
  * createApp(App)
  *   .use(NdpDatepickerPlugin, {
@@ -39,7 +39,7 @@ export const NdpDatepickerPlugin = {
     const resolved = resolveAdapters(options?.adapters ?? []);
     if (resolved.length === 0) {
       throw new Error(
-        '[@ndp/vue] NdpDatepickerPlugin was installed without any adapters. ' +
+        '[@vahidamiryan/vue-datepicker] NdpDatepickerPlugin was installed without any adapters. ' +
           'Pass at least one, e.g. app.use(NdpDatepickerPlugin, { adapters: [new JalaliCalendarAdapter()] }).',
       );
     }
@@ -58,7 +58,7 @@ export function useCalendarAdapters(
   const resolved = local && local.length ? resolveAdapters(local) : inject(NDP_CALENDAR_ADAPTERS, null);
   if (!resolved || resolved.length === 0) {
     throw new Error(
-      '[@ndp/vue] No calendar adapters configured. Install the plugin — ' +
+      '[@vahidamiryan/vue-datepicker] No calendar adapters configured. Install the plugin — ' +
         'app.use(NdpDatepickerPlugin, { adapters: [...] }) — or pass an :adapters prop, e.g. ' +
         ':adapters="[new JalaliCalendarAdapter(), new GregorianCalendarAdapter()]".',
     );

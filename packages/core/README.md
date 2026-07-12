@@ -1,8 +1,8 @@
-# @ndp/core
+# @vahidamiryan/datepicker-core
 
 Framework-agnostic **headless core** for the NDP date picker. Pure TypeScript with
 **zero framework dependencies** — the shared foundation under
-[`@ndp/angular`](../angular) and [`@ndp/vue`](../vue).
+[`@vahidamiryan/ngx-jalali-datepicker`](../angular) and [`@vahidamiryan/vue-datepicker`](../vue).
 
 It ships:
 
@@ -19,7 +19,7 @@ It ships:
   `stepMinutes`), and the `dayKey` / digit utilities.
 
 ```ts
-import { JalaliCalendarAdapter, buildMonthView, applySelection } from '@ndp/core';
+import { JalaliCalendarAdapter, buildMonthView, applySelection } from '@vahidamiryan/datepicker-core';
 
 const cal = new JalaliCalendarAdapter();
 cal.parse('۱۴۰۴/۰۳/۲۸'); // Date | null
