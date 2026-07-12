@@ -27,8 +27,10 @@
 }
 
 /* ── Live Angular islands (AngularDemo.vue) ─────────────────────────────── */
+/* The island root is itself a .ndp-demo box, so this wrapper adds no spacing of
+   its own — keeps Angular demos visually identical to the inline Vue demos. */
 .ndp-angular-demo {
-  margin: 1rem 0;
+  margin: 0;
 }
 
 .ndp-angular-demo__status {

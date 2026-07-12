@@ -47,52 +47,66 @@ function fmt(v: DateRange | Date | null): string {
   return `{ start: ${s}, end: ${e} }`;
 }
 
-/** Every live example the Angular docs page renders, keyed by a stable id. */
+/** Every live example the Angular docs page renders, keyed by a stable id. Each
+ * picker binds `[theme]` so it follows the site's light/dark toggle. */
 const TEMPLATES: Record<string, string> = {
   single: `
-    <ndp-datepicker [(value)]="value" />
+    <ndp-datepicker [theme]="theme()" [(value)]="value" />
     <div class="ndp-demo__value">value = {{ f(value()) }}</div>`,
   range: `
-    <ndp-datepicker mode="range" [numberOfMonths]="2" [min]="today" [(value)]="value" />
+    <ndp-datepicker [theme]="theme()" mode="range" [numberOfMonths]="2" [min]="today" [(value)]="value" />
     <div class="ndp-demo__value">value = {{ f(value()) }}</div>`,
   input: `
-    <ndp-date-input [(value)]="value" />
+    <ndp-date-input [theme]="theme()" [(value)]="value" />
     <div class="ndp-demo__value">value = {{ f(value()) }}</div>`,
   time: `
-    <ndp-time-input [minuteStep]="5" [(value)]="timeValue" />
+    <ndp-time-input [theme]="theme()" [minuteStep]="5" [(value)]="timeValue" />
     <div class="ndp-demo__value">value = {{ f(timeValue()) }}</div>`,
   period: `
-    <ndp-datepicker mode="month" [(value)]="value" />
+    <ndp-datepicker [theme]="theme()" mode="month" [(value)]="value" />
     <div class="ndp-demo__value">value = {{ f(value()) }}</div>`,
   hijri: `
-    <ndp-datepicker calendar="hijri" [showSecondaryDate]="true" [(value)]="value" />
+    <ndp-datepicker [theme]="theme()" calendar="hijri" [showSecondaryDate]="true" [(value)]="value" />
     <div class="ndp-demo__value">value = {{ f(value()) }}</div>`,
   dual: `
-    <ndp-datepicker [showSecondaryDate]="true" [(value)]="value" />
+    <ndp-datepicker [theme]="theme()" [showSecondaryDate]="true" [(value)]="value" />
     <div class="ndp-demo__value">value = {{ f(value()) }}</div>`,
   custom: `
-    <ndp-datepicker [(value)]="value">
+    <ndp-datepicker [theme]="theme()" [(value)]="value">
       <ng-template ndpDayCell let-day>
         {{ day.label }} @if (day.isWeekend) { <span aria-hidden="true">•</span> }
       </ng-template>
     </ndp-datepicker>
     <div class="ndp-demo__value">value = {{ f(value()) }}</div>`,
   forms: `
-    <ndp-datepicker [formControl]="ctrl" />
+    <ndp-datepicker [theme]="theme()" [formControl]="ctrl" />
     <div class="ndp-demo__value">ctrl.value = {{ f(ctrl.value) }}</div>`,
 };
+
+/** Handle the Vue wrapper uses to drive an island after mount. */
+export interface AngularDemoHandle {
+  app: ApplicationRef;
+  /** Push the current site theme into the island (re-renders zoneless). */
+  setTheme(theme: 'light' | 'dark'): void;
+}
 
 /** Monotonic id so every island gets a unique root selector (multiple per page). */
 let islandSeq = 0;
 
-/** Bootstraps the island for `id` into `host`; returns the app ref for teardown. */
-export function mountAngularDemo(host: HTMLElement, id: string): Promise<ApplicationRef> {
+/** Bootstraps the island for `id` into `host`. `initialTheme` seeds the pickers;
+ * the returned handle lets the caller flip the theme with the site toggle. */
+export function mountAngularDemo(
+  host: HTMLElement,
+  id: string,
+  initialTheme: 'light' | 'dark' = 'light',
+): Promise<AngularDemoHandle> {
   const template = TEMPLATES[id];
   if (!template) return Promise.reject(new Error(`Unknown Angular demo id: ${id}`));
 
   // A unique selector per island: bootstrapApplication locates the root host by
   // the component's selector, so several islands on one page must not collide.
   const selector = `ndp-doc-island-${islandSeq++}`;
+  const themeSignal = signal<'light' | 'dark'>(initialTheme);
 
   @Component({
     selector,
@@ -110,6 +124,7 @@ export function mountAngularDemo(host: HTMLElement, id: string): Promise<Applica
   })
   class IslandComponent {
     readonly today = today;
+    readonly theme = themeSignal;
     readonly value = signal<DateRange>({ start: null, end: null });
     readonly timeValue = signal<Date | null>(null);
     readonly ctrl = new FormControl<DateRange>({ start: null, end: null });
@@ -129,5 +144,8 @@ export function mountAngularDemo(host: HTMLElement, id: string): Promise<Applica
         new HijriCalendarAdapter(),
       ),
     ],
-  });
+  }).then((app) => ({
+    app,
+    setTheme: (theme: 'light' | 'dark') => themeSignal.set(theme),
+  }));
 }
