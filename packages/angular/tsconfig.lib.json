@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "outDir": "../../out-tsc/lib",
+    "target": "ES2022",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "types": []
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["**/*.spec.ts"]
+}

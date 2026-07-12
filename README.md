@@ -1,308 +1,120 @@
-# ngx-jalali-datepicker
+<div align="center">
 
-High-performance, customizable, framework-idiomatic date picker for Angular 20+.
-Built on **signals**, an **OnPush + zoneless** rendering model, a pluggable
-**calendar adapter** layer (Jalali / Shamsi + Gregorian + Hijri out of the box), and a
-**headless core** you can reuse to build a completely custom UI.
+# 📅 Jalali Date Picker — Angular & Vue
 
-## Why this design
+**High-performance, zero-dependency Jalali (Shamsi) / Gregorian / Hijri date picker**
+with first-class **Angular 20+** and **Vue 3** components on one shared headless core.
 
-| Goal | How it's achieved |
-| --- | --- |
-| **Performance** | Every per-day flag (selected / in-range / disabled / preview / today) is precomputed once in a `computed` (`buildMonthView`). Templates read only booleans — no `toDateString()` or `[ngClass]` object literals re-evaluated per cell per change-detection cycle. Comparisons use numeric `yyyymmdd` keys, never string allocations. |
-| **Customizability** | Theme entirely via CSS custom properties (`--ndp-*`). Replace the day cell with content projection (`ng-template ndpDayCell`). Swap or add calendars by implementing `CalendarAdapter`. |
-| **Maintainability** | Pure, testable headless core (`buildMonthView`, `applySelection`, adapters) is fully decoupled from the Angular components. No domain logic (pricing, etc.) baked into the core. |
-| **Correctness** | Jalaali math is a faithful port of the battle-tested `jalaali-js` algorithm and is unit-verified against the platform `Intl` Persian calendar. Hijri math is the pure tabular Islamic (civil) algorithm, unit-verified day-by-day against `Intl` `islamic-civil`. |
+[![npm (Angular)](https://img.shields.io/npm/v/@vahidamiryan/ngx-jalali-datepicker?label=angular&color=dd0031)](https://www.npmjs.com/package/@vahidamiryan/ngx-jalali-datepicker)
+[![npm (Vue)](https://img.shields.io/npm/v/@vahidamiryan/vue-datepicker?label=vue&color=42b883)](https://www.npmjs.com/package/@vahidamiryan/vue-datepicker)
+[![npm (core)](https://img.shields.io/npm/v/@vahidamiryan/datepicker-core?label=core&color=3178c6)](https://www.npmjs.com/package/@vahidamiryan/datepicker-core)
+[![downloads](https://img.shields.io/npm/dm/@vahidamiryan/ngx-jalali-datepicker?label=downloads&color=cb3837)](https://www.npmjs.com/package/@vahidamiryan/ngx-jalali-datepicker)
+[![license](https://img.shields.io/npm/l/@vahidamiryan/ngx-jalali-datepicker?color=blue)](LICENSE)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@vahidamiryan/ngx-jalali-datepicker?label=gzip)](https://bundlephobia.com/package/@vahidamiryan/ngx-jalali-datepicker)
 
-## Install / use in this workspace
+### [🔗 Live Demo & Docs →](https://vahidamiryan.github.io/ngx-jalali-datepicker/)
 
-The demo app consumes the library directly from source via a `tsconfig` path
-mapping, so no pre-build is needed during development.
+</div>
 
+---
+
+## Why this one?
+
+Most Persian date pickers are heavy, tied to an old framework model, or a nightmare to
+theme. This one is built differently:
+
+- ⚡ **Fast by construction** — every per-day flag (selected / in-range / disabled / today)
+  is precomputed once; templates read only booleans, comparisons use numeric `yyyymmdd`
+  keys, never string allocations. Angular build is **zoneless + `OnPush` + signals**.
+- 🧩 **Headless core, thin components** — all calendar math and selection logic live in a
+  pure `@vahidamiryan/datepicker-core` with **zero framework dependencies**. Angular and
+  Vue share the *exact same* engine, so a fix in one lands in both.
+- 🗓️ **Three calendars out of the box** — Jalali/Shamsi, Gregorian, and tabular Hijri, all
+  verified against the platform `Intl`. Add your own by implementing one adapter interface.
+- 🎨 **Themeable to the pixel** — every color/radius/shadow is a `--ndp-*` CSS variable;
+  light/dark built in. Replace a whole day cell with content projection (Angular) or a
+  scoped slot (Vue).
+- ✅ **Complete** — range, multi-month, month/year pickers, typed input with parsing,
+  time-of-day, dual-script (Gregorian under Jalali), full keyboard nav, RTL, forms
+  integration (`ControlValueAccessor` / `v-model`).
+
+## Install
+
+**Angular**
+```bash
+npm install @vahidamiryan/ngx-jalali-datepicker @vahidamiryan/datepicker-core
+```
 ```ts
 // app.config.ts
-import { provideNgxDatepicker, JalaliCalendarAdapter, GregorianCalendarAdapter } from 'ngx-jalali-datepicker';
+import { provideZonelessChangeDetection } from '@angular/core';
+import { provideNgxDatepicker, JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamiryan/ngx-jalali-datepicker';
 
-export const appConfig: ApplicationConfig = {
+export const appConfig = {
   providers: [
     provideZonelessChangeDetection(),
     provideNgxDatepicker(new JalaliCalendarAdapter(), new GregorianCalendarAdapter('en-US')),
   ],
 };
 ```
-
 ```html
-<!-- Single date -->
 <ndp-datepicker [(value)]="value" />
-
-<!-- Range, two months, no past dates (min also blocks back-navigation) -->
-<ndp-datepicker mode="range" [numberOfMonths]="2" [min]="today" [(value)]="range" />
-
-<!-- Reactive forms (ControlValueAccessor) -->
-<ndp-datepicker [formControl]="ctrl" />
-
-<!-- Hide the selected-date summary bar but keep the footer action buttons -->
-<ndp-datepicker [showSummary]="false" [(value)]="value" />
-
-<!-- Custom day cell -->
-<ndp-datepicker [(value)]="value">
-  <ng-template ndpDayCell let-day>
-    {{ day.label }} @if (day.isWeekend) { <i></i> }
-  </ng-template>
-</ndp-datepicker>
 ```
 
-> Note: `value` is a `DateRange` (`{ start, end }`). In `single` mode only
-> `start` is populated.
-
-## Dual-script (Gregorian alongside Jalali)
-
-Set `showSecondaryDate` to render each date in a second calendar at the same time
-— Gregorian under Jalali, or vice-versa when the active calendar is Gregorian.
-The secondary defaults to the first *other* registered calendar; override it with
-`secondaryCalendar`.
-
-```html
-<ndp-datepicker [showSecondaryDate]="true" [(value)]="value" />
-<!-- force a specific companion calendar -->
-<ndp-datepicker [showSecondaryDate]="true" secondaryCalendar="gregorian" [(value)]="value" />
+**Vue 3**
+```bash
+npm install @vahidamiryan/vue-datepicker @vahidamiryan/datepicker-core vue
 ```
-
-The month heading shows the companion month range (months don't line up 1:1) and
-the footer summary shows the companion full date.
-
-## Typing dates (input field)
-
-For faster entry than clicking, dates can be typed directly.
-
-**`<ndp-date-input>`** — a text field with a calendar popover. Type to parse, or
-open the panel to pick; selecting writes the text back. It's a
-`ControlValueAccessor` and forwards the usual picker inputs.
-
-```html
-<!-- Single -->
-<ndp-date-input [(value)]="value" />
-
-<!-- Range — shows two fields (start / end), kept in order -->
-<ndp-date-input mode="range" [min]="today" [(value)]="range" />
-```
-
-**`showInput`** — render the same typing field(s) inside the panel itself
-(day modes only):
-
-```html
-<ndp-datepicker [showInput]="true" [(value)]="value" />
-```
-
-Both accept `/`, `-` or `.` separators and Persian/Arabic-Indic digits;
-impossible dates are flagged (`aria-invalid`) without changing the value.
-
-`parse` / `formatInput` also live on `CalendarAdapter`, so you can convert a
-typed string to a `Date` headlessly in any calendar:
-
 ```ts
-const cal = new JalaliCalendarAdapter();
-cal.parse('۱۴۰۴/۰۳/۲۸');     // Date or null
-cal.parse('1404/07/31');      // null — Mehr has 30 days
-cal.formatInput(new Date());  // "۱۴۰۴/۰۳/۲۸"
+// main.ts
+import { NdpDatepickerPlugin } from '@vahidamiryan/vue-datepicker';
+import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamiryan/datepicker-core';
+import '@vahidamiryan/vue-datepicker/styles.css';
+
+createApp(App).use(NdpDatepickerPlugin, {
+  adapters: [new JalaliCalendarAdapter(), new GregorianCalendarAdapter('en-US')],
+}).mount('#app');
+```
+```vue
+<NdpDatepicker v-model="value" />
 ```
 
-## Time of day
+> **Headless, no UI?** Import `@vahidamiryan/datepicker-core` directly for Jalali ⇆ Gregorian ⇆ Hijri
+> conversion and month-grid building with no framework at all.
 
-Set `showTime` (single mode only) to render an hours : minutes stepper under the
-grid. The selected value's `Date` then carries the chosen time instead of local
-midnight; picking another day keeps the clock. `minuteStep` (1–30, default `1`)
-sets the increment for the steppers and the `↑`/`↓` arrow keys.
+## Packages
 
-```html
-<ndp-datepicker [showTime]="true" [minuteStep]="5" [(value)]="value" />
-<ndp-date-input [showTime]="true" [(value)]="value" />
+| Package | Framework | Description |
+| --- | --- | --- |
+| [`@vahidamiryan/ngx-jalali-datepicker`](packages/angular) | Angular 20+ | Signals, zoneless, `OnPush`, `ControlValueAccessor`. |
+| [`@vahidamiryan/vue-datepicker`](packages/vue) | Vue 3 | Composition API, `v-model`, scoped slots. |
+| [`@vahidamiryan/datepicker-core`](packages/core) | none | Headless engine — adapters, math, view builders. Zero deps. |
+
+```
+@vahidamiryan/datepicker-core   (pure TS engine — shared by both)
+   ├── @vahidamiryan/ngx-jalali-datepicker   (Angular component layer)
+   └── @vahidamiryan/vue-datepicker          (Vue 3 component layer)
 ```
 
-```ts
-import { getTimeOfDay, withTimeOfDay } from 'ngx-jalali-datepicker';
+## Develop
 
-getTimeOfDay(value().start!);          // { hours: 14, minutes: 30 }
-withTimeOfDay(value().start!, 9, 0);   // same day at 09:00 (a new Date)
+npm-workspaces monorepo (Node 20+):
+
+```bash
+npm install
+npm run build          # core → angular → vue (dependency order)
+npm run test           # core + vue suites
+npm run dev:docs       # unified docs with live Angular + Vue examples
 ```
 
-**`<ndp-time-input>`** — a standalone **time-only** field (no calendar): an
-`HH:mm` text input with a stepper popover. Type `0930` or step in the popover. Its
-value is a `Date` carrying just the time, and it's a `ControlValueAccessor`.
+Publishing is automated in [`.github/workflows/release.yml`](.github/workflows/release.yml)
+(core first, then the framework packages).
 
-```html
-<ndp-time-input [minuteStep]="15" [(value)]="time" /> <!-- value: Date | null -->
-<ndp-time-input [formControl]="timeCtrl" />
-```
+## Contributing
 
-## Building a dropdown / popover
+Issues, feature requests, and PRs are welcome — this project is actively developed and
+shaped by real feedback. If a calendar edge case or a framework idiom is missing, open an
+issue.
 
-The component is just a panel — wrap it however you like. In `single` mode it
-fires `(dateSelected)` on the first click, which is the natural moment to close:
+## License
 
-```ts
-@Component({ /* … */ imports: [DatepickerComponent] })
-export class FieldComponent {
-  readonly open = signal(false);
-  readonly value = signal<DateRange>({ start: null, end: null });
-  private readonly cal = new JalaliCalendarAdapter();
-  readonly label = computed(() => {
-    const s = this.value().start;
-    return s ? this.cal.format(s) : 'Pick a date';
-  });
-}
-```
-
-```html
-<div class="dropdown">
-  <button (click)="open.update(v => !v)">{{ label() }} ▾</button>
-  @if (open()) {
-    <div class="backdrop" (click)="open.set(false)"></div>
-    <div class="panel">
-      <ndp-datepicker
-        [showFooter]="false"
-        [value]="value()"
-        (valueChange)="value.set($event)"
-        (dateSelected)="open.set(false)" />
-    </div>
-  }
-</div>
-```
-
-## Converting Gregorian ⇆ Jalali (no UI)
-
-Everything needed for conversion is exported, so you can use it headlessly.
-
-```ts
-import { JalaaliMath, JalaliCalendarAdapter, GregorianCalendarAdapter } from 'ngx-jalali-datepicker';
-
-// Gregorian → Jalali (numeric)
-const j = JalaaliMath.toJalaali(new Date(2026, 2, 21)); // { jy: 1405, jm: 1, jd: 1 }
-
-// Jalali → Gregorian (numeric)
-const g = JalaaliMath.toGregorian(1404, 1, 1);          // { gy: 2025, gm: 3, gd: 21 }
-const date = new Date(g.gy, g.gm - 1, g.gd);
-
-// Localized, written-out strings via the adapters
-const jalali = new JalaliCalendarAdapter().format(new Date());     // "شنبه ۱۷ خرداد"
-const greg   = new GregorianCalendarAdapter('en-US').format(new Date()); // "Saturday, June 7"
-```
-
-> The conversion math is dependency-free and verified against the platform
-> `Intl` Persian calendar, including leap years and month lengths.
-
-## Hijri (Islamic civil) calendar
-
-`HijriCalendarAdapter` implements the **tabular Islamic civil** calendar: a
-fully arithmetic 30-year cycle (leap years 2, 5, 7, 10, 13, 16, 18, 21, 24, 26,
-29), 354/355-day years, and months alternating 30/29 days (Dhu al-Hijjah gains
-a 30th day in leap years). It is deliberately **not** Umm al-Qura and **not**
-sighting-based, so results are deterministic and identical in every region and
-runtime.
-
-```ts
-provideNgxDatepicker(new HijriCalendarAdapter(), new JalaliCalendarAdapter())
-```
-
-The math is exported headlessly as well:
-
-```ts
-import { HijriMath } from 'ngx-jalali-datepicker';
-
-HijriMath.toHijri(new Date(2026, 5, 12));  // { hy: 1447, hm: 12, hd: 26 }
-HijriMath.toGregorian(1447, 12, 26);       // { gy: 2026, gm: 6, gd: 12 }
-HijriMath.isLeapHijriYear(1445);           // true (cycle year 5)
-HijriMath.hijriMonthLength(1446, 12);      // 29 (common year)
-```
-
-### Day adjustment (observed vs. tabular)
-
-Locally observed Hijri calendars (moon sighting, Umm al-Qura) can differ from
-the tabular computation by ±1–2 days, and the correct offset depends on country
-and year — there is no universal rule. Instead of baking regional data into the
-library, the adapter accepts an `adjustment` in its config that shifts the
-tabular result by whole days. Supply it **manually** or **as a service**:
-
-```ts
-// 1) Manual — fixed offset
-new HijriCalendarAdapter({ adjustment: -1 })
-
-// 2) Manual — function, e.g. backed by a lookup table you maintain
-new HijriCalendarAdapter({ adjustment: (date) => myOffsetFor(date) })
-
-// 3) Service — implement NdpHijriDayAdjuster and pass a factory so inject() works
-@Injectable({ providedIn: 'root' })
-export class HijriAdjustmentService implements NdpHijriDayAdjuster {
-  // Must answer synchronously from data it already holds — preload/cache any
-  // remote data before the picker renders.
-  getDayAdjustment(date: Date): number { return 0; /* offset for date */ }
-}
-
-provideNgxDatepicker(
-  () => new HijriCalendarAdapter({ adjustment: inject(HijriAdjustmentService) }),
-  new JalaliCalendarAdapter(),
-)
-```
-
-`+1` means the observed calendar runs one day ahead of the tabular one. Keep the
-offset stable within any one Hijri month so round-trips stay exact. Month names
-(Persian by default) and the digit/weekday locale are configurable via
-`NdpHijriConfig` (`monthNames`, `locale`) — labels always follow the adjusted
-math, never raw `Intl` formatting.
-
-## Public API
-
-- **Components:** `DatepickerComponent` (`ndp-datepicker`), `DateInputComponent` (`ndp-date-input`), `TimePickerComponent` (`ndp-time-picker`), `TimeInputComponent` (`ndp-time-input`), `CalendarMonthComponent` (`ndp-calendar-month`)
-- **Directive:** `NdpDayCellTemplate` (`ng-template[ndpDayCell]`)
-- **Adapters:** `CalendarAdapter` (abstract), `GregorianCalendarAdapter`, `JalaliCalendarAdapter`, `HijriCalendarAdapter` (+ `NdpHijriConfig`, `NdpHijriDayAdjustment`, `NdpHijriDayAdjuster`)
-- **Headless core:** `buildMonthView`, `applySelection`, `rangeEquals`, `isSelectionComplete`, `dayKey`, `atMidnight`, `toLatinDigits`, `toPersianDigits`, `getTimeOfDay`, `withTimeOfDay`, `snapMinutes`, `stepMinutes`, adapter `parse` / `formatInput` / `formatNumber`, types (`DateRange`, `DayCell`, `MonthView`, `TimeOfDay`, `DatepickerMode`, `DateFilterFn`)
-- **Config:** `provideNgxDatepicker`, `NDP_CALENDAR_ADAPTERS`
-
-### `DatepickerComponent` inputs
-
-| Input | Type | Default | Notes |
-| --- | --- | --- | --- |
-| `value` (model) | `DateRange` | `{start:null,end:null}` | Two-way bindable; also a `ControlValueAccessor`. |
-| `calendar` (model) | `string` | first registered | Active calendar id, e.g. `'jalali'`/`'gregorian'`. |
-| `mode` | `'single' \| 'range'` | `'single'` | |
-| `numberOfMonths` | `number` | `1` | Render N adjacent months. |
-| `min` / `max` | `Date \| null` | `null` | Inclusive bounds. |
-| `dateFilter` | `(d: Date) => boolean` | `null` | Return `true` if a date is **selectable**. |
-| `animation` | `'none' \| 'slide'` | `'none'` | Slide the calendar body in the direction of travel when navigating between months / years / pages. Direction-aware (mirrored in RTL) and disabled automatically under `prefers-reduced-motion`. |
-| `showSecondaryDate` | `boolean` | `false` | Show each date in a companion calendar (dual-script). |
-| `secondaryCalendar` | `string \| null` | `null` | Companion calendar id; defaults to the first other registered calendar. |
-| `showFooter` | `boolean` | `true` | Master toggle for the whole footer (summary bar + action buttons). |
-| `showSummary` | `boolean` | `true` | Show the selected-date summary bar inside the footer. Set `false` to hide just the summary while keeping the action buttons. |
-| `showToday` / `showClear` / `showCalendarToggle` | `boolean` | `true` | Footer action buttons. |
-| `showInput` | `boolean` | `false` | Render a typed-date field above the grid (day modes only). See [Typing dates](#typing-dates-input-field). |
-| `showTime` | `boolean` | `false` | Render an hours:minutes time picker under the grid (single mode only). The value's `Date` carries the time. See [Time of day](#time-of-day). |
-| `minuteStep` | `number` | `1` | Minute increment for the time picker's stepper and arrow keys (clamped 1–30). |
-
-**Output:** `(dateSelected)` emits the `DateRange` on every selection — handy for closing a dropdown.
-
-In **range** mode the summary bar shows a small ✕ next to each endpoint, so the
-start or end can be cleared individually without resetting the whole range.
-
-`min` / `max` also gate month navigation: the prev/next buttons (and `PageUp`/`PageDown`) stop at the bound month, so users can't browse into fully out-of-range months.
-
-### Keyboard
-
-`←↑↓→` move focus · `Enter`/`Space` select · `PageUp`/`PageDown` change month ·
-`Home`/`End` jump to start/end of month. Arrow direction is mirrored in RTL.
-
-## Adding a calendar
-
-Implement `CalendarAdapter` and register it:
-
-```ts
-provideNgxDatepicker(new MyEthiopianAdapter(), new GregorianCalendarAdapter())
-```
-
-When the adapter needs an Angular service, pass a factory instead of an
-instance — factories run inside the injection context, so `inject()` works:
-
-```ts
-provideNgxDatepicker(() => new MyEthiopianAdapter(inject(MyService)))
-```
-
-No component changes required — the entire UI talks only to the adapter interface.
+MIT © [Vahid Amirian](https://github.com/vahidamiryan)

@@ -1,0 +1,49 @@
+{
+  "name": "@vahidamiryan/datepicker-core",
+  "version": "1.0.0",
+  "description": "Framework-agnostic headless core for the NDP date picker: Jalali/Gregorian/Hijri calendar math, adapters, and render-ready view builders. Zero framework dependencies.",
+  "keywords": [
+    "datepicker",
+    "date-picker",
+    "jalali",
+    "shamsi",
+    "persian",
+    "gregorian",
+    "hijri",
+    "calendar",
+    "headless",
+    "framework-agnostic"
+  ],
+  "author": "Vahid Amirian",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vahidamiryan/ngx-jalali-datepicker",
+    "directory": "packages/core"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup && tsc -p tsconfig.build.json",
+    "build:types": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "vitest": "^2.1.0"
+  }
+}

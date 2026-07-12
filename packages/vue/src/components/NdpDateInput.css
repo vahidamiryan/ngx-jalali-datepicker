@@ -1,0 +1,152 @@
+.ndp-root {
+  /* ── Theme tokens — mirror DatepickerComponent so the field themes too ────── */
+  --ndp-accent: #3b82f6;
+  --ndp-focus-ring: #3b82f6;
+  --ndp-weekend-color: #ef4444;
+  --ndp-surface: #ffffff;
+  --ndp-border: #e2e8f0;
+  --ndp-text: #1e293b;
+  --ndp-muted: #94a3b8;
+  --ndp-day-hover-bg: #f1f5f9;
+  --ndp-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.25);
+  --ndp-radius: 14px;
+
+  display: inline-block;
+  font-family: inherit;
+  color: var(--ndp-text);
+  color-scheme: light;
+}
+
+.ndp-root[data-ndp-theme="dark"] {
+  color-scheme: dark;
+  --ndp-accent: #60a5fa;
+  --ndp-focus-ring: #60a5fa;
+  --ndp-weekend-color: #f87171;
+  --ndp-surface: #1e293b;
+  --ndp-border: #334155;
+  --ndp-text: #f1f5f9;
+  --ndp-muted: #94a3b8;
+  --ndp-day-hover-bg: #334155;
+  --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+}
+
+@media (prefers-color-scheme: dark) {
+  .ndp-root[data-ndp-theme="auto"] {
+    color-scheme: dark;
+    --ndp-accent: #60a5fa;
+    --ndp-focus-ring: #60a5fa;
+    --ndp-weekend-color: #f87171;
+    --ndp-surface: #1e293b;
+    --ndp-border: #334155;
+    --ndp-text: #f1f5f9;
+    --ndp-muted: #94a3b8;
+    --ndp-day-hover-bg: #334155;
+    --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+  }
+}
+
+.ndp-input {
+  position: relative;
+  display: inline-block;
+}
+
+/* The bordered field shell — wraps the input(s) and the calendar toggle.
+   Sits above the click-catching backdrop (z-index 25) so a click on the field
+   keeps focus there instead of landing on the backdrop and closing the popover. */
+.ndp-input__fields {
+  position: relative;
+  z-index: 26;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--ndp-surface);
+  border: 1px solid var(--ndp-border);
+  border-radius: 10px;
+  padding: 0.1rem 0.35rem;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.ndp-input__fields:focus-within {
+  border-color: var(--ndp-accent);
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-input--disabled .ndp-input__fields {
+  opacity: 0.6;
+}
+
+.ndp-input__field {
+  appearance: none;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ndp-text);
+  padding: 0.35rem 0.4rem;
+  width: 7.5rem;
+  text-align: center;
+}
+
+.ndp-input__field::placeholder {
+  color: var(--ndp-muted);
+}
+
+.ndp-input__field:focus {
+  outline: none;
+}
+
+.ndp-input__field--invalid {
+  color: var(--ndp-weekend-color);
+}
+
+.ndp-input__sep {
+  color: var(--ndp-muted);
+  font-size: 0.85rem;
+  user-select: none;
+}
+
+.ndp-input__toggle {
+  appearance: none;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--ndp-muted);
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.ndp-input__toggle:hover:not(:disabled) {
+  background: var(--ndp-day-hover-bg);
+  color: var(--ndp-text);
+}
+
+.ndp-input__toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+}
+
+.ndp-input__toggle:disabled {
+  cursor: default;
+}
+
+/* Click-catcher that closes the popover when clicking elsewhere. */
+.ndp-input__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  border: none;
+  background: transparent;
+  cursor: default;
+}
+
+.ndp-input__popover {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  inset-inline-start: 0;
+  z-index: 30;
+}

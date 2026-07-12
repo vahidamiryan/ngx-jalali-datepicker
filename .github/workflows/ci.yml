@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Build core (@vahidamiryan/datepicker-core)
+        run: npm run build -w @vahidamiryan/datepicker-core
+
+      - name: Test core
+        run: npm run test -w @vahidamiryan/datepicker-core
+
+      - name: Build Angular (@vahidamiryan/ngx-jalali-datepicker)
+        run: npx ng build angular
+
+      - name: Test Angular (headless)
+        run: npx ng test angular --watch=false --browsers=ChromeHeadless
+
+      - name: Build Vue (@vahidamiryan/vue-datepicker)
+        run: npm run build -w @vahidamiryan/vue-datepicker
+
+      - name: Test Vue
+        run: npm run test -w @vahidamiryan/vue-datepicker
+
+      - name: Typecheck Vue
+        run: npm run typecheck -w @vahidamiryan/vue-datepicker
+
+      - name: Build docs
+        run: npm run build -w @vahidamiryan/docs

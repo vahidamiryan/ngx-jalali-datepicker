@@ -1,10 +1,10 @@
-name: Deploy Demo to GitHub Pages
+name: Deploy Docs to GitHub Pages
 
 on:
   push:
     branches:
       - main
-  # امکان اجرای دستی اکشن در گیت‌هاب
+  # Allow manually triggering the workflow from the GitHub UI.
   workflow_dispatch:
 
 jobs:
@@ -26,11 +26,17 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Build Demo App
-        run: npx ng build demo --base-href /ngx-jalali-datepicker/
+      - name: Build core package (docs alias source, but build validates it)
+        run: npm run build -w @vahidamiryan/datepicker-core
+
+      - name: Build Angular package (docs mounts its FESM bundle as live islands)
+        run: npm run build -w @vahidamiryan/ngx-jalali-datepicker
+
+      - name: Build VitePress Docs
+        run: npm run build -w @vahidamiryan/docs
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist/demo/browser
+          publish_dir: ./apps/docs/.vitepress/dist

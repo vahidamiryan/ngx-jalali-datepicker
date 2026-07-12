@@ -8,8 +8,11 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "paths": {
-      "ngx-jalali-datepicker": [
-        "./projects/ngx-jalali-datepicker/src/public-api.ts"
+      "@vahidamiryan/datepicker-core": [
+        "./packages/core/src/index.ts"
+      ],
+      "@vahidamiryan/ngx-jalali-datepicker": [
+        "./packages/angular/src/public-api.ts"
       ]
     },
     "noFallthroughCasesInSwitch": true,
@@ -30,16 +33,16 @@
   "files": [],
   "references": [
     {
-      "path": "./projects/ngx-jalali-datepicker/tsconfig.lib.json"
+      "path": "./packages/angular/tsconfig.lib.json"
     },
     {
-      "path": "./projects/ngx-jalali-datepicker/tsconfig.spec.json"
+      "path": "./packages/angular/tsconfig.spec.json"
     },
     {
-      "path": "./projects/demo/tsconfig.app.json"
+      "path": "./apps/angular-playground/tsconfig.app.json"
     },
     {
-      "path": "./projects/demo/tsconfig.spec.json"
+      "path": "./apps/angular-playground/tsconfig.spec.json"
     }
   ]
 }

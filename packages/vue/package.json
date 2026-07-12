@@ -1,0 +1,64 @@
+{
+  "name": "@vahidamiryan/vue-datepicker",
+  "version": "1.0.0",
+  "description": "High-performance, customizable Jalali/Gregorian/Hijri date picker for Vue 3. Built on the shared @vahidamiryan/datepicker-core headless engine.",
+  "keywords": [
+    "vue",
+    "vue3",
+    "datepicker",
+    "date-picker",
+    "jalali",
+    "shamsi",
+    "persian",
+    "gregorian",
+    "hijri",
+    "calendar",
+    "dual-calendar",
+    "composition-api"
+  ],
+  "author": "Vahid Amirian",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vahidamiryan/ngx-jalali-datepicker",
+    "directory": "packages/vue"
+  },
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/ndp-vue.umd.cjs",
+  "module": "./dist/ndp-vue.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/ndp-vue.js",
+      "require": "./dist/ndp-vue.umd.cjs"
+    },
+    "./styles.css": "./dist/ndp-vue.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build && vue-tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@vahidamiryan/datepicker-core": "^1.0.0",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.1.0",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^25.0.0",
+    "vite": "^5.4.0",
+    "vitest": "^2.1.0",
+    "vue": "^3.5.0",
+    "vue-tsc": "^2.1.0"
+  }
+}
