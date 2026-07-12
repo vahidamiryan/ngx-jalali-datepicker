@@ -1,9 +1,9 @@
 import { ComponentRef, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DatepickerComponent } from './datepicker.component';
-import { GregorianCalendarAdapter } from '@ndp/core';
+import { GregorianCalendarAdapter } from '@vahidamiryan/datepicker-core';
 import { provideNgxDatepicker } from '../../datepicker.providers';
-import { DateRange } from '@ndp/core';
+import { DateRange } from '@vahidamiryan/datepicker-core';
 
 describe('DatepickerComponent time-of-day', () => {
   let fixture: ComponentFixture<DatepickerComponent>;

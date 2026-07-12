@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { CalendarAdapter } from '@ndp/core';
-import { TimeOfDay } from '@ndp/core';
-import { normalizeStep, snapMinutes, stepMinutes, wrapHours } from '@ndp/core';
-import { toLatinDigits } from '@ndp/core';
+import { CalendarAdapter } from '@vahidamiryan/datepicker-core';
+import { TimeOfDay } from '@vahidamiryan/datepicker-core';
+import { normalizeStep, snapMinutes, stepMinutes, wrapHours } from '@vahidamiryan/datepicker-core';
+import { toLatinDigits } from '@vahidamiryan/datepicker-core';
 
 /**
  * Two spinner fields (hours : minutes) for the optional time-of-day feature.

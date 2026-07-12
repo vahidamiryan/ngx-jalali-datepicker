@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { JalaliCalendarAdapter, GregorianCalendarAdapter, type DateRange } from '@ndp/core';
+import { JalaliCalendarAdapter, GregorianCalendarAdapter, type DateRange } from '@vahidamiryan/datepicker-core';
 import NdpDateInput from './NdpDateInput.vue';
 import { NDP_CALENDAR_ADAPTERS } from '../adapters';
 

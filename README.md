@@ -1,61 +1,120 @@
-# NDP Date Picker — monorepo
+<div align="center">
 
-High-performance, customizable **Jalali / Gregorian / Hijri** date picker with a
-shared framework-agnostic core and first-class **Angular** and **Vue 3** components.
-A single headless engine means bug-fixes and new calendar features land in every
-framework at once.
+# 📅 Jalali Date Picker — Angular & Vue
+
+**High-performance, zero-dependency Jalali (Shamsi) / Gregorian / Hijri date picker**
+with first-class **Angular 20+** and **Vue 3** components on one shared headless core.
+
+[![npm (Angular)](https://img.shields.io/npm/v/@vahidamiryan/ngx-jalali-datepicker?label=angular&color=dd0031)](https://www.npmjs.com/package/@vahidamiryan/ngx-jalali-datepicker)
+[![npm (Vue)](https://img.shields.io/npm/v/@vahidamiryan/vue-datepicker?label=vue&color=42b883)](https://www.npmjs.com/package/@vahidamiryan/vue-datepicker)
+[![npm (core)](https://img.shields.io/npm/v/@vahidamiryan/datepicker-core?label=core&color=3178c6)](https://www.npmjs.com/package/@vahidamiryan/datepicker-core)
+[![downloads](https://img.shields.io/npm/dm/@vahidamiryan/ngx-jalali-datepicker?label=downloads&color=cb3837)](https://www.npmjs.com/package/@vahidamiryan/ngx-jalali-datepicker)
+[![license](https://img.shields.io/npm/l/@vahidamiryan/ngx-jalali-datepicker?color=blue)](LICENSE)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@vahidamiryan/ngx-jalali-datepicker?label=gzip)](https://bundlephobia.com/package/@vahidamiryan/ngx-jalali-datepicker)
+
+### [🔗 Live Demo & Docs →](https://vahidamiryan.github.io/ngx-jalali-datepicker/)
+
+</div>
+
+---
+
+## Why this one?
+
+Most Persian date pickers are heavy, tied to an old framework model, or a nightmare to
+theme. This one is built differently:
+
+- ⚡ **Fast by construction** — every per-day flag (selected / in-range / disabled / today)
+  is precomputed once; templates read only booleans, comparisons use numeric `yyyymmdd`
+  keys, never string allocations. Angular build is **zoneless + `OnPush` + signals**.
+- 🧩 **Headless core, thin components** — all calendar math and selection logic live in a
+  pure `@vahidamiryan/datepicker-core` with **zero framework dependencies**. Angular and
+  Vue share the *exact same* engine, so a fix in one lands in both.
+- 🗓️ **Three calendars out of the box** — Jalali/Shamsi, Gregorian, and tabular Hijri, all
+  verified against the platform `Intl`. Add your own by implementing one adapter interface.
+- 🎨 **Themeable to the pixel** — every color/radius/shadow is a `--ndp-*` CSS variable;
+  light/dark built in. Replace a whole day cell with content projection (Angular) or a
+  scoped slot (Vue).
+- ✅ **Complete** — range, multi-month, month/year pickers, typed input with parsing,
+  time-of-day, dual-script (Gregorian under Jalali), full keyboard nav, RTL, forms
+  integration (`ControlValueAccessor` / `v-model`).
+
+## Install
+
+**Angular**
+```bash
+npm install @vahidamiryan/ngx-jalali-datepicker @vahidamiryan/datepicker-core
+```
+```ts
+// app.config.ts
+import { provideZonelessChangeDetection } from '@angular/core';
+import { provideNgxDatepicker, JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamiryan/ngx-jalali-datepicker';
+
+export const appConfig = {
+  providers: [
+    provideZonelessChangeDetection(),
+    provideNgxDatepicker(new JalaliCalendarAdapter(), new GregorianCalendarAdapter('en-US')),
+  ],
+};
+```
+```html
+<ndp-datepicker [(value)]="value" />
+```
+
+**Vue 3**
+```bash
+npm install @vahidamiryan/vue-datepicker @vahidamiryan/datepicker-core vue
+```
+```ts
+// main.ts
+import { NdpDatepickerPlugin } from '@vahidamiryan/vue-datepicker';
+import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamiryan/datepicker-core';
+import '@vahidamiryan/vue-datepicker/styles.css';
+
+createApp(App).use(NdpDatepickerPlugin, {
+  adapters: [new JalaliCalendarAdapter(), new GregorianCalendarAdapter('en-US')],
+}).mount('#app');
+```
+```vue
+<NdpDatepicker v-model="value" />
+```
+
+> **Headless, no UI?** Import `@vahidamiryan/datepicker-core` directly for Jalali ⇆ Gregorian ⇆ Hijri
+> conversion and month-grid building with no framework at all.
 
 ## Packages
 
-| Package | Path | Description |
+| Package | Framework | Description |
 | --- | --- | --- |
-| [`@ndp/core`](packages/core) | `packages/core` | Framework-agnostic headless engine — types, calendar adapters + math, selection and render-ready view builders. **Zero framework deps.** |
-| [`@ndp/angular`](packages/angular) | `packages/angular` | Angular 20+ components (signals, zoneless, `OnPush`, `ControlValueAccessor`) on `@ndp/core`. |
-| [`@ndp/vue`](packages/vue) | `packages/vue` | Vue 3 components (Composition API, `v-model`, scoped slots) on `@ndp/core`. |
-
-Apps:
-
-| App | Path | Description |
-| --- | --- | --- |
-| `@ndp/docs` | `apps/docs` | Unified VitePress docs site with live Vue examples + Angular snippets. Deployed to GitHub Pages. |
-| `angular-playground` | `apps/angular-playground` | Standalone Angular demo app. |
-
-## Architecture
+| [`@vahidamiryan/ngx-jalali-datepicker`](packages/angular) | Angular 20+ | Signals, zoneless, `OnPush`, `ControlValueAccessor`. |
+| [`@vahidamiryan/vue-datepicker`](packages/vue) | Vue 3 | Composition API, `v-model`, scoped slots. |
+| [`@vahidamiryan/datepicker-core`](packages/core) | none | Headless engine — adapters, math, view builders. Zero deps. |
 
 ```
-@ndp/core  (pure TS: adapters, math, build-month/period, selection, time, types)
-   ├── @ndp/angular  (Angular component layer)
-   └── @ndp/vue      (Vue 3 component layer)
+@vahidamiryan/datepicker-core   (pure TS engine — shared by both)
+   ├── @vahidamiryan/ngx-jalali-datepicker   (Angular component layer)
+   └── @vahidamiryan/vue-datepicker          (Vue 3 component layer)
 ```
-
-The core has **one** rule that keeps it portable: no framework imports. Both
-framework packages depend on it as a peer, so the calendar math and selection logic
-are literally the same code in Angular and Vue — the components are thin.
 
 ## Develop
 
-This is an **npm workspaces** monorepo (Node 20+).
+npm-workspaces monorepo (Node 20+):
 
 ```bash
-npm install            # install everything
-
-npm run build          # build core → angular → vue (dependency order)
-npm run test           # test core + vue
-npm run dev:docs       # serve the docs site (live Vue examples)
-npm run start:playground  # serve the Angular playground
-
-# per package
-npm run build -w @ndp/core
-npx ng build angular
-npm run build -w @ndp/vue
+npm install
+npm run build          # core → angular → vue (dependency order)
+npm run test           # core + vue suites
+npm run dev:docs       # unified docs with live Angular + Vue examples
 ```
 
-## Publishing
+Publishing is automated in [`.github/workflows/release.yml`](.github/workflows/release.yml)
+(core first, then the framework packages).
 
-`@ndp/core`, `@ndp/angular`, `@ndp/vue` are published together (see
-`.github/workflows/release.yml` — manual dispatch or a `v*` tag). Build order is
-enforced: core first, then the framework packages.
+## Contributing
+
+Issues, feature requests, and PRs are welcome — this project is actively developed and
+shaped by real feedback. If a calendar edge case or a framework idiom is missing, open an
+issue.
 
 ## License
 
-MIT © Vahid Amirian
+MIT © [Vahid Amirian](https://github.com/vahidamiryan)

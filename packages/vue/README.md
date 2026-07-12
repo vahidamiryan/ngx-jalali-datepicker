@@ -1,14 +1,14 @@
-# @ndp/vue
+# @vahidamiryan/vue-datepicker
 
 High-performance, customizable **Jalali / Gregorian / Hijri date picker for Vue 3**,
-built on the shared [`@ndp/core`](../core) headless engine — the same calendar math
-and selection logic that powers [`@ndp/angular`](../angular), so behavior is identical
+built on the shared [`@vahidamiryan/datepicker-core`](../core) headless engine — the same calendar math
+and selection logic that powers [`@vahidamiryan/ngx-jalali-datepicker`](../angular), so behavior is identical
 across frameworks.
 
 ## Install
 
 ```bash
-npm install @ndp/vue @ndp/core vue
+npm install @vahidamiryan/vue-datepicker @vahidamiryan/datepicker-core vue
 ```
 
 ## Setup
@@ -17,9 +17,9 @@ Configure the calendars once via the plugin (the first is the default):
 
 ```ts
 import { createApp } from 'vue';
-import { NdpDatepickerPlugin } from '@ndp/vue';
-import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@ndp/core';
-import '@ndp/vue/styles.css';
+import { NdpDatepickerPlugin } from '@vahidamiryan/vue-datepicker';
+import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamiryan/datepicker-core';
+import '@vahidamiryan/vue-datepicker/styles.css';
 
 createApp(App)
   .use(NdpDatepickerPlugin, {
@@ -35,8 +35,8 @@ Or pass calendars per-component with the `:adapters` prop (no plugin needed).
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue';
-import { NdpDatepicker, NdpDateInput, NdpTimeInput } from '@ndp/vue';
-import type { DateRange } from '@ndp/core';
+import { NdpDatepicker, NdpDateInput, NdpTimeInput } from '@vahidamiryan/vue-datepicker';
+import type { DateRange } from '@vahidamiryan/datepicker-core';
 
 const value = ref<DateRange>({ start: null, end: null });
 const time = ref<Date | null>(null);

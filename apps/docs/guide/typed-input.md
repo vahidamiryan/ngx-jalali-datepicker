@@ -41,7 +41,7 @@ const range = ref({ start: null, end: null })
 to a `Date` in any calendar without any UI:
 
 ```ts
-import { JalaliCalendarAdapter } from '@ndp/core'
+import { JalaliCalendarAdapter } from '@vahidamiryan/datepicker-core'
 
 const cal = new JalaliCalendarAdapter()
 cal.parse('۱۴۰۴/۰۳/۲۸')    // Date or null

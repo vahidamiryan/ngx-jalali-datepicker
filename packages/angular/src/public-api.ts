@@ -1,10 +1,10 @@
 /*
- * Public API Surface of @ndp/angular
+ * Public API Surface of @vahidamiryan/ngx-jalali-datepicker
  */
 
 // Re-export the entire framework-agnostic core (types, adapters, math, headless
 // view builders) so consumers can import everything from one package if they wish.
-export * from '@ndp/core';
+export * from '@vahidamiryan/datepicker-core';
 
 // Angular configuration & DI
 export * from './datepicker.providers';

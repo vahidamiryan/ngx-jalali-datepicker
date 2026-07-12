@@ -1,11 +1,11 @@
 # Vue 3
 
-Live, interactive examples rendered by the real `@ndp/vue` components (this docs
-site is itself a Vue app). They render the same UI as `@ndp/angular` from the same
-`@ndp/core`, so behavior is identical. Install:
+Live, interactive examples rendered by the real `@vahidamiryan/vue-datepicker` components (this docs
+site is itself a Vue app). They render the same UI as `@vahidamiryan/ngx-jalali-datepicker` from the same
+`@vahidamiryan/datepicker-core`, so behavior is identical. Install:
 
 ```bash
-npm install @ndp/vue @ndp/core vue
+npm install @vahidamiryan/vue-datepicker @vahidamiryan/datepicker-core vue
 ```
 
 <script setup>
@@ -43,9 +43,9 @@ Configure the calendars once (the first is the default):
 ```ts
 // main.ts
 import { createApp } from 'vue'
-import { NdpDatepickerPlugin } from '@ndp/vue'
-import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@ndp/core'
-import '@ndp/vue/styles.css'
+import { NdpDatepickerPlugin } from '@vahidamiryan/vue-datepicker'
+import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamiryan/datepicker-core'
+import '@vahidamiryan/vue-datepicker/styles.css'
 
 createApp(App)
   .use(NdpDatepickerPlugin, {
@@ -64,7 +64,7 @@ createApp(App)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { NdpDatepicker } from '@ndp/vue'
+import { NdpDatepicker } from '@vahidamiryan/vue-datepicker'
 const value = ref({ start: null, end: null })
 </script>
 

@@ -8,7 +8,7 @@ import {
   GregorianCalendarAdapter,
   JalaliCalendarAdapter,
   HijriCalendarAdapter,
-} from '@ndp/angular';
+} from '@vahidamiryan/ngx-jalali-datepicker';
 
 export const appConfig: ApplicationConfig = {
   providers: [

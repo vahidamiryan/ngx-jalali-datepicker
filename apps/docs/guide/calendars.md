@@ -1,7 +1,7 @@
 # Calendars & adapters
 
 The picker never branches on a locale string — it talks only to a `CalendarAdapter`.
-Three ship in `@ndp/core`:
+Three ship in `@vahidamiryan/datepicker-core`:
 
 - **`JalaliCalendarAdapter`** — Jalali / Shamsi (Persian). A faithful port of the
   `jalaali-js` algorithm, verified against the platform `Intl` Persian calendar.
@@ -12,7 +12,7 @@ Three ship in `@ndp/core`:
 All three, and the conversion math, are exported so you can convert headlessly:
 
 ```ts
-import { JalaaliMath, HijriMath } from '@ndp/core'
+import { JalaaliMath, HijriMath } from '@vahidamiryan/datepicker-core'
 
 JalaaliMath.toJalaali(new Date(2026, 2, 21)) // { jy: 1405, jm: 1, jd: 1 }
 JalaaliMath.toGregorian(1404, 1, 1)          // { gy: 2025, gm: 3, gd: 21 }
@@ -53,5 +53,5 @@ Show every date in a second calendar at the same time (Gregorian under Jalali, e
 ## Adding your own calendar
 
 Implement `CalendarAdapter` and register it — no component changes needed, since the
-entire UI talks only to the interface. Because the adapter lives in `@ndp/core`, the
+entire UI talks only to the interface. Because the adapter lives in `@vahidamiryan/datepicker-core`, the
 same custom calendar works in both Angular and Vue.
