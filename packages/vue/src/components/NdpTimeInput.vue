@@ -16,7 +16,7 @@ import {
   snapMinutes,
   withTimeOfDay,
   wrapHours,
-} from '@vahidamiryan/datepicker-core';
+} from '@vahidamirian/datepicker-core';
 import { useCalendarAdapters, type NdpCalendarAdapterSource } from '../adapters';
 import NdpTimePicker from './NdpTimePicker.vue';
 

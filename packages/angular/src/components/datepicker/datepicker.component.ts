@@ -14,7 +14,7 @@ import {
   untracked,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { CalendarAdapter } from '@vahidamiryan/datepicker-core';
+import { CalendarAdapter } from '@vahidamirian/datepicker-core';
 import { NDP_CALENDAR_ADAPTERS } from '../../datepicker.providers';
 import {
   CalendarView,
@@ -25,11 +25,11 @@ import {
   NdpAnimation,
   NdpTheme,
   PeriodCell,
-} from '@vahidamiryan/datepicker-core';
-import { atMidnight, clampDate, dayKey } from '@vahidamiryan/datepicker-core';
-import { applySelection, isSelectionComplete } from '@vahidamiryan/datepicker-core';
-import { buildMonthsView, buildYearsView, YEARS_PER_PAGE } from '@vahidamiryan/datepicker-core';
-import { TimeOfDay, getTimeOfDay, withTimeOfDay } from '@vahidamiryan/datepicker-core';
+} from '@vahidamirian/datepicker-core';
+import { atMidnight, clampDate, dayKey } from '@vahidamirian/datepicker-core';
+import { applySelection, isSelectionComplete } from '@vahidamirian/datepicker-core';
+import { buildMonthsView, buildYearsView, YEARS_PER_PAGE } from '@vahidamirian/datepicker-core';
+import { TimeOfDay, getTimeOfDay, withTimeOfDay } from '@vahidamirian/datepicker-core';
 import { CalendarMonthComponent } from '../calendar-month/calendar-month.component';
 import { CalendarPeriodComponent } from '../calendar-period/calendar-period.component';
 import { TimePickerComponent } from '../time-picker/time-picker.component';

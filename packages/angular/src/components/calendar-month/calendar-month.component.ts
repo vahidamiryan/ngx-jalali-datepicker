@@ -7,9 +7,9 @@ import {
   output,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { CalendarAdapter } from '@vahidamiryan/datepicker-core';
-import { buildMonthView } from '@vahidamiryan/datepicker-core';
-import { DateFilterFn, DateRange, DayCell, DatepickerMode } from '@vahidamiryan/datepicker-core';
+import { CalendarAdapter } from '@vahidamirian/datepicker-core';
+import { buildMonthView } from '@vahidamirian/datepicker-core';
+import { DateFilterFn, DateRange, DayCell, DatepickerMode } from '@vahidamirian/datepicker-core';
 
 /**
  * Renders a single month grid. Pure presentational + fully precomputed:

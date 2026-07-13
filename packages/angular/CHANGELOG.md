@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 **npm:** https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker
 
+## [2.0.0]
+
+### Changed
+- **BREAKING — monorepo architecture.** The headless core (types, calendar
+  adapters, math, view builders) has been extracted to
+  `@vahidamirian/datepicker-core`. This package is now a **peerDependency** —
+  you must install it alongside the Angular package.
+  **Migration:** `npm install @vahidamirian/datepicker-core`. All existing
+  imports from `@vahidamirian/ngx-jalali-datepicker` keep working (the core is
+  re-exported), so no code changes are needed beyond the extra install.
+- Internal build migrated to an npm-workspaces monorepo. The source lives under
+  `packages/angular` and the core under `packages/core`.
+
 ## [1.3.0]
 
 ### Added

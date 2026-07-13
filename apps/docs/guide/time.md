@@ -48,7 +48,7 @@ function fmt(v) {
 ## Headless helpers
 
 ```ts
-import { getTimeOfDay, withTimeOfDay } from '@vahidamiryan/datepicker-core'
+import { getTimeOfDay, withTimeOfDay } from '@vahidamirian/datepicker-core'
 
 getTimeOfDay(value.start)              // { hours: 14, minutes: 30 }
 withTimeOfDay(value.start, 9, 0)       // same day at 09:00 (a new Date)

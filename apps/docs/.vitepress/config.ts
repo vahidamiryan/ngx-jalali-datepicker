@@ -7,7 +7,7 @@ const base = process.env.DOCS_BASE ?? '/ngx-jalali-datepicker/';
 
 // The live Angular islands import the built (template-inlined) FESM bundle. Its
 // file name is derived from the package name, so resolve it dynamically instead
-// of hard-coding it — build @vahidamiryan/ngx-jalali-datepicker before the docs.
+// of hard-coding it — build @vahidamirian/ngx-jalali-datepicker before the docs.
 const angularFesmDir = resolve(__dirname, '../../../dist/angular/fesm2022');
 const angularFesm = existsSync(angularFesmDir)
   ? resolve(angularFesmDir, readdirSync(angularFesmDir).find((f) => f.endsWith('.mjs'))!)
@@ -46,15 +46,15 @@ export default defineConfig({
       alias: {
         // Live Vue examples in the docs import the workspace packages from source
         // so the docs always reflect the current code without a rebuild.
-        '@vahidamiryan/datepicker-core': resolve(__dirname, '../../../packages/core/src/index.ts'),
-        '@vahidamiryan/vue-datepicker': resolve(__dirname, '../../../packages/vue/src/index.ts'),
+        '@vahidamirian/datepicker-core': resolve(__dirname, '../../../packages/core/src/index.ts'),
+        '@vahidamirian/vue-datepicker': resolve(__dirname, '../../../packages/vue/src/index.ts'),
         // Angular islands import the built FESM bundle via this stable alias.
         '@ndp-angular-dist': angularFesm,
       },
     },
     ssr: {
       // The Vue components touch the DOM; render them client-side only.
-      noExternal: ['@vahidamiryan/vue-datepicker', '@vahidamiryan/datepicker-core'],
+      noExternal: ['@vahidamirian/vue-datepicker', '@vahidamirian/datepicker-core'],
     },
   },
   themeConfig: {
@@ -65,9 +65,9 @@ export default defineConfig({
       {
         text: 'npm',
         items: [
-          { text: '@vahidamiryan/datepicker-core', link: 'https://www.npmjs.com/package/@vahidamiryan/datepicker-core' },
-          { text: '@vahidamiryan/ngx-jalali-datepicker', link: 'https://www.npmjs.com/package/@vahidamiryan/ngx-jalali-datepicker' },
-          { text: '@vahidamiryan/vue-datepicker', link: 'https://www.npmjs.com/package/@vahidamiryan/vue-datepicker' },
+          { text: '@vahidamirian/datepicker-core', link: 'https://www.npmjs.com/package/@vahidamirian/datepicker-core' },
+          { text: '@vahidamirian/ngx-jalali-datepicker', link: 'https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker' },
+          { text: '@vahidamirian/vue-datepicker', link: 'https://www.npmjs.com/package/@vahidamirian/vue-datepicker' },
         ],
       },
     ],

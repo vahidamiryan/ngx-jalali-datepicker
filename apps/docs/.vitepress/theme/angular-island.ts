@@ -1,12 +1,12 @@
 /**
  * Bootstraps small, real Angular apps ("islands") inside the docs so the Angular
  * page shows genuinely live pickers — the same idea as the inline Vue examples,
- * but running the actual @vahidamiryan/ngx-jalali-datepicker components. Each island is an isolated
+ * but running the actual @vahidamirian/ngx-jalali-datepicker components. Each island is an isolated
  * `bootstrapApplication` call rendered into a host element supplied by the
  * `AngularDemo.vue` wrapper. Client-only: never imported during SSR.
  */
 // The JIT compiler must load before any @Component is processed: the islands use
-// runtime string templates, which AOT-built @vahidamiryan/ngx-jalali-datepicker doesn't ship a compiler
+// runtime string templates, which AOT-built @vahidamirian/ngx-jalali-datepicker doesn't ship a compiler
 // for. Importing it here registers the JIT resource loader globally.
 import '@angular/compiler';
 import {

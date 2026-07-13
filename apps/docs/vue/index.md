@@ -1,11 +1,11 @@
 # Vue 3
 
-Live, interactive examples rendered by the real `@vahidamiryan/vue-datepicker` components (this docs
-site is itself a Vue app). They render the same UI as `@vahidamiryan/ngx-jalali-datepicker` from the same
-`@vahidamiryan/datepicker-core`, so behavior is identical. Install:
+Live, interactive examples rendered by the real `@vahidamirian/vue-datepicker` components (this docs
+site is itself a Vue app). They render the same UI as `@vahidamirian/ngx-jalali-datepicker` from the same
+`@vahidamirian/datepicker-core`, so behavior is identical. Install:
 
 ```bash
-npm install @vahidamiryan/vue-datepicker @vahidamiryan/datepicker-core vue
+npm install @vahidamirian/vue-datepicker @vahidamirian/datepicker-core vue
 ```
 
 <script setup>
@@ -43,9 +43,9 @@ Configure the calendars once (the first is the default):
 ```ts
 // main.ts
 import { createApp } from 'vue'
-import { NdpDatepickerPlugin } from '@vahidamiryan/vue-datepicker'
-import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamiryan/datepicker-core'
-import '@vahidamiryan/vue-datepicker/styles.css'
+import { NdpDatepickerPlugin } from '@vahidamirian/vue-datepicker'
+import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamirian/datepicker-core'
+import '@vahidamirian/vue-datepicker/styles.css'
 
 createApp(App)
   .use(NdpDatepickerPlugin, {
@@ -64,7 +64,7 @@ createApp(App)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { NdpDatepicker } from '@vahidamiryan/vue-datepicker'
+import { NdpDatepicker } from '@vahidamirian/vue-datepicker'
 const value = ref({ start: null, end: null })
 </script>
 

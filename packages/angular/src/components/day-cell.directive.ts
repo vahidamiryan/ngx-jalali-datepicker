@@ -1,5 +1,5 @@
 import { Directive, TemplateRef, inject } from '@angular/core';
-import { DayCell } from '@vahidamiryan/datepicker-core';
+import { DayCell } from '@vahidamirian/datepicker-core';
 
 /**
  * Marks an `<ng-template>` as the custom renderer for a day cell.

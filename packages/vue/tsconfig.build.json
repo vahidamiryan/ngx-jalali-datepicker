@@ -5,7 +5,7 @@
     "emitDeclarationOnly": true,
     "outDir": "dist",
     "paths": {
-      "@vahidamiryan/datepicker-core": ["../core/dist/types/index.d.ts"]
+      "@vahidamirian/datepicker-core": ["../core/dist/types/index.d.ts"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.vue"],

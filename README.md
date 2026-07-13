@@ -5,12 +5,12 @@
 **High-performance, zero-dependency Jalali (Shamsi) / Gregorian / Hijri date picker**
 with first-class **Angular 20+** and **Vue 3** components on one shared headless core.
 
-[![npm (Angular)](https://img.shields.io/npm/v/@vahidamiryan/ngx-jalali-datepicker?label=angular&color=dd0031)](https://www.npmjs.com/package/@vahidamiryan/ngx-jalali-datepicker)
-[![npm (Vue)](https://img.shields.io/npm/v/@vahidamiryan/vue-datepicker?label=vue&color=42b883)](https://www.npmjs.com/package/@vahidamiryan/vue-datepicker)
-[![npm (core)](https://img.shields.io/npm/v/@vahidamiryan/datepicker-core?label=core&color=3178c6)](https://www.npmjs.com/package/@vahidamiryan/datepicker-core)
-[![downloads](https://img.shields.io/npm/dm/@vahidamiryan/ngx-jalali-datepicker?label=downloads&color=cb3837)](https://www.npmjs.com/package/@vahidamiryan/ngx-jalali-datepicker)
-[![license](https://img.shields.io/npm/l/@vahidamiryan/ngx-jalali-datepicker?color=blue)](LICENSE)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@vahidamiryan/ngx-jalali-datepicker?label=gzip)](https://bundlephobia.com/package/@vahidamiryan/ngx-jalali-datepicker)
+[![npm (Angular)](https://img.shields.io/npm/v/@vahidamirian/ngx-jalali-datepicker?label=angular&color=dd0031)](https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker)
+[![npm (Vue)](https://img.shields.io/npm/v/@vahidamirian/vue-datepicker?label=vue&color=42b883)](https://www.npmjs.com/package/@vahidamirian/vue-datepicker)
+[![npm (core)](https://img.shields.io/npm/v/@vahidamirian/datepicker-core?label=core&color=3178c6)](https://www.npmjs.com/package/@vahidamirian/datepicker-core)
+[![downloads](https://img.shields.io/npm/dm/@vahidamirian/ngx-jalali-datepicker?label=downloads&color=cb3837)](https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker)
+[![license](https://img.shields.io/npm/l/@vahidamirian/ngx-jalali-datepicker?color=blue)](LICENSE)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@vahidamirian/ngx-jalali-datepicker?label=gzip)](https://bundlephobia.com/package/@vahidamirian/ngx-jalali-datepicker)
 
 ### [🔗 Live Demo & Docs →](https://vahidamiryan.github.io/ngx-jalali-datepicker/)
 
@@ -27,7 +27,7 @@ theme. This one is built differently:
   is precomputed once; templates read only booleans, comparisons use numeric `yyyymmdd`
   keys, never string allocations. Angular build is **zoneless + `OnPush` + signals**.
 - 🧩 **Headless core, thin components** — all calendar math and selection logic live in a
-  pure `@vahidamiryan/datepicker-core` with **zero framework dependencies**. Angular and
+  pure `@vahidamirian/datepicker-core` with **zero framework dependencies**. Angular and
   Vue share the *exact same* engine, so a fix in one lands in both.
 - 🗓️ **Three calendars out of the box** — Jalali/Shamsi, Gregorian, and tabular Hijri, all
   verified against the platform `Intl`. Add your own by implementing one adapter interface.
@@ -42,12 +42,12 @@ theme. This one is built differently:
 
 **Angular**
 ```bash
-npm install @vahidamiryan/ngx-jalali-datepicker @vahidamiryan/datepicker-core
+npm install @vahidamirian/ngx-jalali-datepicker @vahidamirian/datepicker-core
 ```
 ```ts
 // app.config.ts
 import { provideZonelessChangeDetection } from '@angular/core';
-import { provideNgxDatepicker, JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamiryan/ngx-jalali-datepicker';
+import { provideNgxDatepicker, JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamirian/ngx-jalali-datepicker';
 
 export const appConfig = {
   providers: [
@@ -62,13 +62,13 @@ export const appConfig = {
 
 **Vue 3**
 ```bash
-npm install @vahidamiryan/vue-datepicker @vahidamiryan/datepicker-core vue
+npm install @vahidamirian/vue-datepicker @vahidamirian/datepicker-core vue
 ```
 ```ts
 // main.ts
-import { NdpDatepickerPlugin } from '@vahidamiryan/vue-datepicker';
-import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamiryan/datepicker-core';
-import '@vahidamiryan/vue-datepicker/styles.css';
+import { NdpDatepickerPlugin } from '@vahidamirian/vue-datepicker';
+import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamirian/datepicker-core';
+import '@vahidamirian/vue-datepicker/styles.css';
 
 createApp(App).use(NdpDatepickerPlugin, {
   adapters: [new JalaliCalendarAdapter(), new GregorianCalendarAdapter('en-US')],
@@ -78,21 +78,21 @@ createApp(App).use(NdpDatepickerPlugin, {
 <NdpDatepicker v-model="value" />
 ```
 
-> **Headless, no UI?** Import `@vahidamiryan/datepicker-core` directly for Jalali ⇆ Gregorian ⇆ Hijri
+> **Headless, no UI?** Import `@vahidamirian/datepicker-core` directly for Jalali ⇆ Gregorian ⇆ Hijri
 > conversion and month-grid building with no framework at all.
 
 ## Packages
 
 | Package | Framework | Description |
 | --- | --- | --- |
-| [`@vahidamiryan/ngx-jalali-datepicker`](packages/angular) | Angular 20+ | Signals, zoneless, `OnPush`, `ControlValueAccessor`. |
-| [`@vahidamiryan/vue-datepicker`](packages/vue) | Vue 3 | Composition API, `v-model`, scoped slots. |
-| [`@vahidamiryan/datepicker-core`](packages/core) | none | Headless engine — adapters, math, view builders. Zero deps. |
+| [`@vahidamirian/ngx-jalali-datepicker`](packages/angular) | Angular 20+ | Signals, zoneless, `OnPush`, `ControlValueAccessor`. |
+| [`@vahidamirian/vue-datepicker`](packages/vue) | Vue 3 | Composition API, `v-model`, scoped slots. |
+| [`@vahidamirian/datepicker-core`](packages/core) | none | Headless engine — adapters, math, view builders. Zero deps. |
 
 ```
-@vahidamiryan/datepicker-core   (pure TS engine — shared by both)
-   ├── @vahidamiryan/ngx-jalali-datepicker   (Angular component layer)
-   └── @vahidamiryan/vue-datepicker          (Vue 3 component layer)
+@vahidamirian/datepicker-core   (pure TS engine — shared by both)
+   ├── @vahidamirian/ngx-jalali-datepicker   (Angular component layer)
+   └── @vahidamirian/vue-datepicker          (Vue 3 component layer)
 ```
 
 ## Develop

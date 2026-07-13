@@ -8,10 +8,10 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "paths": {
-      "@vahidamiryan/datepicker-core": [
+      "@vahidamirian/datepicker-core": [
         "./packages/core/src/index.ts"
       ],
-      "@vahidamiryan/ngx-jalali-datepicker": [
+      "@vahidamirian/ngx-jalali-datepicker": [
         "./packages/angular/src/public-api.ts"
       ]
     },

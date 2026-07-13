@@ -13,7 +13,7 @@ import {
   HijriCalendarAdapter,
   JalaaliMath,
   HijriMath,
-} from '@vahidamiryan/ngx-jalali-datepicker';
+} from '@vahidamirian/ngx-jalali-datepicker';
 import changelogRaw from '../../../../packages/angular/CHANGELOG.md';
 import { parseChangelog } from './changelog';
 

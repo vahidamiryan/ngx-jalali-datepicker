@@ -1,6 +1,6 @@
 name: Release (publish to npm)
 
-# Publishes @vahidamiryan/datepicker-core, @vahidamiryan/ngx-jalali-datepicker and @vahidamiryan/vue-datepicker to npm. Trigger manually and
+# Publishes @vahidamirian/datepicker-core, @vahidamirian/ngx-jalali-datepicker and @vahidamirian/vue-datepicker to npm. Trigger manually and
 # choose which packages to publish, or push a tag like v1.2.3 to publish all.
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
       packages:
         description: 'Space-separated packages to publish (default: all)'
         required: false
-        default: '@vahidamiryan/datepicker-core @vahidamiryan/ngx-jalali-datepicker @vahidamiryan/vue-datepicker'
+        default: '@vahidamirian/datepicker-core @vahidamirian/ngx-jalali-datepicker @vahidamirian/vue-datepicker'
   push:
     tags:
       - 'v*'
@@ -30,28 +30,28 @@ jobs:
       - name: Install
         run: npm ci
 
-      # Build in dependency order. @vahidamiryan/datepicker-core must be built first because the
+      # Build in dependency order. @vahidamirian/datepicker-core must be built first because the
       # framework packages resolve its types/JS.
       - name: Build core
-        run: npm run build -w @vahidamiryan/datepicker-core
+        run: npm run build -w @vahidamirian/datepicker-core
       - name: Build Angular
         run: npx ng build angular
       - name: Build Vue
-        run: npm run build -w @vahidamiryan/vue-datepicker
+        run: npm run build -w @vahidamirian/vue-datepicker
 
-      # Publish. @vahidamiryan/datepicker-core ships from packages/core; @vahidamiryan/ngx-jalali-datepicker from the
-      # ng-packagr output in dist/angular; @vahidamiryan/vue-datepicker from packages/vue.
-      - name: Publish @vahidamiryan/datepicker-core
-        run: npm publish -w @vahidamiryan/datepicker-core --access public --provenance
+      # Publish. @vahidamirian/datepicker-core ships from packages/core; @vahidamirian/ngx-jalali-datepicker from the
+      # ng-packagr output in dist/angular; @vahidamirian/vue-datepicker from packages/vue.
+      - name: Publish @vahidamirian/datepicker-core
+        run: npm publish -w @vahidamirian/datepicker-core --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @vahidamiryan/ngx-jalali-datepicker
+      - name: Publish @vahidamirian/ngx-jalali-datepicker
         run: npm publish ./dist/angular --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @vahidamiryan/vue-datepicker
-        run: npm publish -w @vahidamiryan/vue-datepicker --access public --provenance
+      - name: Publish @vahidamirian/vue-datepicker
+        run: npm publish -w @vahidamirian/vue-datepicker --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

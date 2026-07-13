@@ -1,9 +1,9 @@
 import { ComponentRef, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DatepickerComponent } from './datepicker.component';
-import { GregorianCalendarAdapter } from '@vahidamiryan/datepicker-core';
+import { GregorianCalendarAdapter } from '@vahidamirian/datepicker-core';
 import { provideNgxDatepicker } from '../../datepicker.providers';
-import { dayKey } from '@vahidamiryan/datepicker-core';
+import { dayKey } from '@vahidamirian/datepicker-core';
 
 describe('DatepickerComponent keyboard navigation bounds', () => {
   let fixture: ComponentFixture<DatepickerComponent>;

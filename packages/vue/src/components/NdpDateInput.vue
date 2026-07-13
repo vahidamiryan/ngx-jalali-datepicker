@@ -16,7 +16,7 @@ import {
   atMidnight,
   dayKey,
   copyTimeOfDay,
-} from '@vahidamiryan/datepicker-core';
+} from '@vahidamirian/datepicker-core';
 import { useCalendarAdapters, type NdpCalendarAdapterSource } from '../adapters';
 import NdpDatepicker from './NdpDatepicker.vue';
 

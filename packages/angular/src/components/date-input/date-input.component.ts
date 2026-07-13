@@ -13,7 +13,7 @@ import {
   untracked,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { CalendarAdapter } from '@vahidamiryan/datepicker-core';
+import { CalendarAdapter } from '@vahidamirian/datepicker-core';
 import { NDP_CALENDAR_ADAPTERS } from '../../datepicker.providers';
 import {
   DateFilterFn,
@@ -21,9 +21,9 @@ import {
   DatepickerMode,
   NdpAnimation,
   NdpTheme,
-} from '@vahidamiryan/datepicker-core';
-import { atMidnight, dayKey } from '@vahidamiryan/datepicker-core';
-import { copyTimeOfDay } from '@vahidamiryan/datepicker-core';
+} from '@vahidamirian/datepicker-core';
+import { atMidnight, dayKey } from '@vahidamirian/datepicker-core';
+import { copyTimeOfDay } from '@vahidamirian/datepicker-core';
 import { DatepickerComponent } from '../datepicker/datepicker.component';
 
 /** Which endpoint a text field edits. In single mode only `start` is used. */

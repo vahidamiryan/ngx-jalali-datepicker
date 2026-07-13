@@ -18,7 +18,7 @@ import {
   YEARS_PER_PAGE,
   getTimeOfDay,
   withTimeOfDay,
-} from '@vahidamiryan/datepicker-core';
+} from '@vahidamirian/datepicker-core';
 
 /**
  * Reactive inputs the composable reads. These mirror the Angular
@@ -49,7 +49,7 @@ export interface UseDatepickerOptions {
 
 /**
  * The full picker state machine, ported from the Angular `DatepickerComponent`.
- * All heavy date logic delegates to the shared `@vahidamiryan/datepicker-core`, so behavior is
+ * All heavy date logic delegates to the shared `@vahidamirian/datepicker-core`, so behavior is
  * identical across frameworks. Signals → refs, computeds → computeds,
  * effects → watchers.
  */

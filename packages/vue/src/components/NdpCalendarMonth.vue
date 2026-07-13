@@ -13,7 +13,7 @@ import {
   type DateRange,
   type DayCell,
   type DatepickerMode,
-} from '@vahidamiryan/datepicker-core';
+} from '@vahidamirian/datepicker-core';
 
 const props = withDefaults(
   defineProps<{

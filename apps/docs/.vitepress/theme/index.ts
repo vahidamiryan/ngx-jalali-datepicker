@@ -1,13 +1,13 @@
 import DefaultTheme from 'vitepress/theme';
 import type { Theme } from 'vitepress';
-import { NdpVue, NdpDatepickerPlugin } from '@vahidamiryan/vue-datepicker';
+import { NdpVue, NdpDatepickerPlugin } from '@vahidamirian/vue-datepicker';
 import {
   JalaliCalendarAdapter,
   GregorianCalendarAdapter,
   HijriCalendarAdapter,
-} from '@vahidamiryan/datepicker-core';
+} from '@vahidamirian/datepicker-core';
 // Pull in every component's styles from the workspace source (the alias maps
-// @vahidamiryan/vue-datepicker to its source entry, so we reference the CSS by relative path).
+// @vahidamirian/vue-datepicker to its source entry, so we reference the CSS by relative path).
 import '../../../../packages/vue/src/components/NdpDatepicker.css';
 import '../../../../packages/vue/src/components/NdpCalendarMonth.css';
 import '../../../../packages/vue/src/components/NdpCalendarPeriod.css';

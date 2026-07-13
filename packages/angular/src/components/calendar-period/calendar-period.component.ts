@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { PeriodCell, PeriodView } from '@vahidamiryan/datepicker-core';
+import { PeriodCell, PeriodView } from '@vahidamirian/datepicker-core';
 
 /**
  * Renders a grid of selectable periods — twelve months, or one page of years.

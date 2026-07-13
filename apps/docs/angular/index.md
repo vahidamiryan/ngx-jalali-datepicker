@@ -1,11 +1,11 @@
 # Angular
 
-Live, interactive examples rendered by the real `@vahidamiryan/ngx-jalali-datepicker` components,
+Live, interactive examples rendered by the real `@vahidamirian/ngx-jalali-datepicker` components,
 bootstrapped as Angular islands right here on the page. They render the same UI
-as `@vahidamiryan/vue-datepicker` from the same `@vahidamiryan/datepicker-core`, so behavior is identical. Install:
+as `@vahidamirian/vue-datepicker` from the same `@vahidamirian/datepicker-core`, so behavior is identical. Install:
 
 ```bash
-npm install @vahidamiryan/ngx-jalali-datepicker @vahidamiryan/datepicker-core
+npm install @vahidamirian/ngx-jalali-datepicker @vahidamirian/datepicker-core
 ```
 
 ## Setup
@@ -17,7 +17,7 @@ import {
   provideNgxDatepicker,
   JalaliCalendarAdapter,
   GregorianCalendarAdapter,
-} from '@vahidamiryan/ngx-jalali-datepicker';
+} from '@vahidamirian/ngx-jalali-datepicker';
 
 export const appConfig = {
   providers: [

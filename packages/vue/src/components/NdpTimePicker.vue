@@ -14,7 +14,7 @@ import {
   stepMinutes as stepMinutesCore,
   wrapHours,
   toLatinDigits,
-} from '@vahidamiryan/datepicker-core';
+} from '@vahidamirian/datepicker-core';
 
 const props = withDefaults(
   defineProps<{

@@ -4,7 +4,7 @@
  * Purely presentational: the parent builds the PeriodView (all flags precomputed)
  * and owns selection / navigation. Port of the Angular `CalendarPeriodComponent`.
  */
-import type { PeriodCell, PeriodView } from '@vahidamiryan/datepicker-core';
+import type { PeriodCell, PeriodView } from '@vahidamirian/datepicker-core';
 
 withDefaults(
   defineProps<{

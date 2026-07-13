@@ -4,23 +4,23 @@ The NDP date picker is a monorepo of three packages:
 
 | Package | What it is |
 | --- | --- |
-| **`@vahidamiryan/datepicker-core`** | The framework-agnostic headless engine — types, calendar adapters + math, selection and view builders. Pure TypeScript, zero framework deps. |
-| **`@vahidamiryan/ngx-jalali-datepicker`** | Angular 20+ components built on `@vahidamiryan/datepicker-core`. |
-| **`@vahidamiryan/vue-datepicker`** | Vue 3 components built on `@vahidamiryan/datepicker-core`. |
+| **`@vahidamirian/datepicker-core`** | The framework-agnostic headless engine — types, calendar adapters + math, selection and view builders. Pure TypeScript, zero framework deps. |
+| **`@vahidamirian/ngx-jalali-datepicker`** | Angular 20+ components built on `@vahidamirian/datepicker-core`. |
+| **`@vahidamirian/vue-datepicker`** | Vue 3 components built on `@vahidamirian/datepicker-core`. |
 
-Pick the framework package for your app; it pulls in `@vahidamiryan/datepicker-core` for you.
+Pick the framework package for your app; it pulls in `@vahidamirian/datepicker-core` for you.
 
 ## Vue 3
 
 ```bash
-npm install @vahidamiryan/vue-datepicker @vahidamiryan/datepicker-core vue
+npm install @vahidamirian/vue-datepicker @vahidamirian/datepicker-core vue
 ```
 
 ```ts
 import { createApp } from 'vue'
-import { NdpDatepickerPlugin } from '@vahidamiryan/vue-datepicker'
-import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamiryan/datepicker-core'
-import '@vahidamiryan/vue-datepicker/styles.css'
+import { NdpDatepickerPlugin } from '@vahidamirian/vue-datepicker'
+import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamirian/datepicker-core'
+import '@vahidamirian/vue-datepicker/styles.css'
 
 createApp(App)
   .use(NdpDatepickerPlugin, {
@@ -38,7 +38,7 @@ createApp(App)
 ## Angular
 
 ```bash
-npm install @vahidamiryan/ngx-jalali-datepicker @vahidamiryan/datepicker-core
+npm install @vahidamirian/ngx-jalali-datepicker @vahidamirian/datepicker-core
 ```
 
 ```ts

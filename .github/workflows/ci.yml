@@ -20,26 +20,26 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Build core (@vahidamiryan/datepicker-core)
-        run: npm run build -w @vahidamiryan/datepicker-core
+      - name: Build core (@vahidamirian/datepicker-core)
+        run: npm run build -w @vahidamirian/datepicker-core
 
       - name: Test core
-        run: npm run test -w @vahidamiryan/datepicker-core
+        run: npm run test -w @vahidamirian/datepicker-core
 
-      - name: Build Angular (@vahidamiryan/ngx-jalali-datepicker)
+      - name: Build Angular (@vahidamirian/ngx-jalali-datepicker)
         run: npx ng build angular
 
       - name: Test Angular (headless)
         run: npx ng test angular --watch=false --browsers=ChromeHeadless
 
-      - name: Build Vue (@vahidamiryan/vue-datepicker)
-        run: npm run build -w @vahidamiryan/vue-datepicker
+      - name: Build Vue (@vahidamirian/vue-datepicker)
+        run: npm run build -w @vahidamirian/vue-datepicker
 
       - name: Test Vue
-        run: npm run test -w @vahidamiryan/vue-datepicker
+        run: npm run test -w @vahidamirian/vue-datepicker
 
       - name: Typecheck Vue
-        run: npm run typecheck -w @vahidamiryan/vue-datepicker
+        run: npm run typecheck -w @vahidamirian/vue-datepicker
 
       - name: Build docs
-        run: npm run build -w @vahidamiryan/docs
+        run: npm run build -w @vahidamirian/docs

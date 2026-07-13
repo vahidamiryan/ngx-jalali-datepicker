@@ -1,7 +1,7 @@
 import { ComponentRef, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TimeInputComponent } from './time-input.component';
-import { GregorianCalendarAdapter } from '@vahidamiryan/datepicker-core';
+import { GregorianCalendarAdapter } from '@vahidamirian/datepicker-core';
 import { provideNgxDatepicker } from '../../datepicker.providers';
 
 describe('TimeInputComponent', () => {

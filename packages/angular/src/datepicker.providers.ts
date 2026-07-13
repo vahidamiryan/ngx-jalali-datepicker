@@ -1,5 +1,5 @@
 import { InjectionToken, Provider } from '@angular/core';
-import { CalendarAdapter } from '@vahidamiryan/datepicker-core';
+import { CalendarAdapter } from '@vahidamirian/datepicker-core';
 
 /** DI token carrying the active {@link CalendarAdapter} for a component subtree. */
 export const CALENDAR_ADAPTER = new InjectionToken<CalendarAdapter>('CALENDAR_ADAPTER');

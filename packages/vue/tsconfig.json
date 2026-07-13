@@ -15,7 +15,7 @@
     "jsx": "preserve",
     "types": ["vitest/globals"],
     "paths": {
-      "@vahidamiryan/datepicker-core": ["../core/src/index.ts"]
+      "@vahidamirian/datepicker-core": ["../core/src/index.ts"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.vue"],
