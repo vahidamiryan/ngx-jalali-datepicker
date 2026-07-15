@@ -24,10 +24,14 @@ import '@vahidamirian/vue-datepicker/styles.css'
 
 createApp(App)
   .use(NdpDatepickerPlugin, {
+    // Register only the calendars you use — the first is the default.
     adapters: [new JalaliCalendarAdapter(), new GregorianCalendarAdapter('en-US')],
   })
   .mount('#app')
 ```
+
+> Add `HijriCalendarAdapter` to the list if you use the Hijri calendar anywhere —
+> see [Calendars & adapters](/guide/calendars).
 
 ```vue
 <NdpDatepicker v-model="value" />

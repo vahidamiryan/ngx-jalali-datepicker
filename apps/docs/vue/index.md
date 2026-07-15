@@ -38,21 +38,34 @@ function fmt(v) {
 
 ## Setup
 
-Configure the calendars once (the first is the default):
+Configure the calendars once (the **first is the default**). Register every
+calendar an example on this page uses — including `HijriCalendarAdapter`, or the
+Hijri demo below throws a "calendar not registered" error:
 
 ```ts
 // main.ts
 import { createApp } from 'vue'
 import { NdpDatepickerPlugin } from '@vahidamirian/vue-datepicker'
-import { JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamirian/datepicker-core'
+import {
+  JalaliCalendarAdapter,
+  GregorianCalendarAdapter,
+  HijriCalendarAdapter,
+} from '@vahidamirian/datepicker-core'
 import '@vahidamirian/vue-datepicker/styles.css'
 
 createApp(App)
   .use(NdpDatepickerPlugin, {
-    adapters: [new JalaliCalendarAdapter(), new GregorianCalendarAdapter('en-US')],
+    adapters: [
+      new JalaliCalendarAdapter(),
+      new GregorianCalendarAdapter('en-US'),
+      new HijriCalendarAdapter(),
+    ],
   })
   .mount('#app')
 ```
+
+> Only register what you actually use — a Jalali-only app can drop the other two
+> and never bundles their conversion math.
 
 ## Single date
 
@@ -177,6 +190,9 @@ any ref and it stays in sync, ready for vee-validate / FormKit.
 ---
 
 `v-model` binds the `DateRange`; `v-model:calendar` binds the active calendar id;
-`@date-selected` fires on every concrete pick. The full input reference (min/max,
-`dateFilter`, `animation`, `showTime`, footer toggles, keyboard) is documented in
-the [package README](https://github.com/vahidamiryan/ngx-jalali-datepicker/tree/main/packages/vue).
+`@date-selected` fires on every concrete pick.
+
+**Keep going:** [Options & customization](/guide/options) (modes, `min`/`max`,
+`date-filter`, animation, footer toggles, keyboard) · [Theming](/guide/theming) ·
+[Calendars & adapters](/guide/calendars). The complete prop / event / slot table
+is in the [package README](https://github.com/vahidamiryan/ngx-jalali-datepicker/tree/main/packages/vue#ndpdatepicker--props--events--slots).

@@ -10,6 +10,10 @@ npm install @vahidamirian/ngx-jalali-datepicker @vahidamirian/datepicker-core
 
 ## Setup
 
+Register every calendar an example on this page uses — including
+`HijriCalendarAdapter`, or the Hijri demo below throws a "calendar not
+registered" error. The **first adapter is the default**.
+
 ```ts
 // app.config.ts
 import { provideZonelessChangeDetection } from '@angular/core';
@@ -17,15 +21,23 @@ import {
   provideNgxDatepicker,
   JalaliCalendarAdapter,
   GregorianCalendarAdapter,
+  HijriCalendarAdapter,
 } from '@vahidamirian/ngx-jalali-datepicker';
 
 export const appConfig = {
   providers: [
     provideZonelessChangeDetection(),
-    provideNgxDatepicker(new JalaliCalendarAdapter(), new GregorianCalendarAdapter('en-US')),
+    provideNgxDatepicker(
+      new JalaliCalendarAdapter(),
+      new GregorianCalendarAdapter('en-US'),
+      new HijriCalendarAdapter(),
+    ),
   ],
 };
 ```
+
+> Only register what you actually use — a Jalali-only app can drop the other two
+> and never bundles their conversion math.
 
 ## Single date
 
@@ -107,6 +119,7 @@ export const appConfig = {
 
 ---
 
-The full input reference (min/max, `dateFilter`, `animation`, `showTime`,
-`minuteStep`, footer toggles, keyboard) is documented in the
-[package README](https://github.com/vahidamiryan/ngx-jalali-datepicker/tree/main/packages/angular).
+**Keep going:** [Options & customization](/guide/options) (modes, `min`/`max`,
+`dateFilter`, `animation`, footer toggles, keyboard) · [Theming](/guide/theming) ·
+[Calendars & adapters](/guide/calendars). The complete input / output reference
+is in the [package README](https://github.com/vahidamiryan/ngx-jalali-datepicker/tree/main/packages/angular#datepickercomponent-inputs).

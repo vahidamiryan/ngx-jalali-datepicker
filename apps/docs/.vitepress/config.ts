@@ -76,6 +76,8 @@ export default defineConfig({
         text: 'Guide',
         items: [
           { text: 'Getting started', link: '/guide/getting-started' },
+          { text: 'Options & customization', link: '/guide/options' },
+          { text: 'Theming', link: '/guide/theming' },
           { text: 'Calendars & adapters', link: '/guide/calendars' },
           { text: 'Typed input', link: '/guide/typed-input' },
           { text: 'Time of day', link: '/guide/time' },
