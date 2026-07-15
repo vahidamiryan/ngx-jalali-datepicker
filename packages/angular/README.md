@@ -164,6 +164,7 @@ readonly brand: Record<string, string> = {
 | `--ndp-day-hover-bg` | Day / nav / button hover background. |
 | `--ndp-shadow` | Panel drop shadow. |
 | `--ndp-radius` / `--ndp-day-radius` | Panel and day-cell corner radius. |
+| `--ndp-slide-duration` / `--ndp-slide-easing` / `--ndp-slide-distance` | Tuning for the `animation="slide"` navigation transition (duration, timing function, travel distance). |
 
 ## Typing dates (input field)
 
@@ -417,7 +418,8 @@ math, never raw `Intl` formatting.
 | --- | --- | --- | --- |
 | `value` (model) | `DateRange` | `{start:null,end:null}` | Two-way bindable; also a `ControlValueAccessor`. |
 | `calendar` (model) | `string` | first registered | Active calendar id, e.g. `'jalali'`/`'gregorian'`. |
-| `mode` | `'single' \| 'range'` | `'single'` | |
+| `mode` | `'single' \| 'range' \| 'month' \| 'year'` | `'single'` | See [Month & year picker](#month--year-picker--quick-navigation). |
+| `animation` | `'none' \| 'slide'` | `'none'` | Body transition when navigating months/years/pages. Honors `prefers-reduced-motion`. |
 | `numberOfMonths` | `number` | `1` | Render N adjacent months. |
 | `min` / `max` | `Date \| null` | `null` | Inclusive bounds. |
 | `dateFilter` | `(d: Date) => boolean` | `null` | Return `true` if a date is **selectable**. |
@@ -447,6 +449,138 @@ In **month / year** mode the same keys drive the period grid: `←→` move one
 month/year, `↑↓` move a row (3 cells), `PageUp`/`PageDown` step the year (month
 mode) or page (year mode), and `Enter`/`Space` commit. `Esc` closes an open
 quick-nav dropdown.
+
+## Navigation animation
+
+By default the grid swaps instantly when you move between months/years/pages. Set
+`animation="slide"` to slide the body in the direction of travel. It honors
+`prefers-reduced-motion` (users who ask for less motion get the instant swap), and you can
+tune it with three CSS variables:
+
+```html
+<ndp-datepicker animation="slide" [(value)]="value" />
+```
+
+```css
+ndp-datepicker {
+  --ndp-slide-duration: 220ms;
+  --ndp-slide-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  --ndp-slide-distance: 24px;
+}
+```
+
+## Bounds & disabling days
+
+Three complementary inputs control which days can be picked. All are enforced by the core, so
+keyboard navigation and typed input respect them too.
+
+| Input | Effect |
+| --- | --- |
+| `min` | Days before it are disabled; `‹`/`PageUp` stop at its month. |
+| `max` | Days after it are disabled; `›`/`PageDown` stop at its month. |
+| `dateFilter` | A predicate — return `true` to keep a day **selectable**, `false` to disable it. |
+
+```ts
+// No Fridays (weekend in the Jalali calendar)
+readonly noFridays = (d: Date) => d.getDay() !== 5;
+
+// Block a fixed list of holidays (compare by ISO day)
+private readonly holidays = new Set(['2026-03-21', '2026-03-22']);
+readonly notHoliday = (d: Date) => !this.holidays.has(d.toISOString().slice(0, 10));
+
+// Combine rules
+readonly selectable = (d: Date) => this.noFridays(d) && this.notHoliday(d);
+```
+
+```html
+<ndp-datepicker [min]="today" [dateFilter]="selectable" [(value)]="value" />
+```
+
+`min` / `max` compare by calendar **day** (time-of-day is ignored).
+
+## Date arithmetic — add / subtract
+
+You rarely need a date library. The active adapter does calendar-correct arithmetic (it knows
+month lengths and leap years in *its* calendar), and the core exports numeric helpers.
+
+```ts
+import { JalaliCalendarAdapter } from '@vahidamirian/ngx-jalali-datepicker';
+const cal = new JalaliCalendarAdapter();
+
+cal.addCalendarMonths(new Date(), 1);   // next Jalali month (day-of-month preserved/clamped)
+cal.addCalendarMonths(new Date(), -3);  // three Jalali months ago
+cal.addCalendarYears(new Date(), 1);    // next Jalali year
+cal.startOfMonth(new Date());           // first day of the current Jalali month
+cal.startOfYear(new Date());            // 1 Farvardin of the current year
+```
+
+Whole days are calendar-independent:
+
+```ts
+function addDays(date: Date, n: number): Date {
+  const d = new Date(date.getTime());
+  d.setDate(d.getDate() + n);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+```
+
+Use these to build dynamic bounds with signals — e.g. "only the next 30 days":
+
+```ts
+readonly today = atMidnight(new Date());
+readonly max = computed(() => addDays(this.today, 30));
+```
+
+```html
+<ndp-datepicker [min]="today" [max]="max()" [(value)]="value" />
+```
+
+For pure numeric conversion (no `Date` juggling), reach for `JalaaliMath` / `HijriMath` — see
+[Converting Gregorian ⇆ Jalali](#converting-gregorian--jalali-no-ui).
+
+## Recipes
+
+**Booking window — next 30 days, no weekends:**
+
+```html
+<ndp-datepicker [min]="today" [max]="max()" [dateFilter]="noFridays" [(value)]="value" />
+```
+
+**Range capped to a maximum span** (e.g. 14 nights) — clamp `max` reactively to the chosen
+start:
+
+```ts
+readonly max = computed(() => {
+  const r = this.range();
+  return r.start && !r.end ? addDays(r.start, 14) : null;
+});
+```
+
+**Persist as ISO and restore:**
+
+```ts
+const iso = this.value().start?.toISOString() ?? null;      // save
+this.value.set({ start: iso ? new Date(iso) : null, end: null }); // restore
+```
+
+**Reactive forms with validation:**
+
+```ts
+readonly ctrl = new FormControl<DateRange>({ start: null, end: null }, {
+  validators: (c) => (c.value?.start ? null : { required: true }),
+});
+```
+
+```html
+<ndp-datepicker [formControl]="ctrl" />
+```
+
+**A "billing month" selector** — commit a whole month as a plain `Date`:
+
+```html
+<ndp-datepicker mode="month" [(value)]="month" />
+```
 
 ## Adding a calendar
 
