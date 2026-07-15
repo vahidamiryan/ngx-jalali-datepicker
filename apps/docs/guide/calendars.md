@@ -22,21 +22,53 @@ HijriMath.toHijri(new Date(2026, 5, 12))     // { hy: 1447, hm: 12, hd: 26 }
 ## Choosing calendars
 
 The order you register them sets the default (first) and what the calendar-toggle
-button cycles through.
+button cycles through. **A `calendar="…"` binding or the toggle only works for a
+calendar you actually registered** — using an unregistered id throws a
+descriptive "calendar not registered" error. Register only what you use; the rest
+(and their conversion math) never ship.
 
 **Vue** — via the plugin or a per-component `:adapters` prop:
 
 ```ts
 app.use(NdpDatepickerPlugin, {
-  adapters: [new JalaliCalendarAdapter(), new GregorianCalendarAdapter('en-US')],
+  adapters: [
+    new JalaliCalendarAdapter(),
+    new GregorianCalendarAdapter('en-US'),
+    new HijriCalendarAdapter(),
+  ],
 })
 ```
 
 **Angular** — via `provideNgxDatepicker`:
 
 ```ts
-provideNgxDatepicker(new HijriCalendarAdapter(), new JalaliCalendarAdapter())
+provideNgxDatepicker(
+  new JalaliCalendarAdapter(),
+  new GregorianCalendarAdapter('en-US'),
+  new HijriCalendarAdapter(),
+)
 ```
+
+Switch the active calendar at runtime with `v-model:calendar` (Vue) /
+`[(calendar)]` (Angular), or let users flip it with the footer's calendar-toggle
+button.
+
+## Hijri day adjustment
+
+`HijriCalendarAdapter` is the deterministic **tabular** civil calendar, which can
+differ from a locally observed (sighting / Umm al-Qura) calendar by ±1–2 days.
+Shift the tabular result by whole days with `adjustment` — a fixed number or a
+per-date function:
+
+```ts
+new HijriCalendarAdapter({ adjustment: -1 })                      // fixed offset
+new HijriCalendarAdapter({ adjustment: (date) => offsetFor(date) }) // lookup table
+```
+
+`+1` means the observed calendar runs one day ahead of the tabular one. Keep the
+offset stable within any one Hijri month so round-trips stay exact. Month names
+and the digit/weekday locale are configurable via `NdpHijriConfig`
+(`monthNames`, `locale`).
 
 ## Dual-script display
 

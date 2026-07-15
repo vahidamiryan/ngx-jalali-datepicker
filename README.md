@@ -83,17 +83,46 @@ createApp(App).use(NdpDatepickerPlugin, {
 
 ## Packages
 
-| Package | Framework | Description |
-| --- | --- | --- |
-| [`@vahidamirian/ngx-jalali-datepicker`](packages/angular) | Angular 20+ | Signals, zoneless, `OnPush`, `ControlValueAccessor`. |
-| [`@vahidamirian/vue-datepicker`](packages/vue) | Vue 3 | Composition API, `v-model`, scoped slots. |
-| [`@vahidamirian/datepicker-core`](packages/core) | none | Headless engine — adapters, math, view builders. Zero deps. |
+Each package has its own full README (installation, every prop/input, theming
+tokens, recipes) — the table links straight to it, not just the folder.
+
+| Package | Framework | Full docs | Description |
+| --- | --- | --- | --- |
+| [`@vahidamirian/ngx-jalali-datepicker`](packages/angular#readme) | Angular 20+ | [README](packages/angular/README.md) | Signals, zoneless, `OnPush`, `ControlValueAccessor`. |
+| [`@vahidamirian/vue-datepicker`](packages/vue#readme) | Vue 3 | [README](packages/vue/README.md) | Composition API, `v-model`, scoped slots. |
+| [`@vahidamirian/datepicker-core`](packages/core#readme) | none | [README](packages/core/README.md) | Headless engine — adapters, math, view builders. Zero deps. |
 
 ```
 @vahidamirian/datepicker-core   (pure TS engine — shared by both)
    ├── @vahidamirian/ngx-jalali-datepicker   (Angular component layer)
    └── @vahidamirian/vue-datepicker          (Vue 3 component layer)
 ```
+
+## Features & options
+
+Every option is documented per framework. The links below jump straight to the
+right section of each package README — same feature, framework-idiomatic API.
+
+| Feature | Angular | Vue | Core (headless) |
+| --- | --- | --- | --- |
+| Selection modes — single / range / month / year | [modes](packages/angular/README.md#month--year-picker--quick-navigation) | [modes](packages/vue/README.md#selection-modes-single--range--month--year) | [reducer](packages/core/README.md#selection-reducer) |
+| Multi-month (`numberOfMonths`) | [inputs](packages/angular/README.md#datepickercomponent-inputs) | [props](packages/vue/README.md#ndpdatepicker--props--events--slots) | — |
+| Bounds & disabling days (`min` / `max` / `dateFilter`) | [bounds](packages/angular/README.md#bounds--disabling-days) | [bounds](packages/vue/README.md#bounds--disabling-days) | [view builders](packages/core/README.md#view-builders-render-ready-grids) |
+| Theming — light / dark / custom `--ndp-*` tokens | [theming](packages/angular/README.md#theming-light--dark--custom) | [theming](packages/vue/README.md#theming-light--dark--custom) | — |
+| Custom day cell | [`ndpDayCell`](packages/angular/README.md#quick-start) | [`#day` slot](packages/vue/README.md#customizing-the-day-cell-scoped-slot) | [`DayCell`](packages/core/README.md#type-reference) |
+| Typed input (parse + popover) | [typing dates](packages/angular/README.md#typing-dates-input-field) | [`NdpDateInput`](packages/vue/README.md#typing-dates-ndpdateinput) | [parsing](packages/core/README.md#parsing-formatting--digits) |
+| Time of day | [time](packages/angular/README.md#time-of-day) | [time](packages/vue/README.md#time-of-day) | [time helpers](packages/core/README.md#time-of-day-helpers) |
+| Calendars — Jalali / Gregorian / Hijri | [Hijri](packages/angular/README.md#hijri-islamic-civil-calendar) | [Hijri](packages/vue/README.md#hijri-islamic-civil-calendar) | [adapters](packages/core/README.md#calendar-adapters) |
+| Dual-script (companion calendar) | [dual-script](packages/angular/README.md#dual-script-gregorian-alongside-jalali) | [dual-script](packages/vue/README.md#dual-script-gregorian-alongside-jalali) | — |
+| Navigation animation | [animation](packages/angular/README.md#navigation-animation) | [props](packages/vue/README.md#ndpdatepicker--props--events--slots) | — |
+| Date arithmetic (add / subtract) | [arithmetic](packages/angular/README.md#date-arithmetic--add--subtract) | [arithmetic](packages/vue/README.md#date-arithmetic--add--subtract) | [arithmetic](packages/core/README.md#date-arithmetic--add--subtract) |
+| Conversion math (Jalali ⇆ Gregorian ⇆ Hijri) | [conversion](packages/angular/README.md#converting-gregorian--jalali-no-ui) | [conversion](packages/vue/README.md#calendars--conversion-headless) | [math](packages/core/README.md#conversion-math-jalaalimath--hijrimath) |
+| Keyboard & RTL | [keyboard](packages/angular/README.md#keyboard) | [keyboard](packages/vue/README.md#keyboard) | — |
+| Add your own calendar | [adding a calendar](packages/angular/README.md#adding-a-calendar) | [adding a calendar](packages/vue/README.md#adding-your-own-calendar) | [custom adapter](packages/core/README.md#writing-a-custom-calendar-adapter) |
+| Fully custom / headless UI | [dropdown](packages/angular/README.md#building-a-dropdown--popover) | [`useDatepicker`](packages/vue/README.md#fully-custom-ui-usedatepicker) | [worked example](packages/core/README.md#building-a-headless-picker-worked-example) |
+
+Prefer live, runnable demos? The [docs site](https://vahidamiryan.github.io/ngx-jalali-datepicker/)
+renders every example with the real components.
 
 ## Develop
 

@@ -26,14 +26,13 @@ npm install @vahidamirian/ngx-jalali-datepicker
 
 Package on npm: https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker
 
-## Use in this workspace (dev)
+## Quick start
 
-The demo app consumes the library directly from source via a `tsconfig` path
-mapping, so no pre-build is needed during development.
+Provide the calendars once, then drop the component in a template.
 
 ```ts
 // app.config.ts
-import { provideNgxDatepicker, JalaliCalendarAdapter, GregorianCalendarAdapter } from 'ngx-jalali-datepicker';
+import { provideNgxDatepicker, JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamirian/ngx-jalali-datepicker';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -321,7 +320,7 @@ export class FieldComponent {
 Everything needed for conversion is exported, so you can use it headlessly.
 
 ```ts
-import { JalaaliMath, JalaliCalendarAdapter, GregorianCalendarAdapter } from 'ngx-jalali-datepicker';
+import { JalaaliMath, JalaliCalendarAdapter, GregorianCalendarAdapter } from '@vahidamirian/ngx-jalali-datepicker';
 
 // Gregorian → Jalali (numeric)
 const j = JalaaliMath.toJalaali(new Date(2026, 2, 21)); // { jy: 1405, jm: 1, jd: 1 }
