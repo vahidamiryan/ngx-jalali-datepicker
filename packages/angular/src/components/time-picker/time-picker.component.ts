@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { NDP_LABELS } from '../../datepicker.providers';
 import { CalendarAdapter } from '@vahidamirian/datepicker-core';
+import { NdpLabels, defaultLabelsFor, resolveLabels } from '@vahidamirian/datepicker-core';
 import { TimeOfDay } from '@vahidamirian/datepicker-core';
 import { normalizeStep, snapMinutes, stepMinutes, wrapHours } from '@vahidamirian/datepicker-core';
 import { toLatinDigits } from '@vahidamirian/datepicker-core';
@@ -19,6 +21,19 @@ import { toLatinDigits } from '@vahidamirian/datepicker-core';
   styleUrl: './time-picker.component.css',
 })
 export class TimePickerComponent {
+  /** Overrides for the user-facing text; unnamed labels keep their defaults. */
+  readonly labels = input<Partial<NdpLabels> | null>(null);
+
+  private readonly providedLabels = inject(NDP_LABELS, { optional: true });
+
+  /** Text resolution: the `labels` input, then DI, over the active calendar's defaults. */
+  protected readonly t = computed(() =>
+    resolveLabels(
+      { ...this.providedLabels, ...(this.labels() ?? {}) },
+      defaultLabelsFor(this.adapter().id),
+    ),
+  );
+
   /** Active calendar adapter — used only to localize the displayed digits. */
   readonly adapter = input.required<CalendarAdapter>();
   /** Current time-of-day shown in the fields. */

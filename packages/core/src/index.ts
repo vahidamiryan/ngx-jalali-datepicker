@@ -14,6 +14,8 @@ export * from './core/selection';
 export * from './core/time.util';
 export * from './core/build-month';
 export * from './core/build-period';
+export * from './core/icons';
+export * from './core/labels';
 export { CalendarAdapter } from './core/calendar-adapter';
 
 // Calendar adapters

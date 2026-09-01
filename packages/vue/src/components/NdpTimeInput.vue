@@ -5,9 +5,10 @@
  * today unless written in). Two-way bindable via `v-model`. Port of the Angular
  * `TimeInputComponent`.
  */
-import { computed, ref, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import {
   type CalendarAdapter,
+  type NdpLabels,
   type NdpTheme,
   type TimeOfDay,
   atMidnight,
@@ -17,8 +18,11 @@ import {
   withTimeOfDay,
   wrapHours,
 } from '@vahidamirian/datepicker-core';
+import { defaultLabelsFor, resolveLabels } from '@vahidamirian/datepicker-core';
 import { useCalendarAdapters, type NdpCalendarAdapterSource } from '../adapters';
+import { NDP_LABELS_KEY } from '../labels';
 import NdpTimePicker from './NdpTimePicker.vue';
+import NdpIcon from './NdpIcon.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -31,6 +35,8 @@ const props = withDefaults(
     closeOnSelect?: boolean;
     disabled?: boolean;
     adapters?: NdpCalendarAdapterSource[] | null;
+    /** Overrides for the user-facing text; unnamed labels keep their defaults. */
+    labels?: Partial<NdpLabels> | null;
   }>(),
   {
     modelValue: null,
@@ -42,6 +48,7 @@ const props = withDefaults(
     closeOnSelect: false,
     disabled: false,
     adapters: null,
+    labels: null,
   },
 );
 
@@ -72,6 +79,16 @@ const adapter = computed(
   () => registry.get(calendarModel.value) ?? registry.get(calendarIds[0])!,
 );
 const currentTime = computed<TimeOfDay>(() => getTimeOfDay(value.value ?? new Date()));
+
+// Text resolution: the `labels` prop, then an app-wide provide, over the
+// default set for the active calendar.
+const providedLabels = inject<Partial<NdpLabels> | undefined>(NDP_LABELS_KEY, undefined);
+const t = computed(() =>
+  resolveLabels(
+    { ...providedLabels, ...(props.labels ?? {}) },
+    defaultLabelsFor(adapter.value.id),
+  ),
+);
 
 function render(date: Date, a: CalendarAdapter): string {
   return `${a.formatNumber(date.getHours(), 2)}:${a.formatNumber(date.getMinutes(), 2)}`;
@@ -192,22 +209,20 @@ function onTimeChange(time: TimeOfDay): void {
       <button
         type="button"
         class="ndp-input__toggle"
-        aria-label="باز کردن انتخاب ساعت"
+        :aria-label="t.openCalendar"
         :aria-expanded="open"
         :disabled="disabled"
         @click="toggle()"
       >
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <circle cx="12" cy="12" r="9" />
-          <path d="M12 7v5l3 2" />
-        </svg>
+        <NdpIcon name="clock" />
       </button>
     </div>
 
     <template v-if="open">
-      <button type="button" class="ndp-input__backdrop" aria-label="بستن" @click="close()"></button>
+      <button type="button" class="ndp-input__backdrop" :aria-label="t.close" @click="close()"></button>
       <div class="ndp-input__popover" role="dialog">
         <NdpTimePicker
+          :labels="labels"
           :adapter="adapter"
           :time="currentTime"
           :minute-step="minuteStep"

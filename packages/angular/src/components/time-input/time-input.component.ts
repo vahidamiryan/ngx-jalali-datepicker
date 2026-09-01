@@ -1,19 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  forwardRef,
-  inject,
-  input,
-  model,
-  output,
-  signal,
-  untracked,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, forwardRef, inject, input, model, output, signal, untracked } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CalendarAdapter } from '@vahidamirian/datepicker-core';
-import { NDP_CALENDAR_ADAPTERS } from '../../datepicker.providers';
+import { NdpLabels, defaultLabelsFor, resolveLabels } from '@vahidamirian/datepicker-core';
+import { NDP_CALENDAR_ADAPTERS, NDP_LABELS } from '../../datepicker.providers';
 import { NdpTheme } from '@vahidamirian/datepicker-core';
 import { atMidnight, toLatinDigits } from '@vahidamirian/datepicker-core';
 import {
@@ -24,6 +13,7 @@ import {
   wrapHours,
 } from '@vahidamirian/datepicker-core';
 import { TimePickerComponent } from '../time-picker/time-picker.component';
+import { IconComponent } from '../icon/icon.component';
 
 /**
  * A **time-only** field: a text input showing `HH:mm` plus a popover with the
@@ -36,7 +26,7 @@ import { TimePickerComponent } from '../time-picker/time-picker.component';
 @Component({
   selector: 'ndp-time-input',
   standalone: true,
-  imports: [TimePickerComponent],
+  imports: [TimePickerComponent, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './time-input.component.html',
   styleUrl: './time-input.component.css',
@@ -50,6 +40,19 @@ import { TimePickerComponent } from '../time-picker/time-picker.component';
   ],
 })
 export class TimeInputComponent implements ControlValueAccessor {
+  /** Overrides for the user-facing text; unnamed labels keep their defaults. */
+  readonly labels = input<Partial<NdpLabels> | null>(null);
+
+  private readonly providedLabels = inject(NDP_LABELS, { optional: true });
+
+  /** Text resolution: the `labels` input, then DI, over the active calendar's defaults. */
+  protected readonly t = computed(() =>
+    resolveLabels(
+      { ...this.providedLabels, ...(this.labels() ?? {}) },
+      defaultLabelsFor(this.adapter().id),
+    ),
+  );
+
   private readonly registry = new Map<string, CalendarAdapter>();
   private readonly calendarIds: string[];
 

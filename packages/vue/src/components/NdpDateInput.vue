@@ -5,9 +5,10 @@
  * selecting in the calendar writes the text back. In range mode it shows two
  * fields. Two-way bindable via `v-model`. Port of Angular `DateInputComponent`.
  */
-import { computed, ref, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import {
   type CalendarAdapter,
+  type NdpLabels,
   type DateFilterFn,
   type DateRange,
   type DatepickerMode,
@@ -17,8 +18,11 @@ import {
   dayKey,
   copyTimeOfDay,
 } from '@vahidamirian/datepicker-core';
+import { defaultLabelsFor, resolveLabels } from '@vahidamirian/datepicker-core';
 import { useCalendarAdapters, type NdpCalendarAdapterSource } from '../adapters';
+import { NDP_LABELS_KEY } from '../labels';
 import NdpDatepicker from './NdpDatepicker.vue';
+import NdpIcon from './NdpIcon.vue';
 
 type Endpoint = 'start' | 'end';
 
@@ -44,6 +48,8 @@ const props = withDefaults(
     closeOnSelect?: boolean | null;
     disabled?: boolean;
     adapters?: NdpCalendarAdapterSource[] | null;
+    /** Overrides for the user-facing text; unnamed labels keep their defaults. */
+    labels?: Partial<NdpLabels> | null;
   }>(),
   {
     modelValue: () => ({ start: null, end: null }),
@@ -66,6 +72,7 @@ const props = withDefaults(
     closeOnSelect: null,
     disabled: false,
     adapters: null,
+    labels: null,
   },
 );
 
@@ -101,6 +108,16 @@ const isRange = computed(() => props.mode === 'range');
 const fieldPlaceholder = computed(() => props.placeholder ?? adapter.value.getInputFormatHint());
 const effectiveCloseOnSelect = computed(
   () => props.closeOnSelect ?? (props.mode === 'single' && !props.showTime),
+);
+
+// Text resolution: the `labels` prop, then an app-wide provide, over the
+// default set for the active calendar.
+const providedLabels = inject<Partial<NdpLabels> | undefined>(NDP_LABELS_KEY, undefined);
+const t = computed(() =>
+  resolveLabels(
+    { ...providedLabels, ...(props.labels ?? {}) },
+    defaultLabelsFor(adapter.value.id),
+  ),
 );
 
 // Keep the text fields in sync with the value (and active calendar), except
@@ -245,20 +262,17 @@ function onPanelSelected(range: DateRange): void {
       <button
         type="button"
         class="ndp-input__toggle"
-        aria-label="باز کردن تقویم"
+        :aria-label="t.openCalendar"
         :aria-expanded="open"
         :disabled="disabled"
         @click="toggle()"
       >
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <rect x="3" y="4" width="18" height="18" rx="2" />
-          <path d="M3 9h18M8 2v4M16 2v4" />
-        </svg>
+        <NdpIcon name="calendar" />
       </button>
     </div>
 
     <template v-if="open">
-      <button type="button" class="ndp-input__backdrop" aria-label="بستن" @click="close()"></button>
+      <button type="button" class="ndp-input__backdrop" :aria-label="t.close" @click="close()"></button>
       <div class="ndp-input__popover" role="dialog">
         <NdpDatepicker
           :theme="theme"
@@ -275,6 +289,7 @@ function onPanelSelected(range: DateRange): void {
           :show-time="showTime"
           :minute-step="minuteStep"
           :adapters="adapters"
+          :labels="labels"
           :model-value="value"
           :calendar="calendarModel"
           @update:calendar="calendarModel = $event"

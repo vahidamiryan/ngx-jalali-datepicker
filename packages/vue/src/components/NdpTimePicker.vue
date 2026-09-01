@@ -5,16 +5,21 @@
  * TimeOfDay; every change emits back through `timeChange`. Digits render in the
  * active calendar's own numerals. Port of the Angular `TimePickerComponent`.
  */
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import {
   type CalendarAdapter,
+  type NdpLabels,
   type TimeOfDay,
+  defaultLabelsFor,
+  resolveLabels,
   normalizeStep,
   snapMinutes,
   stepMinutes as stepMinutesCore,
   wrapHours,
   toLatinDigits,
 } from '@vahidamirian/datepicker-core';
+
+import { NDP_LABELS_KEY } from '../labels';
 
 const props = withDefaults(
   defineProps<{
@@ -24,11 +29,23 @@ const props = withDefaults(
     disabled?: boolean;
     /** Draw the top divider that separates the stepper from a grid above it. */
     bordered?: boolean;
+    /** Overrides for the user-facing text; unnamed labels keep their defaults. */
+    labels?: Partial<NdpLabels> | null;
   }>(),
-  { minuteStep: 1, disabled: false, bordered: true },
+  { minuteStep: 1, disabled: false, bordered: true, labels: null },
 );
 
 const emit = defineEmits<{ (e: 'timeChange', time: TimeOfDay): void }>();
+
+// Text resolution: the `labels` prop, then an app-wide provide, over the
+// default set for the active calendar.
+const providedLabels = inject<Partial<NdpLabels> | undefined>(NDP_LABELS_KEY, undefined);
+const t = computed(() =>
+  resolveLabels(
+    { ...providedLabels, ...(props.labels ?? {}) },
+    defaultLabelsFor(props.adapter.id),
+  ),
+);
 
 const step = computed(() => normalizeStep(props.minuteStep));
 const hoursText = computed(() => props.adapter.formatNumber(props.time.hours, 2));
@@ -94,7 +111,7 @@ function onMinutesKeydown(event: KeyboardEvent): void {
       <button
         type="button"
         class="ndp-time__step"
-        aria-label="افزایش ساعت"
+        :aria-label="t.increaseHours"
         tabindex="-1"
         :disabled="disabled"
         @click="stepHours(1)"
@@ -106,7 +123,7 @@ function onMinutesKeydown(event: KeyboardEvent): void {
         class="ndp-time__input"
         inputmode="numeric"
         autocomplete="off"
-        aria-label="ساعت"
+        :aria-label="t.hours"
         maxlength="2"
         :disabled="disabled"
         :value="hoursText"
@@ -116,7 +133,7 @@ function onMinutesKeydown(event: KeyboardEvent): void {
       <button
         type="button"
         class="ndp-time__step"
-        aria-label="کاهش ساعت"
+        :aria-label="t.decreaseHours"
         tabindex="-1"
         :disabled="disabled"
         @click="stepHours(-1)"
@@ -132,7 +149,7 @@ function onMinutesKeydown(event: KeyboardEvent): void {
       <button
         type="button"
         class="ndp-time__step"
-        aria-label="افزایش دقیقه"
+        :aria-label="t.increaseMinutes"
         tabindex="-1"
         :disabled="disabled"
         @click="stepMinutesBy(1)"
@@ -144,7 +161,7 @@ function onMinutesKeydown(event: KeyboardEvent): void {
         class="ndp-time__input"
         inputmode="numeric"
         autocomplete="off"
-        aria-label="دقیقه"
+        :aria-label="t.minutes"
         maxlength="2"
         :disabled="disabled"
         :value="minutesText"
@@ -154,7 +171,7 @@ function onMinutesKeydown(event: KeyboardEvent): void {
       <button
         type="button"
         class="ndp-time__step"
-        aria-label="کاهش دقیقه"
+        :aria-label="t.decreaseMinutes"
         tabindex="-1"
         :disabled="disabled"
         @click="stepMinutesBy(-1)"
