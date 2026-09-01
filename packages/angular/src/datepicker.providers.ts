@@ -1,5 +1,7 @@
 import { InjectionToken, Provider } from '@angular/core';
-import { CalendarAdapter } from '@vahidamirian/datepicker-core';
+import { CalendarAdapter, NdpIconSet, NdpLabels } from '@vahidamirian/datepicker-core';
+
+import { NDP_ICONS } from './components/icon/icon.component';
 
 /** DI token carrying the active {@link CalendarAdapter} for a component subtree. */
 export const CALENDAR_ADAPTER = new InjectionToken<CalendarAdapter>('CALENDAR_ADAPTER');
@@ -46,4 +48,37 @@ export function provideNgxDatepicker(...adapters: NdpCalendarAdapterSource[]): P
       useFactory: () => adapters.map((a) => (typeof a === 'function' ? a() : a)),
     },
   ];
+}
+
+/**
+ * Override any subset of the built-in icons for an application (or a component
+ * subtree). Unnamed icons keep their defaults.
+ *
+ * ```ts
+ * provideNdpIcons({ prev: '<path d="M15 18l-6-6 6-6" />' })
+ * ```
+ *
+ * Each value is the *inner* markup of a 24x24 viewBox — the wrapping `<svg>` is
+ * supplied by the renderer, so stroke, colour and size stay token-driven. Values
+ * are trusted as SVG markup: supply static strings you author, never
+ * unsanitised user input.
+ */
+export function provideNdpIcons(icons: Partial<NdpIconSet>): Provider[] {
+  return [{ provide: NDP_ICONS, useValue: icons }];
+}
+
+/** Overrides for the user-facing text. Unnamed labels keep their defaults. */
+export const NDP_LABELS = new InjectionToken<Partial<NdpLabels>>('NDP_LABELS');
+
+/**
+ * Override any subset of the built-in text for an application (or a component
+ * subtree). Unnamed labels keep the default set for the active calendar —
+ * English for Gregorian, Persian for Jalali and Hijri.
+ *
+ * ```ts
+ * provideNdpLabels({ today: 'Today', clear: 'Clear' })
+ * ```
+ */
+export function provideNdpLabels(labels: Partial<NdpLabels>): Provider[] {
+  return [{ provide: NDP_LABELS, useValue: labels }];
 }

@@ -10,14 +10,14 @@
      when its label turns bold on selection, stealing width from neighbours
      and shifting the whole row. */
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: var(--ndp-cell-gap, 2px);
+  gap: var(--ndp-cell-gap);
 }
 
 .ndp-weekday {
   text-align: center;
-  font-size: var(--ndp-weekday-font-size, 0.72rem);
+  font-size: var(--ndp-weekday-font-size);
   font-weight: 600;
-  color: var(--ndp-weekday-color, #94a3b8);
+  color: var(--ndp-weekday-color);
   padding-block: 0.35rem;
   user-select: none;
 }
@@ -32,67 +32,67 @@
   background: transparent;
   font: inherit;
   cursor: pointer;
-  color: var(--ndp-day-color, #1e293b);
+  color: var(--ndp-day-color);
   width: 100%;
   aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--ndp-day-radius, 8px);
-  font-size: var(--ndp-day-font-size, 0.85rem);
+  border-radius: var(--ndp-day-radius);
+  font-size: var(--ndp-day-font-size);
   line-height: 1;
   transition: background-color 0.12s ease, color 0.12s ease;
 }
 
 .ndp-day:hover:not(:disabled) {
-  background: var(--ndp-day-hover-bg, #f1f5f9);
+  background: var(--ndp-day-hover-bg);
 }
 
 .ndp-day:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--ndp-focus-ring, #3b82f6);
+  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
 }
 
 .ndp-day--outside {
-  color: var(--ndp-day-outside-color, #cbd5e1);
+  color: var(--ndp-day-outside-color);
   pointer-events: none;
 }
 
 .ndp-day--weekend:not(.ndp-day--selected):not(.ndp-day--in-range) {
-  color: var(--ndp-weekend-color, #ef4444);
+  color: var(--ndp-weekend-color);
 }
 
 .ndp-day--today:not(.ndp-day--selected) {
-  border-color: var(--ndp-today-border, #3b82f6);
+  border-color: var(--ndp-today-border);
   font-weight: 700;
 }
 
 .ndp-day:disabled {
   cursor: default;
-  opacity: 0.35;
+  opacity: var(--ndp-disabled-opacity);
 }
 
 /* range band */
 .ndp-day--in-range,
 .ndp-day--preview {
-  background: var(--ndp-range-bg, #dbeafe);
+  background: var(--ndp-range-bg);
   border-radius: 0;
-  color: var(--ndp-range-color, #1d4ed8);
+  color: var(--ndp-range-color);
 }
 
 .ndp-day--preview {
-  background: var(--ndp-preview-bg, #eff6ff);
+  background: var(--ndp-preview-bg);
 }
 
 /* selected end-points */
 .ndp-day--selected {
-  background: var(--ndp-accent, #3b82f6);
-  color: var(--ndp-accent-contrast, #ffffff);
+  background: var(--ndp-accent);
+  color: var(--ndp-accent-contrast);
   font-weight: 700;
 }
 
 .ndp-day--selected:hover {
-  background: var(--ndp-accent-hover, #2563eb);
+  background: var(--ndp-accent-hover);
 }
 
 .ndp-day--start {
@@ -107,5 +107,17 @@
 
 /* a single-day range keeps full rounding */
 .ndp-day--start.ndp-day--end {
-  border-radius: var(--ndp-day-radius, 8px);
+  border-radius: var(--ndp-day-radius);
+}
+
+.ndp-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

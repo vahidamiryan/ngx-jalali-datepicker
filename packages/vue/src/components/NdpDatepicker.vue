@@ -6,19 +6,23 @@
  * `v-model:calendar`. A `#day` scoped slot customizes the day cell — the Vue
  * equivalent of Angular's `ndpDayCell` content projection.
  */
-import { computed, ref, toRef, watch } from 'vue';
+import { computed, inject, ref, toRef, watch } from 'vue';
 import type {
   DateFilterFn,
   DateRange,
   DatepickerMode,
   NdpAnimation,
+  NdpLabels,
   NdpTheme,
 } from '@vahidamirian/datepicker-core';
+import { defaultLabelsFor, resolveLabels } from '@vahidamirian/datepicker-core';
 import { useCalendarAdapters, type NdpCalendarAdapterSource } from '../adapters';
 import { useDatepicker } from '../composables/useDatepicker';
+import { NDP_LABELS_KEY } from '../labels';
 import NdpCalendarMonth from './NdpCalendarMonth.vue';
 import NdpCalendarPeriod from './NdpCalendarPeriod.vue';
 import NdpTimePicker from './NdpTimePicker.vue';
+import NdpIcon from './NdpIcon.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -46,6 +50,8 @@ const props = withDefaults(
     disabled?: boolean;
     /** Per-component calendar override; otherwise the app-level plugin's adapters. */
     adapters?: NdpCalendarAdapterSource[] | null;
+    /** Overrides for the user-facing text; unnamed labels keep their defaults. */
+    labels?: Partial<NdpLabels> | null;
   }>(),
   {
     modelValue: () => ({ start: null, end: null }),
@@ -69,6 +75,7 @@ const props = withDefaults(
     minuteStep: 1,
     showSecondaryDate: false,
     secondaryCalendar: null,
+    labels: null,
     disabled: false,
     adapters: null,
   },
@@ -113,6 +120,16 @@ const dp = useDatepicker({
   getHost: () => host.value,
 });
 
+// Text resolution, most specific first: the `labels` prop, then an app-wide
+// provide, over the default set for the active calendar.
+const providedLabels = inject<Partial<NdpLabels> | undefined>(NDP_LABELS_KEY, undefined);
+const t = computed(() =>
+  resolveLabels(
+    { ...providedLabels, ...(props.labels ?? {}) },
+    defaultLabelsFor(dp.adapter.value.id),
+  ),
+);
+
 watch(() => props.disabled, (d) => dp.setDisabled(d), { immediate: true });
 
 // Reflect theme + custom CSS vars on the host (mirrors the Angular host bindings).
@@ -153,7 +170,7 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
           @blur="dp.onInputBlur()"
         />
         <template v-if="mode === 'range'">
-          <span class="ndp-input-row__sep" aria-hidden="true">←</span>
+          <NdpIcon name="arrow" class="ndp-input-row__sep ndp-icon--directional" />
           <input
             type="text"
             class="ndp-input-field"
@@ -183,11 +200,11 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
                 v-if="i === 0"
                 type="button"
                 class="ndp-nav"
-                aria-label="قبلی"
+                :aria-label="t.prev"
                 :disabled="!dp.canGoPrev.value"
                 @click="dp.goPrev()"
               >
-                ‹
+                <NdpIcon name="prev" class="ndp-icon--directional" />
               </button>
               <span v-else class="ndp-nav-spacer" aria-hidden="true"></span>
 
@@ -202,13 +219,13 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
                       :aria-expanded="dp.monthMenuOpen.value === i"
                       @click="dp.toggleMonthMenu(i)"
                     >
-                      {{ dp.blockMonthName(m) }} <span aria-hidden="true">▾</span>
+                      {{ dp.blockMonthName(m) }} <NdpIcon name="caret" class="ndp-icon--caret" />
                     </button>
                     <template v-if="dp.monthMenuOpen.value === i">
                       <button
                         type="button"
                         class="ndp-menu-backdrop"
-                        aria-label="بستن"
+                        :aria-label="t.close"
                         @click="dp.closeMenus()"
                       ></button>
                       <ul class="ndp-menu ndp-menu--month" role="listbox">
@@ -237,13 +254,13 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
                       :aria-expanded="dp.yearMenuOpen.value === i"
                       @click="dp.toggleYearMenu(i)"
                     >
-                      {{ dp.blockYearLabel(m) }} <span aria-hidden="true">▾</span>
+                      {{ dp.blockYearLabel(m) }} <NdpIcon name="caret" class="ndp-icon--caret" />
                     </button>
                     <template v-if="dp.yearMenuOpen.value === i">
                       <button
                         type="button"
                         class="ndp-menu-backdrop"
-                        aria-label="بستن"
+                        :aria-label="t.close"
                         @click="dp.closeMenus()"
                       ></button>
                       <ul class="ndp-menu ndp-menu--year" role="listbox">
@@ -278,11 +295,11 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
                 v-if="i === dp.visibleMonths.value.length - 1"
                 type="button"
                 class="ndp-nav"
-                aria-label="بعدی"
+                :aria-label="t.next"
                 :disabled="!dp.canGoNext.value"
                 @click="dp.goNext()"
               >
-                ›
+                <NdpIcon name="next" class="ndp-icon--directional" />
               </button>
               <span v-else class="ndp-nav-spacer" aria-hidden="true"></span>
             </div>
@@ -311,6 +328,7 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
         </div>
 
         <NdpTimePicker
+          :labels="labels"
           v-if="dp.timeVisible.value"
           :adapter="dp.adapter.value"
           :time="dp.currentTime.value"
@@ -327,11 +345,11 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
             <button
               type="button"
               class="ndp-nav"
-              aria-label="قبلی"
+              :aria-label="t.prev"
               :disabled="!dp.canGoPrev.value"
               @click="dp.goPrev()"
             >
-              ‹
+              <NdpIcon name="prev" class="ndp-icon--directional" />
             </button>
 
             <span v-if="dp.viewMode.value === 'month' && showQuickNav" class="ndp-dropdown">
@@ -342,13 +360,13 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
                 :aria-expanded="dp.yearMenuOpen.value === 0"
                 @click="dp.toggleYearMenu()"
               >
-                {{ dp.periodHeading.value }} <span aria-hidden="true">▾</span>
+                {{ dp.periodHeading.value }} <NdpIcon name="caret" class="ndp-icon--caret" />
               </button>
               <template v-if="dp.yearMenuOpen.value === 0">
                 <button
                   type="button"
                   class="ndp-menu-backdrop"
-                  aria-label="بستن"
+                  :aria-label="t.close"
                   @click="dp.closeMenus()"
                 ></button>
                 <ul class="ndp-menu ndp-menu--year" role="listbox">
@@ -372,11 +390,11 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
             <button
               type="button"
               class="ndp-nav"
-              aria-label="بعدی"
+              :aria-label="t.next"
               :disabled="!dp.canGoNext.value"
               @click="dp.goNext()"
             >
-              ›
+              <NdpIcon name="next" class="ndp-icon--directional" />
             </button>
           </div>
 
@@ -405,14 +423,14 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
               v-if="mode === 'range'"
               type="button"
               class="ndp-summary__clear-btn"
-              aria-label="پاک کردن تاریخ شروع"
+              :aria-label="t.clearStart"
               @click="dp.clearStart()"
             >
-              ✕
+              <NdpIcon name="clear" />
             </button>
           </span>
           <template v-if="valueModel.end">
-            <span class="ndp-summary__sep">←</span>
+            <NdpIcon name="arrow" class="ndp-summary__sep ndp-icon--directional" />
             <span class="ndp-summary__chip">
               <span class="ndp-summary__text">
                 {{ dp.adapter.value.format(valueModel.end) }}
@@ -424,10 +442,10 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
                 v-if="mode === 'range'"
                 type="button"
                 class="ndp-summary__clear-btn"
-                aria-label="پاک کردن تاریخ پایان"
+                :aria-label="t.clearEnd"
                 @click="dp.clearEnd()"
               >
-                ✕
+                <NdpIcon name="clear" />
               </button>
             </span>
           </template>
@@ -440,9 +458,9 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
             class="ndp-btn"
             @click="dp.toggleCalendar()"
           >
-            {{ calendarModel === 'jalali' ? 'میلادی' : 'شمسی' }}
+            {{ t.calendars[dp.nextCalendarId.value] ?? dp.nextCalendarId.value }}
           </button>
-          <button v-if="showToday" type="button" class="ndp-btn" @click="dp.goToToday()">امروز</button>
+          <button v-if="showToday" type="button" class="ndp-btn" @click="dp.goToToday()">{{ t.today }}</button>
           <button
             v-if="showClear"
             type="button"
@@ -450,7 +468,7 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
             :disabled="!valueModel.start"
             @click="dp.clear()"
           >
-            پاک کردن
+            {{ t.clear }}
           </button>
         </div>
       </div>

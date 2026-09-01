@@ -75,11 +75,12 @@ function onLeave(): void {
 
 <template>
   <div class="ndp-month" role="grid" :aria-label="view.label">
+    <span class="ndp-sr-only" aria-live="polite">{{ view.label }}</span>
     <div class="ndp-weekdays" role="row">
       <span v-for="(wd, i) in view.weekdays" :key="i" class="ndp-weekday" role="columnheader">{{ wd }}</span>
     </div>
 
-    <div class="ndp-grid">
+    <div class="ndp-grid" role="row">
       <button
         v-for="cell in view.cells"
         :key="cell.key"

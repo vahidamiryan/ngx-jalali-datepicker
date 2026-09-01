@@ -62,6 +62,7 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/getting-started' },
       { text: 'Angular', link: '/angular/' },
       { text: 'Vue', link: '/vue/' },
+      { text: 'Vanilla JS', link: '/vanilla/' },
       {
         text: 'npm',
         items: [
@@ -88,6 +89,7 @@ export default defineConfig({
         items: [
           { text: 'Angular', link: '/angular/' },
           { text: 'Vue 3', link: '/vue/' },
+          { text: 'Vanilla JS', link: '/vanilla/' },
         ],
       },
     ],

@@ -22,7 +22,7 @@
         (blur)="onInputBlur()"
       />
       @if (mode() === "range") {
-        <span class="ndp-input-row__sep" aria-hidden="true">←</span>
+        <ndp-icon name="arrow" class="ndp-input-row__sep ndp-icon--directional" />
         <input
           #endEl
           type="text"
@@ -54,11 +54,11 @@
               <button
                 type="button"
                 class="ndp-nav"
-                aria-label="قبلی"
+                [attr.aria-label]="t().prev"
                 [disabled]="!canGoPrev()"
                 (click)="goPrev()"
               >
-                ‹
+                <ndp-icon name="prev" class="ndp-icon--directional" />
               </button>
             } @else {
               <span class="ndp-nav-spacer" aria-hidden="true"></span>
@@ -77,13 +77,13 @@
                       [attr.aria-expanded]="monthMenuOpen() === i"
                       (click)="toggleMonthMenu(i)"
                     >
-                      {{ blockMonthName(m) }} <span aria-hidden="true">▾</span>
+                      {{ blockMonthName(m) }} <ndp-icon name="caret" class="ndp-icon--caret" />
                     </button>
                     @if (monthMenuOpen() === i) {
                       <button
                         type="button"
                         class="ndp-menu-backdrop"
-                        aria-label="بستن"
+                        [attr.aria-label]="t().close"
                         (click)="closeMenus()"
                       ></button>
                       <ul class="ndp-menu ndp-menu--month" role="listbox">
@@ -114,13 +114,13 @@
                       [attr.aria-expanded]="yearMenuOpen() === i"
                       (click)="toggleYearMenu(i)"
                     >
-                      {{ blockYearLabel(m) }} <span aria-hidden="true">▾</span>
+                      {{ blockYearLabel(m) }} <ndp-icon name="caret" class="ndp-icon--caret" />
                     </button>
                     @if (yearMenuOpen() === i) {
                       <button
                         type="button"
                         class="ndp-menu-backdrop"
-                        aria-label="بستن"
+                        [attr.aria-label]="t().close"
                         (click)="closeMenus()"
                       ></button>
                       <ul class="ndp-menu ndp-menu--year" role="listbox">
@@ -164,11 +164,11 @@
               <button
                 type="button"
                 class="ndp-nav"
-                aria-label="بعدی"
+                [attr.aria-label]="t().next"
                 [disabled]="!canGoNext()"
                 (click)="goNext()"
               >
-                ›
+                <ndp-icon name="next" class="ndp-icon--directional" />
               </button>
             } @else {
               <span class="ndp-nav-spacer" aria-hidden="true"></span>
@@ -199,6 +199,7 @@
     @if (timeVisible()) {
       <ndp-time-picker
         [adapter]="adapter()"
+        [labels]="labels()"
         [time]="currentTime()"
         [minuteStep]="minuteStep()"
         [disabled]="disabled()"
@@ -211,11 +212,11 @@
         <button
           type="button"
           class="ndp-nav"
-          aria-label="قبلی"
+          [attr.aria-label]="t().prev"
           [disabled]="!canGoPrev()"
           (click)="goPrev()"
         >
-          ‹
+          <ndp-icon name="prev" class="ndp-icon--directional" />
         </button>
 
         @if (viewMode() === "month" && showQuickNav()) {
@@ -228,13 +229,13 @@
               [attr.aria-expanded]="yearMenuOpen() === 0"
               (click)="toggleYearMenu()"
             >
-              {{ periodHeading() }} <span aria-hidden="true">▾</span>
+              {{ periodHeading() }} <ndp-icon name="caret" class="ndp-icon--caret" />
             </button>
             @if (yearMenuOpen() === 0) {
               <button
                 type="button"
                 class="ndp-menu-backdrop"
-                aria-label="بستن"
+                [attr.aria-label]="t().close"
                 (click)="closeMenus()"
               ></button>
               <ul class="ndp-menu ndp-menu--year" role="listbox">
@@ -262,11 +263,11 @@
         <button
           type="button"
           class="ndp-nav"
-          aria-label="بعدی"
+          [attr.aria-label]="t().next"
           [disabled]="!canGoNext()"
           (click)="goNext()"
         >
-          ›
+          <ndp-icon name="next" class="ndp-icon--directional" />
         </button>
       </div>
 
@@ -302,16 +303,16 @@
               <button
                 type="button"
                 class="ndp-summary__clear-btn"
-                aria-label="پاک کردن تاریخ شروع"
+                [attr.aria-label]="t().clearStart"
                 (click)="clearStart()"
               >
-                ✕
+                <ndp-icon name="clear" />
               </button>
             }
           </span>
         }
         @if (value().end) {
-          <span class="ndp-summary__sep">←</span>
+          <ndp-icon name="arrow" class="ndp-summary__sep ndp-icon--directional" />
           <span class="ndp-summary__chip">
             <span class="ndp-summary__text">
               {{ adapter().format(value().end!) }}
@@ -325,10 +326,10 @@
               <button
                 type="button"
                 class="ndp-summary__clear-btn"
-                aria-label="پاک کردن تاریخ پایان"
+                [attr.aria-label]="t().clearEnd"
                 (click)="clearEnd()"
               >
-                ✕
+                <ndp-icon name="clear" />
               </button>
             }
           </span>
@@ -339,12 +340,12 @@
       <div class="ndp-actions">
         @if (canToggleCalendar()) {
           <button type="button" class="ndp-btn" (click)="toggleCalendar()">
-            {{ calendar() === "jalali" ? "میلادی" : "شمسی" }}
+            {{ t().calendars[nextCalendarId()] ?? nextCalendarId() }}
           </button>
         }
         @if (showToday()) {
           <button type="button" class="ndp-btn" (click)="goToToday()">
-            امروز
+            {{ t().today }}
           </button>
         }
         @if (showClear()) {
@@ -354,7 +355,7 @@
             [disabled]="!value().start"
             (click)="clear()"
           >
-            پاک کردن
+            {{ t().clear }}
           </button>
         }
       </div>

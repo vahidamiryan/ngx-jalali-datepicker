@@ -114,6 +114,11 @@ export function useDatepicker(opts: UseDatepickerOptions) {
   });
 
   const canToggleCalendar = computed(() => calendarIds.length > 1);
+  /** The calendar `toggleCalendar()` will switch to — used to label the button. */
+  const nextCalendarId = computed(() => {
+    const i = calendarIds.indexOf(opts.calendar.value);
+    return calendarIds[(i + 1) % calendarIds.length];
+  });
 
   const secondaryAdapter = computed<CalendarAdapter | null>(() => {
     if (!opts.showSecondaryDate.value) return null;
@@ -678,6 +683,7 @@ export function useDatepicker(opts: UseDatepickerOptions) {
     visibleMonths,
     focusedKey,
     canToggleCalendar,
+    nextCalendarId,
     secondaryAdapter,
     monthsView,
     yearsView,

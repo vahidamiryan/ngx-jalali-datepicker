@@ -17,3 +17,4 @@ export * from './components/date-input/date-input.component';
 export * from './components/time-picker/time-picker.component';
 export * from './components/time-input/time-input.component';
 export * from './components/day-cell.directive';
+export * from './components/icon/icon.component';

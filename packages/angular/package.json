@@ -1,6 +1,6 @@
 {
   "name": "@vahidamirian/ngx-jalali-datepicker",
-  "version": "2.0.0",
+  "version": "2.2.0",
   "description": "High-performance, customizable, framework-idiomatic Jalali/Gregorian/Hijri date picker for Angular 20+. Built on the shared @vahidamirian/datepicker-core headless engine.",
   "keywords": [
     "angular",
@@ -28,13 +28,13 @@
   "peerDependencies": {
     "@angular/common": ">=20.1.0",
     "@angular/core": ">=20.1.0",
-    "@vahidamirian/datepicker-core": "^1.0.0"
+    "@vahidamirian/datepicker-core": "^1.2.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
   },
   "scripts": {
-    "build": "ng build angular --configuration production"
+    "build": "node ../../scripts/sync-tokens.mjs && ng build angular --configuration production"
   },
   "sideEffects": false
 }

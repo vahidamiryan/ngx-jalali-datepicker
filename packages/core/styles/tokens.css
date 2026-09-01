@@ -1,0 +1,146 @@
+/* NDP design tokens — single source of truth for every theme value.
+   Override any token from your app; components only consume, never redefine. */
+:root,
+.ndp-root,
+[data-ndp-scope] {
+  --ndp-accent: #2563eb;
+  --ndp-accent-hover: #1d4ed8;
+  --ndp-accent-contrast: #ffffff;
+  --ndp-range-bg: #dbeafe;
+  --ndp-range-color: #1d4ed8;
+  --ndp-preview-bg: #eff6ff;
+  --ndp-focus-ring: var(--ndp-accent);
+  --ndp-today-border: var(--ndp-accent);
+  --ndp-weekend-color: #dc2626;
+  --ndp-surface: #ffffff;
+  --ndp-border: #cbd5e1;
+  --ndp-text: #1e293b;
+  --ndp-muted: #64748b;
+  --ndp-day-hover-bg: #f1f5f9;
+  --ndp-day-color: var(--ndp-text);
+  --ndp-weekday-color: var(--ndp-muted);
+  --ndp-day-outside-color: #64748b;
+  --ndp-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.25);
+
+  --ndp-radius: 14px;
+  --ndp-day-radius: 8px;
+
+  --ndp-font-family: inherit;
+  --ndp-font-size: 0.875rem;
+  --ndp-day-font-size: 0.85rem;
+  --ndp-weekday-font-size: 0.72rem;
+
+  --ndp-space: 0.75rem;
+  --ndp-cell-gap: 0.125rem;
+
+  --ndp-disabled-opacity: 0.65;
+
+  --ndp-icon-size: 1.0625rem;
+  --ndp-icon-size-sm: 0.875rem;
+  --ndp-icon-stroke: 2;
+
+  --ndp-slide-distance: 1.25rem;
+  --ndp-slide-duration: 0.22s;
+  --ndp-slide-easing: cubic-bezier(0.25, 0.8, 0.4, 1);
+}
+
+/* ── Dark palette — only the values that differ ─────────────────────────── */
+.ndp-root[data-ndp-theme="dark"],
+[data-ndp-scope][data-ndp-theme="dark"] {
+  color-scheme: dark;
+  --ndp-accent: #60a5fa;
+  --ndp-accent-hover: #93c5fd;
+  --ndp-accent-contrast: #0f172a;
+  --ndp-range-bg: #1e3a5f;
+  --ndp-range-color: #93c5fd;
+  --ndp-preview-bg: #172554;
+  --ndp-weekend-color: #f87171;
+  --ndp-surface: #1e293b;
+  --ndp-border: #475569;
+  --ndp-text: #f1f5f9;
+  --ndp-muted: #94a3b8;
+  --ndp-day-hover-bg: #334155;
+  --ndp-day-outside-color: #94a3b8;
+  --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+}
+
+@media (prefers-color-scheme: dark) {
+  .ndp-root[data-ndp-theme="auto"],
+  [data-ndp-scope][data-ndp-theme="auto"] {
+    color-scheme: dark;
+    --ndp-accent: #60a5fa;
+    --ndp-accent-hover: #93c5fd;
+    --ndp-accent-contrast: #0f172a;
+    --ndp-range-bg: #1e3a5f;
+    --ndp-range-color: #93c5fd;
+    --ndp-preview-bg: #172554;
+    --ndp-weekend-color: #f87171;
+    --ndp-surface: #1e293b;
+    --ndp-border: #475569;
+    --ndp-text: #f1f5f9;
+    --ndp-muted: #94a3b8;
+    --ndp-day-hover-bg: #334155;
+    --ndp-day-outside-color: #94a3b8;
+    --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* ── Presets ───────────────────────────────────────────────────────────── */
+[data-ndp-preset="compact"] {
+  --ndp-icon-size: 0.9375rem;
+  --ndp-icon-size-sm: 0.8125rem;
+  --ndp-space: 0.5rem;
+  --ndp-day-font-size: 0.78rem;
+  --ndp-weekday-font-size: 0.68rem;
+  --ndp-radius: 10px;
+  --ndp-day-radius: 6px;
+}
+
+[data-ndp-preset="comfortable"] {
+  --ndp-icon-size: 1.1875rem;
+  --ndp-icon-size-sm: 1rem;
+  --ndp-space: 1rem;
+  --ndp-day-font-size: 0.95rem;
+  --ndp-weekday-font-size: 0.8rem;
+  --ndp-cell-gap: 0.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  .ndp-root,
+  [data-ndp-scope] {
+    --ndp-slide-duration: 0ms;
+    --ndp-slide-distance: 0px;
+  }
+}
+
+/* ── Icons ─────────────────────────────────────────────────────────────── */
+.ndp-icon {
+  width: var(--ndp-icon-size);
+  height: var(--ndp-icon-size);
+  stroke-width: var(--ndp-icon-stroke);
+  flex: none;
+  display: block;
+}
+
+/* Directional icons mirror with the writing direction. The icon set stays
+   direction-agnostic; only the rendering flips. */
+[dir="rtl"] svg.ndp-icon--directional,
+[dir="rtl"] ndp-icon.ndp-icon--directional > .ndp-icon {
+  transform: scaleX(-1);
+}
+
+.ndp-icon--caret {
+  width: var(--ndp-icon-size-sm);
+  height: var(--ndp-icon-size-sm);
+  display: inline-block;
+  vertical-align: -0.15em;
+}
+
+.ndp-summary__sep,
+.ndp-input-row__sep {
+  width: var(--ndp-icon-size-sm);
+  height: var(--ndp-icon-size-sm);
+  color: var(--ndp-muted);
+  flex: none;
+}

@@ -1,13 +1,14 @@
 @let m = view();
 
 <div class="ndp-month" role="grid" [attr.aria-label]="m.label">
+  <span class="ndp-sr-only" aria-live="polite">{{ m.label }}</span>
   <div class="ndp-weekdays" role="row">
     @for (wd of m.weekdays; track $index) {
       <span class="ndp-weekday" role="columnheader" aria-hidden="false">{{ wd }}</span>
     }
   </div>
 
-  <div class="ndp-grid">
+  <div class="ndp-grid" role="row">
     @for (cell of m.cells; track cell.key) {
       <button
         type="button"

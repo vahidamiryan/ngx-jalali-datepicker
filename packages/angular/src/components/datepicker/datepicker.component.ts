@@ -14,8 +14,8 @@ import {
   untracked,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { CalendarAdapter } from '@vahidamirian/datepicker-core';
-import { NDP_CALENDAR_ADAPTERS } from '../../datepicker.providers';
+import { CalendarAdapter, NdpLabels, defaultLabelsFor, resolveLabels } from '@vahidamirian/datepicker-core';
+import { NDP_CALENDAR_ADAPTERS, NDP_LABELS } from '../../datepicker.providers';
 import {
   CalendarView,
   DateFilterFn,
@@ -34,6 +34,7 @@ import { CalendarMonthComponent } from '../calendar-month/calendar-month.compone
 import { CalendarPeriodComponent } from '../calendar-period/calendar-period.component';
 import { TimePickerComponent } from '../time-picker/time-picker.component';
 import { NdpDayCellTemplate } from '../day-cell.directive';
+import { IconComponent } from '../icon/icon.component';
 
 /**
  * The orchestrator: owns selection / navigation / focus state as signals, swaps
@@ -44,7 +45,7 @@ import { NdpDayCellTemplate } from '../day-cell.directive';
 @Component({
   selector: 'ndp-datepicker',
   standalone: true,
-  imports: [CalendarMonthComponent, CalendarPeriodComponent, TimePickerComponent],
+  imports: [CalendarMonthComponent, CalendarPeriodComponent, TimePickerComponent, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './datepicker.component.html',
   styleUrl: './datepicker.component.css',
@@ -162,6 +163,25 @@ export class DatepickerComponent implements ControlValueAccessor {
   protected readonly adapter = computed(
     () => this.registry.get(this.calendar()) ?? this.registry.get(this.calendarIds[0])!,
   );
+
+  /** Overrides for the user-facing text; unnamed labels keep their defaults. */
+  readonly labels = input<Partial<NdpLabels> | null>(null);
+
+  private readonly providedLabels = inject(NDP_LABELS, { optional: true });
+
+  /** Text resolution: the `labels` input, then DI, over the active calendar's defaults. */
+  protected readonly t = computed(() =>
+    resolveLabels(
+      { ...this.providedLabels, ...(this.labels() ?? {}) },
+      defaultLabelsFor(this.adapter().id),
+    ),
+  );
+
+  /** The calendar `toggleCalendar()` switches to — used to label the button. */
+  protected readonly nextCalendarId = computed(() => {
+    const i = this.calendarIds.indexOf(this.calendar());
+    return this.calendarIds[(i + 1) % this.calendarIds.length];
+  });
 
   protected readonly visibleMonths = computed<Date[]>(() => {
     const a = this.adapter();
