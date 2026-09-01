@@ -21,7 +21,7 @@
   "author": "Vahid Amirian",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vahidamiryan/ngx-jalali-datepicker",
+    "url": "git+https://github.com/vahidamiryan/ngx-jalali-datepicker.git",
     "directory": "packages/angular"
   },
   "license": "MIT",
