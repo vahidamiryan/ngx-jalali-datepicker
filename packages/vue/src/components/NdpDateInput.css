@@ -1,48 +1,9 @@
 .ndp-root {
-  /* ── Theme tokens — mirror DatepickerComponent so the field themes too ────── */
-  --ndp-accent: #3b82f6;
-  --ndp-focus-ring: #3b82f6;
-  --ndp-weekend-color: #ef4444;
-  --ndp-surface: #ffffff;
-  --ndp-border: #e2e8f0;
-  --ndp-text: #1e293b;
-  --ndp-muted: #94a3b8;
-  --ndp-day-hover-bg: #f1f5f9;
-  --ndp-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.25);
-  --ndp-radius: 14px;
-
   display: inline-block;
-  font-family: inherit;
+  font-family: var(--ndp-font-family);
+  font-size: var(--ndp-font-size);
   color: var(--ndp-text);
   color-scheme: light;
-}
-
-.ndp-root[data-ndp-theme="dark"] {
-  color-scheme: dark;
-  --ndp-accent: #60a5fa;
-  --ndp-focus-ring: #60a5fa;
-  --ndp-weekend-color: #f87171;
-  --ndp-surface: #1e293b;
-  --ndp-border: #334155;
-  --ndp-text: #f1f5f9;
-  --ndp-muted: #94a3b8;
-  --ndp-day-hover-bg: #334155;
-  --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
-}
-
-@media (prefers-color-scheme: dark) {
-  .ndp-root[data-ndp-theme="auto"] {
-    color-scheme: dark;
-    --ndp-accent: #60a5fa;
-    --ndp-focus-ring: #60a5fa;
-    --ndp-weekend-color: #f87171;
-    --ndp-surface: #1e293b;
-    --ndp-border: #334155;
-    --ndp-text: #f1f5f9;
-    --ndp-muted: #94a3b8;
-    --ndp-day-hover-bg: #334155;
-    --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
-  }
 }
 
 .ndp-input {
@@ -72,7 +33,7 @@
 }
 
 .ndp-input--disabled .ndp-input__fields {
-  opacity: 0.6;
+  opacity: var(--ndp-disabled-opacity);
 }
 
 .ndp-input__field {

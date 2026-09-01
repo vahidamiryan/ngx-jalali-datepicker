@@ -1,89 +1,22 @@
 :host {
-  /* ── Theme tokens — override any of these from the consuming app ─────────── */
-  --ndp-accent: #3b82f6;
-  --ndp-accent-hover: #2563eb;
-  --ndp-accent-contrast: #ffffff;
-  --ndp-range-bg: #dbeafe;
-  --ndp-range-color: #1d4ed8;
-  --ndp-preview-bg: #eff6ff;
-  --ndp-focus-ring: #3b82f6;
-  --ndp-today-border: #3b82f6;
-  --ndp-weekend-color: #ef4444;
-  --ndp-surface: #ffffff;
-  --ndp-border: #e2e8f0;
-  --ndp-text: #1e293b;
-  --ndp-muted: #94a3b8;
-  --ndp-day-hover-bg: #f1f5f9;
-  /* Calendar-grid tokens — derived from the primary tokens so they follow
-     light/dark automatically while remaining individually overridable. */
-  --ndp-day-color: var(--ndp-text);
-  --ndp-weekday-color: var(--ndp-muted);
-  --ndp-day-outside-color: #cbd5e1;
-  --ndp-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.25);
-  --ndp-radius: 14px;
-  --ndp-day-radius: 8px;
-
   display: inline-block;
-  font-family: inherit;
+  font-family: var(--ndp-font-family);
+  font-size: var(--ndp-font-size);
   color: var(--ndp-text);
   color-scheme: light;
-}
-
-/* ── Dark theme ─────────────────────────────────────────────────────────── */
-:host([data-ndp-theme="dark"]) {
-  color-scheme: dark;
-  --ndp-accent: #60a5fa;
-  --ndp-accent-hover: #93c5fd;
-  --ndp-accent-contrast: #0f172a;
-  --ndp-range-bg: #1e3a5f;
-  --ndp-range-color: #93c5fd;
-  --ndp-preview-bg: #172554;
-  --ndp-focus-ring: #60a5fa;
-  --ndp-today-border: #60a5fa;
-  --ndp-weekend-color: #f87171;
-  --ndp-surface: #1e293b;
-  --ndp-border: #334155;
-  --ndp-text: #f1f5f9;
-  --ndp-muted: #94a3b8;
-  --ndp-day-hover-bg: #334155;
-  --ndp-day-outside-color: #475569;
-  --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
-}
-
-/* ── Auto theme — follows OS prefers-color-scheme ───────────────────────── */
-@media (prefers-color-scheme: dark) {
-  :host([data-ndp-theme="auto"]) {
-    color-scheme: dark;
-    --ndp-accent: #60a5fa;
-    --ndp-accent-hover: #93c5fd;
-    --ndp-accent-contrast: #0f172a;
-    --ndp-range-bg: #1e3a5f;
-    --ndp-range-color: #93c5fd;
-    --ndp-preview-bg: #172554;
-    --ndp-focus-ring: #60a5fa;
-    --ndp-today-border: #60a5fa;
-    --ndp-weekend-color: #f87171;
-    --ndp-surface: #1e293b;
-    --ndp-border: #334155;
-    --ndp-text: #f1f5f9;
-    --ndp-muted: #94a3b8;
-    --ndp-day-hover-bg: #334155;
-    --ndp-day-outside-color: #475569;
-    --ndp-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
-  }
 }
 
 .ndp-panel {
   background: var(--ndp-surface);
   border: 1px solid var(--ndp-border);
   border-radius: var(--ndp-radius);
-  box-shadow: var(--ndp-shadow, 0 10px 30px -12px rgba(15, 23, 42, 0.25));
-  padding: 0.75rem;
+  box-shadow: var(--ndp-shadow);
+  padding: var(--ndp-space);
   display: inline-block;
 }
 
 .ndp-panel--disabled {
-  opacity: 0.6;
+  opacity: var(--ndp-disabled-opacity);
   pointer-events: none;
 }
 
@@ -191,7 +124,7 @@
 }
 
 .ndp-title-btn:hover {
-  background: var(--ndp-day-hover-bg, #f1f5f9);
+  background: var(--ndp-day-hover-bg);
 }
 
 .ndp-title-btn:focus-visible {
@@ -219,7 +152,7 @@
   background: var(--ndp-surface);
   border: 1px solid var(--ndp-border);
   border-radius: 10px;
-  box-shadow: var(--ndp-shadow, 0 10px 30px -12px rgba(15, 23, 42, 0.25));
+  box-shadow: var(--ndp-shadow);
   max-height: 14rem;
   overflow-y: auto;
   /* Don't let the menu clip to the panel's overflow boundary. */
@@ -254,7 +187,7 @@
 }
 
 .ndp-menu__item:hover {
-  background: var(--ndp-day-hover-bg, #f1f5f9);
+  background: var(--ndp-day-hover-bg);
 }
 
 .ndp-menu__item:focus-visible {
@@ -294,7 +227,7 @@
 .ndp-nav {
   appearance: none;
   border: none;
-  background: var(--ndp-day-hover-bg, #f1f5f9);
+  background: var(--ndp-day-hover-bg);
   width: 2rem;
   height: 2rem;
   border-radius: 8px;
@@ -317,12 +250,12 @@
 }
 
 .ndp-nav:disabled {
-  opacity: 0.35;
+  opacity: var(--ndp-disabled-opacity);
   cursor: default;
 }
 
 .ndp-nav:disabled:hover {
-  background: var(--ndp-day-hover-bg, #f1f5f9);
+  background: var(--ndp-day-hover-bg);
 }
 
 .ndp-nav-spacer {
@@ -381,8 +314,8 @@
 }
 
 .ndp-summary__clear-btn:hover {
-  background: var(--ndp-day-hover-bg, #f1f5f9);
-  color: var(--ndp-weekend-color, #ef4444);
+  background: var(--ndp-day-hover-bg);
+  color: var(--ndp-weekend-color);
 }
 
 .ndp-summary__clear-btn:focus-visible {
@@ -413,7 +346,7 @@
 }
 
 .ndp-btn:disabled {
-  opacity: 0.45;
+  opacity: var(--ndp-disabled-opacity);
   cursor: default;
 }
 
@@ -422,14 +355,7 @@
   box-shadow: 0 0 0 2px var(--ndp-focus-ring);
 }
 
-/* ── Navigation slide animation (opt-in via [animation]="'slide'") ─────────── */
-/* The duration/easing are themable like every other token. */
-:host {
-  --ndp-slide-duration: 0.22s;
-  --ndp-slide-easing: cubic-bezier(0.25, 0.8, 0.4, 1);
-  --ndp-slide-distance: 1.25rem;
-}
-
+/* ── Navigation slide animation (opt-in via [animation]="slide") ────────── */
 /* The wrapper div around each calendar grid — animated, not the child component
    host itself, which avoids Angular view-encapsulation issues in production. */
 .ndp-calendar-wrap {

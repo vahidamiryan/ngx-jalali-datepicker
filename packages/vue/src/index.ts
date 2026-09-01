@@ -1,6 +1,8 @@
 /*
  * Public API of @vahidamirian/vue-datepicker — Vue 3 date-picker components on the shared @vahidamirian/datepicker-core.
  */
+import '../../core/styles/tokens.css';
+
 import type { App } from 'vue';
 
 import NdpDatepicker from './components/NdpDatepicker.vue';
@@ -28,6 +30,9 @@ export {
   useCalendarAdapters,
 } from './adapters';
 export type { NdpCalendarAdapterSource } from './adapters';
+export { NDP_ICONS_KEY } from './icons';
+export { NDP_LABELS_KEY } from './labels';
+export { default as NdpIcon } from './components/NdpIcon.vue';
 
 // Re-export the framework-agnostic core so consumers can grab adapters, math,
 // and types from a single import if they prefer.

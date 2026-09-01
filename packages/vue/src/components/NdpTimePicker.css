@@ -13,7 +13,7 @@
 }
 
 .ndp-time--disabled {
-  opacity: 0.55;
+  opacity: var(--ndp-disabled-opacity);
   pointer-events: none;
 }
 
@@ -38,13 +38,13 @@
 }
 
 .ndp-time__step:hover:not(:disabled) {
-  background: var(--ndp-day-hover-bg, #f1f5f9);
+  background: var(--ndp-day-hover-bg);
   color: var(--ndp-text);
 }
 
 .ndp-time__step:disabled {
   cursor: default;
-  opacity: 0.5;
+  opacity: var(--ndp-disabled-opacity);
 }
 
 .ndp-time__input {

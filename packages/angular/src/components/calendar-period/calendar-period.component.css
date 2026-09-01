@@ -13,17 +13,17 @@
   appearance: none;
   border: 1px solid transparent;
   background: transparent;
-  border-radius: var(--ndp-day-radius, 8px);
+  border-radius: var(--ndp-day-radius);
   padding: 0.6rem 0.4rem;
   font: inherit;
   font-size: 0.85rem;
   cursor: pointer;
-  color: var(--ndp-day-color, var(--ndp-text));
+  color: var(--ndp-day-color);
   transition: background-color 0.12s ease;
 }
 
 .ndp-period-cell:hover:not(:disabled) {
-  background: var(--ndp-day-hover-bg, #f1f5f9);
+  background: var(--ndp-day-hover-bg);
 }
 
 .ndp-period-cell:focus-visible {
@@ -47,6 +47,6 @@
 }
 
 .ndp-period-cell:disabled {
-  opacity: 0.35;
+  opacity: var(--ndp-disabled-opacity);
   cursor: default;
 }

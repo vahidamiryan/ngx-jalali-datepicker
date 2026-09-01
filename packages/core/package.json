@@ -1,6 +1,6 @@
 {
   "name": "@vahidamirian/datepicker-core",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Framework-agnostic headless core for the NDP date picker: Jalali/Gregorian/Hijri calendar math, adapters, and render-ready view builders. Zero framework dependencies.",
   "keywords": [
     "datepicker",
@@ -31,10 +31,12 @@
       "types": "./dist/types/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./styles/tokens.css": "./styles/tokens.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "styles"
   ],
   "scripts": {
     "build": "tsup && tsc -p tsconfig.build.json",
