@@ -147,17 +147,45 @@ cal.startOfMonth(d);          cal.startOfYear(d);
 function addDays(d: Date, n: number){ const x=new Date(d.getTime()); x.setDate(x.getDate()+n); x.setHours(0,0,0,0); return x; }
 ```
 
-**Theming** — every color/radius/shadow is a `--ndp-*` variable. Override in CSS or via
+**Theming** — every color/radius/spacing/type size is a `--ndp-*` variable. All defaults live
+in **`packages/core/styles/tokens.css`** — the single source of truth. Components only *consume*
+tokens via `var()`; they must never redefine one, or user overrides break. `scripts/sync-tokens.mjs`
+copies that sheet into `packages/angular/styles/` at build time (ng-packagr refuses assets outside
+the package root); the Vue build inlines it via `packages/vue/src/index.ts`.
+
+Override on `:root` (re-themes every component at once), scoped to an instance, or via
 `customVars` (inline, wins over theme + stylesheet). Angular host tag: `ndp-datepicker`.
 Vue root class: `.ndp-root`. Both carry `data-ndp-theme`.
 ```css
-ndp-datepicker { --ndp-accent:#8b5cf6; --ndp-range-bg:rgba(139,92,246,.18); --ndp-radius:18px; }
+:root { --ndp-accent:#8b5cf6; --ndp-radius:18px; }         /* global */
+ndp-datepicker { --ndp-range-bg:rgba(139,92,246,.18); }    /* one instance */
 /* Vue: .ndp-root { … }  or  .my-wrapper .ndp-root { … } to scope one instance */
 ```
+Density: `data-ndp-preset="compact|comfortable"` on the component or any ancestor.
+
+**Icons** — all glyphs live in `packages/core/src/core/icons.ts` (`NDP_DEFAULT_ICONS`), each the
+*inner* markup of a 24x24 viewBox; components wrap it in `<svg>` so size/stroke/colour stay
+token-driven (`--ndp-icon-size`, `--ndp-icon-size-sm`, `--ndp-icon-stroke`). Names: `prev`,
+`next`, `caret`, `clear`, `calendar`, `clock`. Override via `provideNdpIcons({...})` (Angular) or
+`app.provide(NDP_ICONS_KEY, {...})` (Vue); `resolveIcons()` merges partial sets.
+Directional icons (`prev`/`next`) carry `.ndp-icon--directional`, which CSS mirrors under
+`[dir="rtl"]` — the icon set itself stays direction-agnostic. Renderers:
+`packages/angular/src/components/icon/icon.component.ts`, `packages/vue/src/components/NdpIcon.vue`.
+Never add a typographic glyph (`<`, `>`, `x`) as an icon — add it to the set instead.
+
+**Labels** — all user-facing text lives in `packages/core/src/core/labels.ts` (`NdpLabels`,
+`NDP_EN_LABELS`, `NDP_FA_LABELS`). Default follows the calendar via `defaultLabelsFor(id)`:
+English for `gregorian`, Persian for `jalali`/`hijri`. Override with the `labels` input/prop
+(per component) or `provideNdpLabels()` / `NDP_LABELS_KEY` (app-wide); the component's own
+wins. `resolveLabels()` merges partials and deep-merges the `calendars` map.
+Never hardcode a user-facing string — including `aria-label` — in a template.
+
 Key tokens: `--ndp-accent`, `--ndp-accent-hover`, `--ndp-accent-contrast`, `--ndp-range-bg`,
 `--ndp-preview-bg`, `--ndp-focus-ring`, `--ndp-today-border`, `--ndp-weekend-color`,
 `--ndp-surface`, `--ndp-border`, `--ndp-text`, `--ndp-muted`, `--ndp-radius`, `--ndp-day-radius`,
-`--ndp-shadow`, `--ndp-slide-{duration,easing,distance}`. Full table in the READMEs.
+`--ndp-shadow`, `--ndp-font-family`, `--ndp-font-size`, `--ndp-day-font-size`,
+`--ndp-weekday-font-size`, `--ndp-space`, `--ndp-cell-gap`,
+`--ndp-slide-{duration,easing,distance}`. Full table in the READMEs.
 
 **Custom day cell** — Angular content projection / Vue scoped slot, receives a fully-built
 `DayCell` (all flags precomputed: `isSelected`, `isInRange`, `isDisabled`, `isPreview`, `key`, …):
@@ -256,6 +284,11 @@ the shared core so it applies once). Tests exist on both sides — run them.
 - ❌ Rendering `<ndp-datepicker>` without a provider → throws. Always register adapters.
 - ❌ Treating the value as a bare `Date`. It's a `DateRange`; read `value.start`.
 - ❌ Using `showTime` in range/month/year mode — it's single-mode only.
-- ❌ Hardcoding colors — use `--ndp-*` variables / `customVars`.
+- ❌ Hardcoding colors/sizes — use `--ndp-*` variables / `customVars`.
+- ❌ Defining a `--ndp-*` token in a component stylesheet — it silently overrides the user's
+  own override. Add it to `packages/core/styles/tokens.css` instead.
+- ❌ `var(--ndp-x, #hardcoded)` fallbacks — they shadow the real palette when it changes.
+  Tokens always ship, so use bare `var(--ndp-x)`.
+- ❌ Text/glyph icons — every icon comes from `NDP_DEFAULT_ICONS`.
 - ❌ Pulling in moment/dayjs/date-fns for arithmetic — the adapter + `Date` cover it.
 - ❌ Forgetting `import '@vahidamirian/vue-datepicker/styles.css'` in Vue apps.
