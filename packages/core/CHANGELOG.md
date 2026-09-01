@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 **npm:** https://www.npmjs.com/package/@vahidamirian/datepicker-core
 
+## [1.2.0]
+
+### Added
+- **Label set** (`NdpLabels`, `NDP_EN_LABELS`, `NDP_FA_LABELS`, `resolveLabels`,
+  `defaultLabelsFor`) — the single source of every user-facing string, kept separate from
+  the calendar adapters so language and calendar stay independent choices.
+  `defaultLabelsFor(calendarId)` returns English for Gregorian, Persian otherwise.
+- `arrow` icon in `NDP_DEFAULT_ICONS`, used for the range separator.
+
+## [1.1.0]
+
+### Added
+- **Icon set** (`NDP_DEFAULT_ICONS`, `NdpIconName`, `NdpIconSet`, `resolveIcons`) — the
+  single source for every glyph the pickers render. Each entry is the inner markup of a
+  24x24 viewBox; `resolveIcons()` merges a partial override set over the defaults.
+- **Design-token stylesheet** shipped at `@vahidamirian/datepicker-core/styles/tokens.css`,
+  defining every `--ndp-*` default on `:root`.
+
 ## [1.0.0]
 
 ### Added

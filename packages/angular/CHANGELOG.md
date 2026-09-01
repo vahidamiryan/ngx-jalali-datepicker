@@ -6,6 +6,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 **npm:** https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker
 
+## [2.2.0]
+
+### Added
+- **Configurable labels** — the `labels` input on every component, and
+  `provideNdpLabels()` / `NDP_LABELS` for application-wide text. A component's input wins
+  over the provider, and both merge over the calendar default, so you override only the
+  keys you need.
+
+### Fixed
+- **English UI showed Persian text.** The footer buttons, every `aria-label`, and the
+  calendar-toggle button were hardcoded Persian regardless of the active calendar, so a
+  Gregorian picker in an English app rendered `امروز` / `پاک کردن` and announced Persian to
+  screen readers. Text now comes from a label set that defaults to English for Gregorian
+  and Persian for Jalali / Hijri.
+- **The range separator pointed the wrong way in LTR.** It was a hardcoded `←` glyph, so
+  `Aug 21 ← Sep 22` read backwards in English. It is now a directional icon that mirrors
+  with the writing direction, as the nav chevrons already do.
+- The calendar-toggle button assumed a Jalali/Gregorian pair and mislabelled itself when
+  Hijri was registered; it now names whichever calendar it will switch to.
+
+## [2.1.0]
+
+### Added
+- **Swappable icons** — the `NDP_ICONS` injection token overrides any subset of the
+  built-in glyphs; `IconComponent` (`<ndp-icon>`) renders them as inline SVG that
+  inherits `currentColor` and the size tokens.
+- **Density presets** — `data-ndp-preset="compact"` / `"comfortable"` on the component
+  or any ancestor.
+- **New tokens** — `--ndp-font-family`, `--ndp-font-size`, `--ndp-day-font-size`,
+  `--ndp-weekday-font-size`, `--ndp-space`, `--ndp-cell-gap`, `--ndp-icon-size`,
+  `--ndp-icon-size-sm`, `--ndp-icon-stroke`, `--ndp-disabled-opacity`.
+
+### Changed
+- **Tokens are now defined once on `:root`** instead of being redeclared per component,
+  so a single global override re-themes the picker, date input and time field together.
+  They ship in `styles/tokens.css` — add it to the `styles` array in `angular.json`.
+- **Palette corrected for WCAG contrast.** Selected-day text (3.68:1), weekend days
+  (3.76:1), muted text (2.56:1) and out-of-month days (1.48:1 light / 1.93:1 dark) all
+  fell below 4.5:1. Accent is now `#2563eb`, weekend `#dc2626`, muted `#64748b`.
+- Disabled controls use `--ndp-disabled-opacity` (0.65, was 0.45), which was illegible.
+- Navigation chevrons, dropdown caret and clear buttons are SVG instead of typographic
+  characters, and mirror correctly in RTL.
+
+### Removed
+- Hardcoded `var(--ndp-x, #fallback)` colour fallbacks, which shadowed the palette.
+
 ## [2.0.0]
 
 ### Changed
