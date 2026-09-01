@@ -24,8 +24,12 @@ export interface NdpLabels {
   openCalendar: string;
   /** Switches to the secondary calendar (label is the calendar's own name). */
   switchCalendar: string;
-  /** Display names per calendar id, used by the calendar-toggle button. */
-  calendars: Record<string, string>;
+  /**
+   * Display names per calendar id, used by the calendar-toggle button.
+   * Indexed lookups may miss — a custom adapter's id is not in the default
+   * map — so callers must fall back to the id itself.
+   */
+  calendars: Record<string, string | undefined>;
   /** Hours field in the time picker. */
   hours: string;
   /** Minutes field in the time picker. */
