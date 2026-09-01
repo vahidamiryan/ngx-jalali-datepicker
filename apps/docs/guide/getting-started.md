@@ -9,6 +9,8 @@ The NDP date picker is a monorepo of three packages:
 | **`@vahidamirian/vue-datepicker`** | Vue 3 components built on `@vahidamirian/datepicker-core`. |
 
 Pick the framework package for your app; it pulls in `@vahidamirian/datepicker-core` for you.
+On no framework — or one that isn't Angular or Vue — use the core directly and render
+your own markup: see [Vanilla JS](/vanilla/).
 
 ## Vue 3
 

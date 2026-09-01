@@ -24,9 +24,20 @@ spacing value stays overridable.
 
 ## Override in CSS
 
-Overrides cascade, so you can scope them to one instance or apply them globally.
-In Vue every component root carries the `.ndp-root` class; in Angular target the
-`ndp-datepicker` element.
+All tokens are defined once on `:root`, so a single global override re-themes
+every picker, input and time field at once — no need to repeat it per component.
+
+```css
+/* Every NDP component, both frameworks */
+:root {
+  --ndp-accent: #8b5cf6;
+  --ndp-accent-hover: #7c3aed;
+  --ndp-radius: 18px;
+}
+```
+
+To scope an override instead, target one instance. In Vue every component root
+carries the `.ndp-root` class; in Angular target the `ndp-datepicker` element.
 
 ```css
 /* Vue: all pickers */
@@ -45,6 +56,25 @@ ndp-datepicker {
   --ndp-range-bg: rgba(139, 92, 246, 0.18);
 }
 ```
+
+## Density presets
+
+`data-ndp-preset` swaps spacing and type size in one attribute. Put it on the
+component or any ancestor.
+
+```html
+<ndp-datepicker data-ndp-preset="compact" [(value)]="value" />
+```
+
+```vue
+<NdpDatepicker v-model="value" data-ndp-preset="comfortable" />
+```
+
+| Preset | Effect |
+| --- | --- |
+| *(none)* | Default density. |
+| `compact` | Tighter padding, smaller type and radii. |
+| `comfortable` | Roomier padding, larger type, wider cell gaps. |
 
 ## Override programmatically
 
@@ -82,7 +112,112 @@ const brand: Record<string, string> = {
 | `--ndp-day-hover-bg` | Day / nav / button hover background. |
 | `--ndp-shadow` | Panel drop shadow. |
 | `--ndp-radius` / `--ndp-day-radius` | Panel and day-cell corner radius. |
-| `--ndp-slide-duration` / `--ndp-slide-easing` / `--ndp-slide-distance` | `animation="slide"` transition tuning. |
+| `--ndp-font-family` / `--ndp-font-size` | Base font stack and size. |
+| `--ndp-day-font-size` / `--ndp-weekday-font-size` | Day-cell and weekday-header type size. |
+| `--ndp-space` | Panel padding — the main density dial. |
+| `--ndp-cell-gap` | Gap between day cells. |
+| `--ndp-icon-size` / `--ndp-icon-size-sm` | Icon box size, and the smaller dropdown caret. |
+| `--ndp-icon-stroke` | Icon stroke width. |
+| `--ndp-disabled-opacity` | Opacity of disabled days, buttons and panels. |
+| `--ndp-slide-duration` / `--ndp-slide-easing` / `--ndp-slide-distance` | `animation="slide"` transition tuning. Zeroed automatically under `prefers-reduced-motion`. |
+
+## Labels & language
+
+Every string the picker renders — footer buttons, `aria-label`s, calendar names —
+comes from one set. The default follows the **calendar**: Gregorian gets English,
+Jalali and Hijri get Persian. That is the common pairing, but the two are
+independent, so a Jalali calendar in an English admin panel is one prop away.
+
+```ts
+import { NDP_EN_LABELS, NDP_FA_LABELS, type NdpLabels } from '@vahidamirian/datepicker-core'
+```
+
+Per component:
+
+```html
+<!-- Angular -->
+<ndp-datepicker [labels]="{ today: 'Today', clear: 'Clear' }" [(value)]="value" />
+```
+
+```vue
+<!-- Vue -->
+<NdpDatepicker v-model="value" :labels="{ today: 'Today', clear: 'Clear' }" />
+```
+
+Application-wide:
+
+```ts
+// Angular
+import { provideNdpLabels } from '@vahidamirian/ngx-jalali-datepicker'
+providers: [provideNdpLabels(NDP_EN_LABELS)]
+```
+
+```ts
+// Vue
+import { NDP_LABELS_KEY } from '@vahidamirian/vue-datepicker'
+app.provide(NDP_LABELS_KEY, NDP_EN_LABELS)
+```
+
+A component's own `labels` wins over the app-wide set, and both merge over the
+calendar default — override only the keys you care about.
+
+### Keys
+
+| Key | Used for |
+| --- | --- |
+| `today` / `clear` | Footer buttons. |
+| `prev` / `next` | Month navigation `aria-label`s. |
+| `close` | Dropdown and popover dismiss buttons. |
+| `clearStart` / `clearEnd` | Per-chip clear buttons in range mode. |
+| `openCalendar` | The trigger button on a typed input. |
+| `switchCalendar` | The calendar-toggle button. |
+| `calendars` | Display names per calendar id (`{ gregorian, jalali, hijri }`), merged key-by-key. |
+| `hours` / `minutes` | Time-picker fields. |
+| `increaseHours` / `decreaseHours` | Hour steppers. |
+| `increaseMinutes` / `decreaseMinutes` | Minute steppers. |
+
+## Replace the icons
+
+Every glyph — nav chevrons, dropdown caret, clear button, calendar and clock —
+comes from one set in the core package, rendered as inline SVG that inherits
+`currentColor` and the size tokens. Override any subset; the rest stay default.
+
+Each value is the **inner** markup of a `24 x 24` viewBox — the wrapping `<svg>`
+is supplied for you, so stroke, colour and size stay token-driven.
+
+```ts
+import { NDP_DEFAULT_ICONS, type NdpIconSet } from '@vahidamirian/datepicker-core'
+// names: prev | next | caret | clear | calendar | clock
+```
+
+```ts
+// Angular — application-wide
+import { provideNdpIcons } from '@vahidamirian/ngx-jalali-datepicker'
+
+providers: [
+  provideNdpIcons({ prev: '<path d="M15 18l-6-6 6-6" />' }),
+]
+```
+
+```ts
+// Vue — application-wide
+import { NDP_ICONS_KEY } from '@vahidamirian/vue-datepicker'
+
+app.provide(NDP_ICONS_KEY, { prev: '<path d="M15 18l-6-6 6-6" />' })
+```
+
+Size and stroke are tokens like everything else:
+
+```css
+:root {
+  --ndp-icon-size: 1.25rem;
+  --ndp-icon-size-sm: 1rem;   /* the dropdown caret */
+  --ndp-icon-stroke: 1.5;
+}
+```
+
+Overrides are inserted as raw SVG markup, so supply static strings you author —
+never unsanitised user input.
 
 ## Replace a whole day cell
 

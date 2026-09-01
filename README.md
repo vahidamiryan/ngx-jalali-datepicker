@@ -31,7 +31,10 @@ theme. This one is built differently:
   Vue share the *exact same* engine, so a fix in one lands in both.
 - 🗓️ **Three calendars out of the box** — Jalali/Shamsi, Gregorian, and tabular Hijri, all
   verified against the platform `Intl`. Add your own by implementing one adapter interface.
-- 🎨 **Themeable to the pixel** — every color/radius/shadow is a `--ndp-*` CSS variable;
+- 🎨 **Themeable to the pixel** — every color/radius/spacing/type size is a `--ndp-*` CSS
+  variable defined once on `:root`, so one global override re-themes every component;
+  `data-ndp-preset="compact|comfortable"` switches density in a single attribute;
+  all icons are swappable SVG from one set (`NDP_ICONS` / `NDP_ICONS_KEY`);
   light/dark built in. Replace a whole day cell with content projection (Angular) or a
   scoped slot (Vue).
 - ✅ **Complete** — range, multi-month, month/year pickers, typed input with parsing,
@@ -78,8 +81,9 @@ createApp(App).use(NdpDatepickerPlugin, {
 <NdpDatepicker v-model="value" />
 ```
 
-> **Headless, no UI?** Import `@vahidamirian/datepicker-core` directly for Jalali ⇆ Gregorian ⇆ Hijri
-> conversion and month-grid building with no framework at all.
+> **No framework?** Import `@vahidamirian/datepicker-core` directly — it drives a complete
+> picker in ~60 lines of your own markup, or does Jalali ⇆ Gregorian ⇆ Hijri conversion with
+> no UI at all. Worked example: [Vanilla JS guide](https://vahidamiryan.github.io/ngx-jalali-datepicker/vanilla/).
 
 ## Packages
 

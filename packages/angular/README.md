@@ -24,6 +24,16 @@ Built on **signals**, an **OnPush + zoneless** rendering model, a pluggable
 npm install @vahidamirian/ngx-jalali-datepicker
 ```
 
+Import the token sheet once — it carries every `--ndp-*` default:
+
+```json
+// angular.json → architect.build.options.styles
+"styles": [
+  "src/styles.css",
+  "node_modules/@vahidamirian/ngx-jalali-datepicker/styles/tokens.css"
+]
+```
+
 Package on npm: https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker
 
 ## Quick start
@@ -122,7 +132,18 @@ The picker ships with three built-in themes selected via the `theme` input:
 `theme` only swaps the default palette of design tokens — every colour, radius
 and spacing value is a CSS custom property (`--ndp-*`) you can override.
 
-**Override in CSS** (cascades, so you can scope it to one instance or globally):
+**Override in CSS.** Tokens are defined once on `:root`, so a single global
+override re-themes every picker, date input and time field at once:
+
+```css
+:root {
+  --ndp-accent: #8b5cf6;
+  --ndp-accent-hover: #7c3aed;
+  --ndp-radius: 18px;
+}
+```
+
+To scope an override instead, target one instance:
 
 ```css
 ndp-datepicker {
@@ -131,6 +152,14 @@ ndp-datepicker {
   --ndp-range-bg: rgba(139, 92, 246, 0.18); /* translucent → works on any surface */
   --ndp-radius: 18px;
 }
+```
+
+**Density presets.** `data-ndp-preset` swaps spacing and type size in one
+attribute — put it on the component or any ancestor:
+
+```html
+<ndp-datepicker data-ndp-preset="compact" [(value)]="value" />      <!-- tighter -->
+<ndp-datepicker data-ndp-preset="comfortable" [(value)]="value" />  <!-- roomier -->
 ```
 
 **Override programmatically** with the `customVars` input — handy for runtime or
@@ -163,7 +192,56 @@ readonly brand: Record<string, string> = {
 | `--ndp-day-hover-bg` | Day / nav / button hover background. |
 | `--ndp-shadow` | Panel drop shadow. |
 | `--ndp-radius` / `--ndp-day-radius` | Panel and day-cell corner radius. |
-| `--ndp-slide-duration` / `--ndp-slide-easing` / `--ndp-slide-distance` | Tuning for the `animation="slide"` navigation transition (duration, timing function, travel distance). |
+| `--ndp-font-family` / `--ndp-font-size` | Base font stack and size. |
+| `--ndp-day-font-size` / `--ndp-weekday-font-size` | Day-cell and weekday-header type size. |
+| `--ndp-space` | Panel padding — the main density dial. |
+| `--ndp-cell-gap` | Gap between day cells. |
+| `--ndp-icon-size` / `--ndp-icon-size-sm` | Icon box size, and the smaller dropdown caret. |
+| `--ndp-icon-stroke` | Icon stroke width. |
+| `--ndp-disabled-opacity` | Opacity of disabled days, buttons and panels. |
+| `--ndp-slide-duration` / `--ndp-slide-easing` / `--ndp-slide-distance` | Tuning for the `animation="slide"` navigation transition (duration, timing function, travel distance). Zeroed automatically under `prefers-reduced-motion`. |
+
+### Labels & language
+
+Every string — footer buttons, `aria-label`s, calendar names — comes from one set.
+The default follows the **calendar**: Gregorian gets English, Jalali and Hijri get
+Persian. Override per component or application-wide; unnamed keys keep their defaults.
+
+```html
+<ndp-datepicker [labels]="{ today: 'Today', clear: 'Clear' }" [(value)]="value" />
+```
+
+```ts
+import { provideNdpLabels } from '@vahidamirian/ngx-jalali-datepicker';
+import { NDP_EN_LABELS } from '@vahidamirian/datepicker-core';
+
+providers: [provideNdpLabels(NDP_EN_LABELS)];
+```
+
+Keys: `today`, `clear`, `prev`, `next`, `close`, `clearStart`, `clearEnd`,
+`openCalendar`, `switchCalendar`, `calendars`, `hours`, `minutes`,
+`increaseHours`, `decreaseHours`, `increaseMinutes`, `decreaseMinutes`.
+
+### Custom icons
+
+Every glyph — nav chevrons, dropdown caret, clear button, calendar and clock —
+comes from one set in the core package, rendered as inline SVG that inherits
+`currentColor` and the size tokens. Override any subset; the rest stay default.
+Each value is the **inner** markup of a `24 x 24` viewBox.
+
+```ts
+import { provideNdpIcons } from '@vahidamirian/ngx-jalali-datepicker';
+// names: prev | next | caret | clear | calendar | clock
+
+providers: [
+  provideNdpIcons({ prev: '<path d="M15 18l-6-6 6-6" />' }),
+];
+```
+
+Size and stroke are tokens (`--ndp-icon-size`, `--ndp-icon-size-sm`,
+`--ndp-icon-stroke`). Overrides are inserted as raw SVG markup, so supply static
+strings you author — never unsanitised user input.
+
 
 ## Typing dates (input field)
 

@@ -338,9 +338,19 @@ Three built-in themes via the `theme` prop:
 `theme` only swaps the default palette of design tokens — **every** colour, radius and
 spacing value is a CSS custom property (`--ndp-*`) you can override.
 
-**Override in CSS** (cascades — globally or scoped). Every component root carries the
-`.ndp-root` class and a `data-ndp-theme` attribute. Target `.ndp-root` for all pickers, or
-wrap one instance in your own container to scope it:
+**Override in CSS.** Tokens are defined once on `:root`, so a single global override
+re-themes every picker, date input and time field at once:
+
+```css
+:root {
+  --ndp-accent: #8b5cf6;
+  --ndp-accent-hover: #7c3aed;
+  --ndp-radius: 18px;
+}
+```
+
+To scope an override instead, every component root carries the `.ndp-root` class and a
+`data-ndp-theme` attribute — wrap one instance in your own container:
 
 ```css
 /* all pickers */
@@ -357,6 +367,14 @@ wrap one instance in your own container to scope it:
 
 ```vue
 <div class="my-brand-picker"><NdpDatepicker v-model="value" /></div>
+```
+
+**Density presets.** `data-ndp-preset` swaps spacing and type size in one attribute —
+put it on the component or any ancestor:
+
+```vue
+<NdpDatepicker v-model="value" data-ndp-preset="compact" />      <!-- tighter -->
+<NdpDatepicker v-model="value" data-ndp-preset="comfortable" />  <!-- roomier -->
 ```
 
 **Override programmatically** with `custom-vars` — handy for runtime / brand-driven values.
@@ -390,7 +408,54 @@ const brand: Record<string, string> = {
 | `--ndp-day-hover-bg` | Day / nav / button hover background. |
 | `--ndp-shadow` | Panel drop shadow. |
 | `--ndp-radius` / `--ndp-day-radius` | Panel and day-cell corner radius. |
-| `--ndp-slide-duration` / `--ndp-slide-easing` / `--ndp-slide-distance` | Tuning for the `animation="slide"` navigation transition. |
+| `--ndp-font-family` / `--ndp-font-size` | Base font stack and size. |
+| `--ndp-day-font-size` / `--ndp-weekday-font-size` | Day-cell and weekday-header type size. |
+| `--ndp-space` | Panel padding — the main density dial. |
+| `--ndp-cell-gap` | Gap between day cells. |
+| `--ndp-icon-size` / `--ndp-icon-size-sm` | Icon box size, and the smaller dropdown caret. |
+| `--ndp-icon-stroke` | Icon stroke width. |
+| `--ndp-disabled-opacity` | Opacity of disabled days, buttons and panels. |
+| `--ndp-slide-duration` / `--ndp-slide-easing` / `--ndp-slide-distance` | Tuning for the `animation="slide"` navigation transition. Zeroed automatically under `prefers-reduced-motion`. |
+
+### Labels & language
+
+Every string — footer buttons, `aria-label`s, calendar names — comes from one set.
+The default follows the **calendar**: Gregorian gets English, Jalali and Hijri get
+Persian. Override per component or application-wide; unnamed keys keep their defaults.
+
+```vue
+<NdpDatepicker v-model="value" :labels="{ today: 'Today', clear: 'Clear' }" />
+```
+
+```ts
+import { NDP_LABELS_KEY } from '@vahidamirian/vue-datepicker'
+import { NDP_EN_LABELS } from '@vahidamirian/datepicker-core'
+
+app.provide(NDP_LABELS_KEY, NDP_EN_LABELS)
+```
+
+Keys: `today`, `clear`, `prev`, `next`, `close`, `clearStart`, `clearEnd`,
+`openCalendar`, `switchCalendar`, `calendars`, `hours`, `minutes`,
+`increaseHours`, `decreaseHours`, `increaseMinutes`, `decreaseMinutes`.
+
+### Custom icons
+
+Every glyph — nav chevrons, dropdown caret, clear button, calendar and clock —
+comes from one set in the core package, rendered as inline SVG that inherits
+`currentColor` and the size tokens. Override any subset; the rest stay default.
+Each value is the **inner** markup of a `24 x 24` viewBox.
+
+```ts
+import { NDP_ICONS_KEY } from '@vahidamirian/vue-datepicker'
+// names: prev | next | caret | clear | calendar | clock
+
+app.provide(NDP_ICONS_KEY, { prev: '<path d="M15 18l-6-6 6-6" />' })
+```
+
+Size and stroke are tokens (`--ndp-icon-size`, `--ndp-icon-size-sm`,
+`--ndp-icon-stroke`). Overrides are inserted as raw SVG markup, so supply static
+strings you author — never unsanitised user input.
+
 
 ## Customizing the day cell (scoped slot)
 
