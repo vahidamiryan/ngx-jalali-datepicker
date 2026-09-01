@@ -35,7 +35,7 @@ jobs:
       - name: Build core
         run: npm run build -w @vahidamirian/datepicker-core
       - name: Build Angular
-        run: npx ng build angular
+        run: npm run build -w @vahidamirian/ngx-jalali-datepicker
       - name: Build Vue
         run: npm run build -w @vahidamirian/vue-datepicker
 

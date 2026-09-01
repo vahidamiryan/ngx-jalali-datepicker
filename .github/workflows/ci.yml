@@ -27,7 +27,7 @@ jobs:
         run: npm run test -w @vahidamirian/datepicker-core
 
       - name: Build Angular (@vahidamirian/ngx-jalali-datepicker)
-        run: npx ng build angular
+        run: npm run build -w @vahidamirian/ngx-jalali-datepicker
 
       - name: Test Angular (headless)
         run: npx ng test angular --watch=false --browsers=ChromeHeadless
