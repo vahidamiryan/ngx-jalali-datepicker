@@ -1,7 +1,7 @@
 import { ComponentRef, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DateInputComponent } from './date-input.component';
-import { GregorianCalendarAdapter } from '@vahidamirian/datepicker-core';
+import { GregorianCalendarAdapter, JalaliCalendarAdapter } from '@vahidamirian/datepicker-core';
 import { provideNgxDatepicker } from '../../datepicker.providers';
 import { dayKey } from '@vahidamirian/datepicker-core';
 
@@ -24,7 +24,7 @@ describe('DateInputComponent', () => {
       imports: [DateInputComponent],
       providers: [
         provideZonelessChangeDetection(),
-        provideNgxDatepicker(new GregorianCalendarAdapter('en-US')),
+        provideNgxDatepicker(new GregorianCalendarAdapter('en-US'), new JalaliCalendarAdapter()),
       ],
     });
     fixture = TestBed.createComponent(DateInputComponent);
@@ -52,6 +52,20 @@ describe('DateInputComponent', () => {
     type(fields()[0], '2026/03/21');
     type(fields()[0], '');
     expect(component.value().start).toBeNull();
+  });
+
+  it('keeps the committed date when pasted text or date restrictions reject an edit', () => {
+    ref.setInput('min', new Date(2026, 2, 10));
+    ref.setInput('max', new Date(2026, 2, 31));
+    ref.setInput('dateFilter', (date: Date) => date.getDate() !== 21);
+    fixture.detectChanges();
+    type(fields()[0], '2026/03/20');
+    const before = component.value();
+    for (const invalid of ['unavailable', '2026/03/09', '2026/03/21', '2026/04/01']) {
+      type(fields()[0], invalid);
+      expect(fields()[0].getAttribute('aria-invalid')).withContext(invalid).toBe('true');
+      expect(component.value()).withContext(invalid).toBe(before);
+    }
   });
 
   it('reflects an external value as formatted text', () => {
@@ -92,5 +106,67 @@ describe('DateInputComponent', () => {
     fixture.nativeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.ndp-input__popover')).toBeFalsy();
+  });
+
+  it('reopens on the selected Jalali month without committing year navigation', () => {
+    const jalali = new JalaliCalendarAdapter();
+    const value = { start: jalali.createDate(1404, 11, 30), end: null };
+    const onChange = jasmine.createSpy('onChange');
+    const valueChange = jasmine.createSpy('valueChange');
+    const dateSelected = jasmine.createSpy('dateSelected');
+    const calendarChange = jasmine.createSpy('calendarChange');
+    component.registerOnChange(onChange);
+    component.value.subscribe(valueChange);
+    component.dateSelected.subscribe(dateSelected);
+    component.calendar.subscribe(calendarChange);
+    ref.setInput('calendar', 'jalali');
+    ref.setInput('value', value);
+    fixture.detectChanges();
+
+    function click(selector: string): void {
+      fixture.nativeElement.querySelector(selector).click();
+      fixture.detectChanges();
+    }
+
+    const monthLabel = (): string =>
+      fixture.nativeElement.querySelector('.ndp-month').getAttribute('aria-label');
+
+    expect(fields()[0].value).toBe('۱۴۰۴/۱۱/۳۰');
+    click('.ndp-input__toggle');
+    expect(monthLabel()).toBe(jalali.getMonthLabel(value.start));
+    expect(fixture.nativeElement.querySelector('.ndp-summary__text').textContent).toContain('۱۴۰۴');
+
+    click('.ndp-year-trigger');
+    const active = fixture.nativeElement.querySelector('.ndp-year-option[aria-current="true"]');
+    expect(active.textContent?.trim()).toBe('۱۴۰۴');
+    const search: HTMLInputElement = fixture.nativeElement.querySelector('.ndp-year-search');
+    type(search, '۱۲۹۵');
+    expect(fixture.nativeElement.querySelectorAll('.ndp-year-grid button').length).toBe(1);
+    const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+    search.dispatchEvent(enter);
+    fixture.detectChanges();
+    expect(monthLabel()).toBe(jalali.getMonthLabel(jalali.createDate(1295, 11, 1)));
+
+    click('.ndp-input__toggle');
+    click('.ndp-input__toggle');
+    expect(monthLabel()).toBe(jalali.getMonthLabel(value.start));
+    expect(component.value()).toBe(value);
+    expect(onChange).not.toHaveBeenCalled();
+    expect(valueChange).not.toHaveBeenCalled();
+    expect(dateSelected).not.toHaveBeenCalled();
+    expect(calendarChange).not.toHaveBeenCalled();
+  });
+
+  it('opens on today when the bound selection is invalid', () => {
+    const jalali = new JalaliCalendarAdapter();
+    ref.setInput('calendar', 'jalali');
+    ref.setInput('value', { start: new Date(NaN), end: null });
+    fixture.detectChanges();
+    fixture.nativeElement.querySelector('.ndp-input__toggle').click();
+    fixture.detectChanges();
+
+    expect(fields()[0].value).toBe('');
+    expect(fixture.nativeElement.querySelector('.ndp-month').getAttribute('aria-label'))
+      .toBe(jalali.getMonthLabel(new Date()));
   });
 });

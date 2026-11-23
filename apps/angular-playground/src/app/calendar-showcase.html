@@ -1,0 +1,57 @@
+<section class="showcase" aria-labelledby="calendar-showcase-title">
+  <div class="showcase-head">
+    <h2 id="calendar-showcase-title">Single date</h2>
+    <div class="showcase-switch" role="group" aria-label="Calendar size">
+      @for (option of densities; track option.label) {
+        <button type="button" [attr.aria-pressed]="density() === option.value" (click)="density.set(option.value)">
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </div>
+  <div class="showcase-calendars" [attr.data-ndp-preset]="density()">
+    @for (sample of calendars; track sample.id) {
+      <article class="showcase-sample" [attr.dir]="sample.direction" [attr.lang]="sample.lang">
+        <h3><label [attr.for]="'showcase-' + sample.id">{{ sample.label }}</label></h3>
+        <ndp-date-input [inputId]="'showcase-' + sample.id" [calendar]="sample.id" [theme]="theme()"
+          [showFooter]="false" [value]="single()" (valueChange)="single.set($event)" />
+        <ndp-datepicker [calendar]="sample.id" [theme]="theme()" [showFooter]="false"
+          [value]="single()" (valueChange)="single.set($event)" />
+      </article>
+    }
+  </div>
+
+  <div class="showcase-head">
+    <h2>Date range</h2>
+    <div class="showcase-switch" role="group" aria-label="Range calendar direction">
+      <button type="button" [attr.aria-pressed]="!isRtl()" (click)="isRtl.set(false)">LTR</button>
+      <button type="button" [attr.aria-pressed]="isRtl()" (click)="isRtl.set(true)">RTL</button>
+    </div>
+  </div>
+  <div class="showcase-range" [attr.dir]="isRtl() ? 'rtl' : 'ltr'" [attr.lang]="isRtl() ? 'fa' : 'en'">
+    <div class="showcase-presets" role="group" [attr.aria-label]="isRtl() ? 'بازه‌های آماده' : 'Preset ranges'">
+      @for (preset of presets(); track preset.en) {
+        <button type="button" [attr.aria-pressed]="isActivePreset(preset)"
+          (click)="replaceDraft(preset)">
+          {{ isRtl() ? preset.fa : preset.en }}
+        </button>
+      }
+    </div>
+    <div class="showcase-range-body">
+      @for (view of [rangeView()]; track view.key) {
+        <ndp-datepicker mode="range" data-ndp-preset="compact" [calendar]="view.calendar"
+          [theme]="theme()" [numberOfMonths]="2" [showFooter]="false" [showInput]="true"
+          [value]="draft()" (valueChange)="draft.set($event)" />
+      }
+      <div class="showcase-actions">
+        <button type="button" (click)="replaceDraft(applied())">{{ isRtl() ? 'لغو' : 'Cancel' }}</button>
+        <button type="button" class="showcase-apply" [disabled]="!draft().start || !draft().end"
+          (click)="applied.set(draft())">{{ isRtl() ? 'اعمال بازه' : 'Apply range' }}</button>
+      </div>
+    </div>
+  </div>
+  <p class="showcase-result" [attr.dir]="isRtl() ? 'rtl' : 'ltr'" [attr.lang]="isRtl() ? 'fa' : 'en'">
+    {{ isRtl() ? 'بازهٔ اعمال‌شده' : 'Applied range' }}
+    <output aria-live="polite">{{ appliedText() }}</output>
+  </p>
+</section>

@@ -1,5 +1,6 @@
 <div
   class="ndp-panel"
+  [attr.inert]="disabled() ? '' : null"
   [class.ndp-panel--disabled]="disabled()"
   [class.ndp-panel--slide-prev]="slideDir() === 'prev'"
   [class.ndp-panel--slide-next]="slideDir() === 'next'"
@@ -106,11 +107,11 @@
                   </span>
 
                   <!-- Year dropdown -->
-                  <span class="ndp-dropdown">
+                  <span class="ndp-dropdown ndp-dropdown--year">
                     <button
                       type="button"
-                      class="ndp-title-btn"
-                      aria-haspopup="listbox"
+                      class="ndp-title-btn ndp-year-trigger"
+                      [attr.aria-label]="t().findYear + ' ' + blockYearLabel(m)"
                       [attr.aria-expanded]="yearMenuOpen() === i"
                       (click)="toggleYearMenu(i)"
                     >
@@ -120,25 +121,13 @@
                       <button
                         type="button"
                         class="ndp-menu-backdrop"
+                        tabindex="-1"
                         [attr.aria-label]="t().close"
                         (click)="closeMenus()"
                       ></button>
-                      <ul class="ndp-menu ndp-menu--year" role="listbox">
-                        @for (opt of yearOptions(); track opt.year) {
-                          <li role="none">
-                            <button
-                              type="button"
-                              role="option"
-                              class="ndp-menu__item"
-                              [class.ndp-menu__item--active]="opt.year === blockYearNumber(m)"
-                              [attr.aria-selected]="opt.year === blockYearNumber(m)"
-                              (click)="pickYear(opt.year, i)"
-                            >
-                              {{ opt.label }}
-                            </button>
-                          </li>
-                        }
-                      </ul>
+                      <ndp-year-navigation [adapter]="adapter()" [month]="m"
+                        [today]="todayValue()" [min]="min()" [max]="max()" [labels]="t()"
+                        (jump)="pickYear($event, i)" />
                     }
                   </span>
 
@@ -219,13 +208,13 @@
           <ndp-icon name="prev" class="ndp-icon--directional" />
         </button>
 
-        @if (viewMode() === "month" && showQuickNav()) {
-          <!-- Year dropdown in month-picker mode -->
-          <span class="ndp-dropdown">
+        @if (showQuickNav()) {
+          <!-- Year navigation for month and year views -->
+          <span class="ndp-dropdown ndp-dropdown--year">
             <button
               type="button"
-              class="ndp-title-btn"
-              aria-haspopup="listbox"
+              class="ndp-title-btn ndp-year-trigger"
+              [attr.aria-label]="t().findYear + ' ' + periodHeading()"
               [attr.aria-expanded]="yearMenuOpen() === 0"
               (click)="toggleYearMenu()"
             >
@@ -235,25 +224,13 @@
               <button
                 type="button"
                 class="ndp-menu-backdrop"
+                tabindex="-1"
                 [attr.aria-label]="t().close"
                 (click)="closeMenus()"
               ></button>
-              <ul class="ndp-menu ndp-menu--year" role="listbox">
-                @for (opt of yearOptions(); track opt.year) {
-                  <li role="none">
-                    <button
-                      type="button"
-                      role="option"
-                      class="ndp-menu__item"
-                      [class.ndp-menu__item--active]="opt.year === activeYearNumber()"
-                      [attr.aria-selected]="opt.year === activeYearNumber()"
-                      (click)="pickYear(opt.year)"
-                    >
-                      {{ opt.label }}
-                    </button>
-                  </li>
-                }
-              </ul>
+              <ndp-year-navigation [adapter]="adapter()" [month]="yearNavigationMonth()"
+                [today]="todayValue()" [min]="min()" [max]="max()" [labels]="t()"
+                (jump)="pickYear($event)" />
             }
           </span>
         } @else {
@@ -289,13 +266,13 @@
     <div class="ndp-footer">
       @if (showSummary()) {
       <div class="ndp-summary">
-        @if (value().start) {
+        @if (selectedStart(); as start) {
           <span class="ndp-summary__chip">
             <span class="ndp-summary__text">
-              {{ adapter().format(value().start!) }}
+              {{ adapter().format(start) }}
               @if (secondaryAdapter()) {
                 <small class="ndp-summary__secondary">{{
-                  secondaryFormat(value().start!)
+                  secondaryFormat(start)
                 }}</small>
               }
             </span>
@@ -352,7 +329,7 @@
           <button
             type="button"
             class="ndp-btn"
-            [disabled]="!value().start"
+            [disabled]="!value().start && !value().end"
             (click)="clear()"
           >
             {{ t().clear }}

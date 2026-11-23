@@ -23,7 +23,7 @@
     <button
       type="button"
       class="ndp-input__toggle"
-      [attr.aria-label]="t().openCalendar"
+      [attr.aria-label]="t().openTime ?? t().openCalendar"
       [attr.aria-expanded]="open()"
       [disabled]="disabled()"
       (click)="toggle()"
@@ -33,8 +33,8 @@
   </div>
 
   @if (open()) {
-    <button type="button" class="ndp-input__backdrop" [attr.aria-label]="t().close" (click)="close()"></button>
-    <div class="ndp-input__popover" role="dialog">
+    <button type="button" class="ndp-input__backdrop" tabindex="-1" [attr.aria-label]="t().close" (click)="close()"></button>
+    <div class="ndp-input__popover" role="dialog" ndpFitPopover>
       <ndp-time-picker
         [adapter]="adapter()"
         [labels]="labels()"

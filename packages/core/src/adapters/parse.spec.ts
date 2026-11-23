@@ -79,11 +79,20 @@ describe('CalendarAdapter typed-input (parse / formatInput)', () => {
     expect(cal.parse('1404/01/31')).not.toBeNull(); // Farvardin has 31
   });
 
+  it('rejects Jalali years beyond the adapter range without throwing', () => {
+    expect(new JalaliCalendarAdapter().parse('9999/01/01')).toBeNull();
+  });
+
   it('Gregorian rejects 31 Feb', () => {
     const cal = new GregorianCalendarAdapter('en-US');
     expect(cal.parse('2026/02/31')).toBeNull();
     expect(cal.parse('2024/02/29')).not.toBeNull(); // leap year
     expect(cal.parse('2026/02/29')).toBeNull(); // non-leap
+  });
+
+  it('includes the localized Jalali year in the written-out date', () => {
+    const cal = new JalaliCalendarAdapter();
+    expect(cal.format(cal.createDate(1404, 3, 17))).toContain('۱۴۰۴');
   });
 
   it('localizes digits: Jalali uses Persian numerals, Gregorian uses ASCII', () => {

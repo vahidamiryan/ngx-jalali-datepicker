@@ -14,6 +14,8 @@ export * from './core/selection';
 export * from './core/time.util';
 export * from './core/build-month';
 export * from './core/build-period';
+export { buildYearNavigation } from './core/year-navigation';
+export { getPopoverViewportOffset } from './core/popover-placement';
 export * from './core/icons';
 export * from './core/labels';
 export { CalendarAdapter } from './core/calendar-adapter';

@@ -57,6 +57,14 @@ describe('TimeInputComponent', () => {
     expect(value()).toBeNull();
   });
 
+  it('preserves the committed time after a nonnumeric paste', () => {
+    (component as any).onInput('0930');
+    const before = value();
+    (component as any).onInput('not a time');
+    expect(value()).toBe(before);
+    expect(invalid()).toBe(true);
+  });
+
   it('applies a stepper time change from the popover', () => {
     (component as any).onTimeChange({ hours: 22, minutes: 5 });
     fixture.detectChanges();

@@ -23,6 +23,7 @@ import NdpCalendarMonth from './NdpCalendarMonth.vue';
 import NdpCalendarPeriod from './NdpCalendarPeriod.vue';
 import NdpTimePicker from './NdpTimePicker.vue';
 import NdpIcon from './NdpIcon.vue';
+import NdpYearNavigation from './NdpYearNavigation.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -91,9 +92,15 @@ const host = ref<HTMLElement | null>(null);
 
 // Bridge the value/calendar models between props (immutable) and the composable's
 // mutable refs, emitting the corresponding update events on change.
-const valueModel = ref<DateRange>(props.modelValue);
-watch(() => props.modelValue, (v) => { if (v !== valueModel.value) valueModel.value = v; });
-watch(valueModel, (v) => emit('update:modelValue', v), { deep: true });
+const selectedRange = ref<DateRange>(props.modelValue);
+watch(() => props.modelValue, value => { selectedRange.value = value; });
+const valueModel = computed({
+  get: () => selectedRange.value,
+  set: value => {
+    selectedRange.value = value;
+    emit('update:modelValue', value);
+  },
+});
 
 const calendarModel = ref<string>(props.calendar);
 watch(() => props.calendar, (v) => { if (v && v !== calendarModel.value) calendarModel.value = v; });
@@ -147,6 +154,7 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
   >
     <div
       class="ndp-panel"
+      :inert="dp.disabled.value"
       :class="{
         'ndp-panel--disabled': dp.disabled.value,
         'ndp-panel--slide-prev': dp.slideDir.value === 'prev',
@@ -246,11 +254,11 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
                   </span>
 
                   <!-- Year dropdown -->
-                  <span class="ndp-dropdown">
+                  <span class="ndp-dropdown ndp-dropdown--year">
                     <button
                       type="button"
-                      class="ndp-title-btn"
-                      aria-haspopup="listbox"
+                      class="ndp-title-btn ndp-year-trigger"
+                      :aria-label="t.findYear + ' ' + dp.blockYearLabel(m)"
                       :aria-expanded="dp.yearMenuOpen.value === i"
                       @click="dp.toggleYearMenu(i)"
                     >
@@ -260,23 +268,13 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
                       <button
                         type="button"
                         class="ndp-menu-backdrop"
+                        tabindex="-1"
                         :aria-label="t.close"
                         @click="dp.closeMenus()"
                       ></button>
-                      <ul class="ndp-menu ndp-menu--year" role="listbox">
-                        <li v-for="opt in dp.yearOptions.value" :key="opt.year" role="none">
-                          <button
-                            type="button"
-                            role="option"
-                            class="ndp-menu__item"
-                            :class="{ 'ndp-menu__item--active': opt.year === dp.blockYearNumber(m) }"
-                            :aria-selected="opt.year === dp.blockYearNumber(m)"
-                            @click="dp.pickYear(opt.year, i)"
-                          >
-                            {{ opt.label }}
-                          </button>
-                        </li>
-                      </ul>
+                      <NdpYearNavigation :adapter="dp.adapter.value" :month="m"
+                        :today="dp.today.value" :min="min" :max="max" :labels="t"
+                        @jump="dp.pickYear($event, i)" />
                     </template>
                   </span>
                 </span>
@@ -352,11 +350,11 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
               <NdpIcon name="prev" class="ndp-icon--directional" />
             </button>
 
-            <span v-if="dp.viewMode.value === 'month' && showQuickNav" class="ndp-dropdown">
+            <span v-if="showQuickNav" class="ndp-dropdown ndp-dropdown--year">
               <button
                 type="button"
-                class="ndp-title-btn"
-                aria-haspopup="listbox"
+                class="ndp-title-btn ndp-year-trigger"
+                :aria-label="t.findYear + ' ' + dp.periodHeading.value"
                 :aria-expanded="dp.yearMenuOpen.value === 0"
                 @click="dp.toggleYearMenu()"
               >
@@ -366,23 +364,13 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
                 <button
                   type="button"
                   class="ndp-menu-backdrop"
+                  tabindex="-1"
                   :aria-label="t.close"
                   @click="dp.closeMenus()"
                 ></button>
-                <ul class="ndp-menu ndp-menu--year" role="listbox">
-                  <li v-for="opt in dp.yearOptions.value" :key="opt.year" role="none">
-                    <button
-                      type="button"
-                      role="option"
-                      class="ndp-menu__item"
-                      :class="{ 'ndp-menu__item--active': opt.year === dp.activeYearNumber.value }"
-                      :aria-selected="opt.year === dp.activeYearNumber.value"
-                      @click="dp.pickYear(opt.year)"
-                    >
-                      {{ opt.label }}
-                    </button>
-                  </li>
-                </ul>
+                <NdpYearNavigation :adapter="dp.adapter.value" :month="dp.activeMonth.value"
+                  :today="dp.today.value" :min="min" :max="max" :labels="t"
+                  @jump="dp.pickYear($event)" />
               </template>
             </span>
             <span v-else class="ndp-month-title__label">{{ dp.periodHeading.value }}</span>
@@ -465,7 +453,7 @@ const styleVars = computed(() => ({ ...props.customVars }) as Record<string, str
             v-if="showClear"
             type="button"
             class="ndp-btn"
-            :disabled="!valueModel.start"
+            :disabled="!valueModel.start && !valueModel.end"
             @click="dp.clear()"
           >
             {{ t.clear }}

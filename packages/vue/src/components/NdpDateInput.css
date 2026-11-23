@@ -3,7 +3,7 @@
   font-family: var(--ndp-font-family);
   font-size: var(--ndp-font-size);
   color: var(--ndp-text);
-  color-scheme: light;
+  color-scheme: var(--ndp-color-scheme, light);
 }
 
 .ndp-input {
@@ -17,19 +17,19 @@
 .ndp-input__fields {
   position: relative;
   z-index: 26;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 0.25rem;
   background: var(--ndp-surface);
   border: 1px solid var(--ndp-border);
-  border-radius: 10px;
-  padding: 0.1rem 0.35rem;
+  border-radius: var(--ndp-control-radius);
+  padding: 0.15rem 0.35rem;
   transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
 .ndp-input__fields:focus-within {
-  border-color: var(--ndp-accent);
-  box-shadow: 0 0 0 2px var(--ndp-focus-ring);
+  border-color: var(--ndp-focus-ring);
+  box-shadow: 0 0 0 1px var(--ndp-focus-ring);
 }
 
 .ndp-input--disabled .ndp-input__fields {
@@ -44,8 +44,10 @@
   font-size: 0.9rem;
   color: var(--ndp-text);
   padding: 0.35rem 0.4rem;
-  width: 7.5rem;
-  text-align: center;
+  inline-size: min(8rem, 32vw);
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  text-align: start;
 }
 
 .ndp-input__field::placeholder {
@@ -70,7 +72,7 @@
   appearance: none;
   border: none;
   background: transparent;
-  border-radius: 8px;
+  border-radius: var(--ndp-control-radius);
   width: 1.9rem;
   height: 1.9rem;
   display: inline-flex;
@@ -107,6 +109,8 @@
 
 .ndp-input__popover {
   position: absolute;
+  inline-size: max-content;
+  max-inline-size: calc(100vw - 2rem);
   top: calc(100% + 0.4rem);
   inset-inline-start: 0;
   z-index: 30;

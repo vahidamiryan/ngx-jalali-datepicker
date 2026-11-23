@@ -79,7 +79,7 @@ export abstract class CalendarAdapter {
   /** Seven short weekday names, ordered from {@link weekStartsOn}. */
   abstract getWeekdayLabels(): readonly string[];
 
-  /** A fully written-out date, e.g. "چهارشنبه ۱ شهریور" / "Wednesday, August 23". */
+  /** A fully written-out date, e.g. "چهارشنبه ۱ شهریور ۱۴۰۲" / "Wednesday, August 23". */
   abstract format(date: Date): string;
 
   /** Column index 0..6 of `date` within this calendar's week. */
@@ -92,7 +92,7 @@ export abstract class CalendarAdapter {
 
   // ── Typed-input support (parse / machine-readable format) ──────────────────
   //
-  // `format()` produces a written-out string ("شنبه ۱۷ خرداد") that can't be
+  // `format()` produces a written-out string ("شنبه ۱۷ خرداد ۱۴۰۴") that can't be
   // parsed back. These two methods give a compact, round-trippable representation
   // ("۱۴۰۴/۰۳/۲۸" / "2026/03/21") so a text input can read and write dates.
   // Both have working defaults built only on the existing abstract members, so
@@ -125,15 +125,14 @@ export abstract class CalendarAdapter {
     const month = +m[2];
     const day = +m[3];
     if (month < 1 || month > 12 || day < 1 || day > 31) return null;
-    const date = this.createDate(year, month, day);
-    if (
-      this.getYear(date) !== year ||
-      this.getMonth(date) !== month ||
-      this.getDayOfMonth(date) !== day
-    ) {
+    try {
+      const date = this.createDate(year, month, day);
+      return this.getYear(date) === year &&
+        this.getMonth(date) === month &&
+        this.getDayOfMonth(date) === day ? date : null;
+    } catch {
       return null;
     }
-    return date;
   }
 
   /**

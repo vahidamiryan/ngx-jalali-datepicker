@@ -1,4 +1,4 @@
-import { computed, ref, watch, type Ref } from 'vue';
+import { computed, nextTick, ref, watch, type Ref } from 'vue';
 import {
   type CalendarAdapter,
   type CalendarView,
@@ -12,11 +12,14 @@ import {
   clampDate,
   dayKey,
   applySelection,
+  firstSelectableDate,
+  isDateSelectable,
   isSelectionComplete,
   buildMonthsView,
   buildYearsView,
   YEARS_PER_PAGE,
   getTimeOfDay,
+  copyTimeOfDay,
   withTimeOfDay,
 } from '@vahidamirian/datepicker-core';
 
@@ -164,20 +167,6 @@ export function useDatepicker(opts: UseDatepickerOptions) {
     adapter.value.getMonthNames().map((label, i) => ({ month: i + 1, label })),
   );
 
-  const activeYearNumber = computed(() => adapter.value.getYear(activeMonth.value));
-
-  const yearOptions = computed(() => {
-    const a = adapter.value;
-    const todayYear = a.getYear(today.value);
-    const min = opts.min.value;
-    const max = opts.max.value;
-    const lo = min ? a.getYear(atMidnight(min)) : todayYear - 100;
-    const hi = max ? a.getYear(atMidnight(max)) : todayYear + 20;
-    const out: { year: number; label: string }[] = [];
-    for (let y = lo; y <= hi; y++) out.push({ year: y, label: a.getYearLabel(a.createDate(y, 1, 1)) });
-    return out;
-  });
-
   // ── Navigation guards ─────────────────────────────────────────────────────────
   const canGoPrev = computed(() => {
     const min = opts.min.value;
@@ -275,13 +264,7 @@ export function useDatepicker(opts: UseDatepickerOptions) {
   }
 
   function isDisabledDate(date: Date): boolean {
-    const min = opts.min.value;
-    const max = opts.max.value;
-    const filter = opts.dateFilter.value;
-    const k = dayKey(date);
-    if (min && k < dayKey(atMidnight(min))) return true;
-    if (max && k > dayKey(atMidnight(max))) return true;
-    return filter ? !filter(date) : false;
+    return !isDateSelectable(date, opts.min.value, opts.max.value, opts.dateFilter.value);
   }
 
   function commit(next: DateRange): void {
@@ -291,6 +274,7 @@ export function useDatepicker(opts: UseDatepickerOptions) {
 
   // ── Selection ─────────────────────────────────────────────────────────────────
   function onDaySelect(cell: DayCell): void {
+    if (disabled.value || cell.isDisabled) return;
     let next = applySelection(opts.mode.value, opts.value.value, cell.date);
     if (timeVisible.value) {
       const t = currentTime.value;
@@ -306,6 +290,7 @@ export function useDatepicker(opts: UseDatepickerOptions) {
 
   function onTimeChange(time: TimeOfDay): void {
     const start = opts.value.value.start ?? atMidnight(today.value);
+    if (disabled.value || isDisabledDate(atMidnight(start))) return;
     const next: DateRange = { start: withTimeOfDay(start, time.hours, time.minutes), end: null };
     focusedDate.value = next.start;
     commit(next);
@@ -317,6 +302,7 @@ export function useDatepicker(opts: UseDatepickerOptions) {
 
   // ── Typed input ────────────────────────────────────────────────────────────────
   function onInputType(which: 'start' | 'end', raw: string): void {
+    if (disabled.value) return;
     if (which === 'start') startText.value = raw;
     else endText.value = raw;
     const trimmed = raw.trim();
@@ -326,7 +312,7 @@ export function useDatepicker(opts: UseDatepickerOptions) {
       return;
     }
     const parsed = adapter.value.parse(raw);
-    if (!parsed) {
+    if (!parsed || isDisabledDate(parsed)) {
       setInputInvalid(which, true);
       return;
     }
@@ -351,7 +337,9 @@ export function useDatepicker(opts: UseDatepickerOptions) {
       if (start && end && dayKey(start) > dayKey(end)) [start, end] = [end, start];
       next = { start, end };
     } else {
-      next = { start: date, end: null };
+      const previous = opts.value.value.start;
+      const start = date && timeVisible.value && previous ? copyTimeOfDay(date, previous) : date;
+      next = { start, end: null };
     }
     if (date) {
       focusedDate.value = date;
@@ -395,26 +383,38 @@ export function useDatepicker(opts: UseDatepickerOptions) {
   function goPrev(): void {
     if (!canGoPrev.value) return;
     beginSlide(-1);
-    activeMonth.value = shiftActive(-1);
+    moveView(shiftActive(-1));
   }
 
   function goNext(): void {
     if (!canGoNext.value) return;
     beginSlide(1);
-    activeMonth.value = shiftActive(1);
+    moveView(shiftActive(1));
+  }
+
+  function moveView(target: Date, preferred = target): void {
+    activeMonth.value = target;
+    if (viewMode.value !== 'day') {
+      focusedDate.value = clampDate(preferred, opts.min.value, opts.max.value);
+      return;
+    }
+    const start = adapter.value.startOfMonth(target);
+    const end = adapter.value.addCalendarMonths(start, opts.numberOfMonths.value);
+    focusedDate.value = isVisible(preferred) && !isDisabledDate(preferred)
+      ? preferred
+      : firstSelectableDate(start, end, opts.min.value, opts.max.value, opts.dateFilter.value);
   }
 
   function goToToday(): void {
     const t = today.value;
     const target = adapter.value.startOfMonth(t);
     beginSlideTowards(target);
-    activeMonth.value = target;
-    focusedDate.value = t;
+    moveView(target, t);
   }
 
   // ── Period selection ─────────────────────────────────────────────────────────
   function onPeriodSelect(cell: PeriodCell): void {
-    commitPeriod(cell.date);
+    if (!disabled.value && !cell.isDisabled) commitPeriod(cell.date);
   }
 
   function commitPeriod(date: Date): void {
@@ -448,18 +448,22 @@ export function useDatepicker(opts: UseDatepickerOptions) {
     const picked = a.createDate(a.getYear(blockMonth), month, 1);
     const target = a.addCalendarMonths(picked, -index);
     beginSlideTowards(target);
-    activeMonth.value = target;
+    moveView(target, picked);
     monthMenuOpen.value = null;
   }
 
   function pickYear(year: number, index = 0): void {
     const a = adapter.value;
     const blockMonth = a.addCalendarMonths(activeMonth.value, index);
-    const picked = a.createDate(year, a.getMonth(blockMonth), 1);
-    const target = a.addCalendarMonths(picked, -index);
+    const picked = clampDate(a.createDate(year, a.getMonth(blockMonth), 1), opts.min.value, opts.max.value);
+    const target = a.addCalendarMonths(a.startOfMonth(picked), -index);
     beginSlideTowards(target);
-    activeMonth.value = target;
+    moveView(target, picked);
     yearMenuOpen.value = null;
+    void nextTick(() => {
+      opts.getHost()?.querySelectorAll<HTMLButtonElement>('.ndp-year-trigger')[index]
+        ?.focus({ preventScroll: true });
+    });
   }
 
   // ── Footer ───────────────────────────────────────────────────────────────────
@@ -496,9 +500,6 @@ export function useDatepicker(opts: UseDatepickerOptions) {
   }
   function blockMonthNumber(monthStart: Date): number {
     return adapter.value.getMonth(monthStart);
-  }
-  function blockYearNumber(monthStart: Date): number {
-    return adapter.value.getYear(monthStart);
   }
   function monthLabel(monthStart: Date): string {
     return adapter.value.getMonthLabel(monthStart);
@@ -577,7 +578,8 @@ export function useDatepicker(opts: UseDatepickerOptions) {
       case 'Enter':
       case ' ':
         event.preventDefault();
-        commitPeriod(current);
+        const cell = activePeriodView.value.cells.find(option => option.key === periodFocusedKey.value);
+        if (cell) onPeriodSelect(cell);
         return;
       default:
         return;
@@ -595,17 +597,22 @@ export function useDatepicker(opts: UseDatepickerOptions) {
   }
 
   function onKeydown(event: KeyboardEvent): void {
+    if (disabled.value) return;
     if (event.key === 'Escape' && anyMenuOpen.value) {
+      opts.getHost()?.querySelector<HTMLButtonElement>('.ndp-title-btn[aria-expanded="true"]')
+        ?.focus({ preventScroll: true });
       closeMenus();
+      event.stopPropagation();
       return;
     }
+    if ((event.target as HTMLElement | null)?.closest('input, button:not([role="gridcell"])')) return;
     if (viewMode.value !== 'day') {
       onPeriodKeydown(event);
       return;
     }
     const a = adapter.value;
     const rtl = a.direction === 'rtl';
-    const current = focusedDate.value ?? today.value;
+    const current = focusedDate.value ?? activeMonth.value;
     let next: Date | null = null;
 
     switch (event.key) {
@@ -637,7 +644,7 @@ export function useDatepicker(opts: UseDatepickerOptions) {
       case 'Enter':
       case ' ':
         event.preventDefault();
-        onDaySelect(toCell(current));
+        if (isVisible(current)) onDaySelect(toCell(current));
         return;
       default:
         return;
@@ -657,6 +664,7 @@ export function useDatepicker(opts: UseDatepickerOptions) {
   /** Set from the outside (CVA-equivalent) — position the view on the value. */
   function setDisabled(v: boolean): void {
     disabled.value = v;
+    if (v) closeMenus();
   }
 
   return {
@@ -691,8 +699,6 @@ export function useDatepicker(opts: UseDatepickerOptions) {
     periodFocusedKey,
     periodHeading,
     monthOptions,
-    activeYearNumber,
-    yearOptions,
     canGoPrev,
     canGoNext,
     calendarIds,
@@ -720,7 +726,6 @@ export function useDatepicker(opts: UseDatepickerOptions) {
     blockMonthName,
     blockYearLabel,
     blockMonthNumber,
-    blockYearNumber,
     monthLabel,
     secondaryMonthLabel,
     secondaryFormat,

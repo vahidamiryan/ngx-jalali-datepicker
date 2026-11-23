@@ -32,6 +32,9 @@ jobs:
       - name: Test Angular (headless)
         run: npx ng test angular --watch=false --browsers=ChromeHeadless
 
+      - name: Test Angular playground (headless)
+        run: npx ng test angular-playground --watch=false --browsers=ChromeHeadless
+
       - name: Build Vue (@vahidamirian/vue-datepicker)
         run: npm run build -w @vahidamirian/vue-datepicker
 

@@ -87,4 +87,40 @@ describe('NdpDatepicker (Vue)', () => {
     });
     expect(wrapper.find('.mark').exists()).toBe(true);
   });
+
+  it('finds years from localized input and leaves the bound selection intact', async () => {
+    const adapter = new JalaliCalendarAdapter();
+    const start = adapter.createDate(1404, 11, 1);
+    const wrapper = mountPicker({ modelValue: { start, end: null }, min: adapter.createDate(1300, 1, 1) });
+    await wrapper.get('.ndp-year-trigger').trigger('click');
+    const search = wrapper.get<HTMLInputElement>('.ndp-year-search');
+    await search.setValue('١٢٩٥');
+    expect(wrapper.find('.ndp-year-empty').exists()).toBe(true);
+    await search.trigger('keydown', { key: 'Enter' });
+    expect(wrapper.find('.ndp-year-search').exists()).toBe(true);
+    await search.setValue('١٣٠٥');
+    expect(wrapper.findAll('.ndp-year-grid button')).toHaveLength(1);
+    await search.trigger('keydown', { key: 'Enter' });
+    expect(wrapper.get('.ndp-month').attributes('aria-label'))
+      .toBe(adapter.getMonthLabel(adapter.createDate(1305, 11, 1)));
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+    expect(wrapper.emitted('dateSelected')).toBeUndefined();
+  });
+
+  it('allows keyboard focus in a new month and refuses blocked days and a disabled picker', async () => {
+    const wrapper = mountPicker({
+      calendar: 'gregorian',
+      modelValue: { start: new Date(2026, 5, 14), end: null },
+      dateFilter: (date: Date) => date.getDate() !== 15,
+    });
+    await wrapper.trigger('keydown', { key: 'ArrowRight' });
+    await wrapper.trigger('keydown', { key: 'Enter' });
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+    await wrapper.get('.ndp-nav[aria-label="Next"]').trigger('click');
+    expect(wrapper.find('.ndp-day[tabindex="0"]:enabled').exists()).toBe(true);
+    await wrapper.setProps({ disabled: true });
+    expect(wrapper.get('.ndp-panel').attributes('inert')).toBeDefined();
+    await wrapper.trigger('keydown', { key: 'Enter' });
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+  });
 });

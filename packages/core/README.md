@@ -113,7 +113,7 @@ fa.getMonthNames();       // ["فروردین", …]
 fa.getYearLabel(date);    // "۱۴۰۴"
 fa.getDayLabel(date);     // "۲۸"
 fa.getWeekdayLabels();    // ["ش","ی","د","س","چ","پ","ج"]
-fa.format(date);          // "چهارشنبه ۲۸ خرداد"
+fa.format(date);          // "چهارشنبه ۲۸ خرداد ۱۴۰۴"
 fa.isWeekend(date);       // Friday in Jalali
 fa.parse('1404/3/28'); fa.formatInput(date);
 ```
@@ -186,7 +186,7 @@ cal.getInputFormatHint();    // "سال/ماه/روز"  (placeholder hint)
 cal.formatNumber(9, 2);      // "۰۹"           (localized, zero-padded)
 ```
 
-`format()` produces a *written-out* string (`"چهارشنبه ۲۸ خرداد"`) for display, while
+`format()` produces a *written-out* string (`"چهارشنبه ۲۸ خرداد ۱۴۰۴"`) for display, while
 `formatInput()` / `parse()` are the compact round-trippable pair for text inputs.
 
 Standalone digit helpers:

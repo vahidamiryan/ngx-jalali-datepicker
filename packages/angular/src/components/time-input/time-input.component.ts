@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, forwardRef, inject, input, model, output, signal, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, effect, forwardRef, inject, input, model, output, signal, untracked } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CalendarAdapter } from '@vahidamirian/datepicker-core';
 import { NdpLabels, defaultLabelsFor, resolveLabels } from '@vahidamirian/datepicker-core';
@@ -14,6 +14,7 @@ import {
 } from '@vahidamirian/datepicker-core';
 import { TimePickerComponent } from '../time-picker/time-picker.component';
 import { IconComponent } from '../icon/icon.component';
+import { NdpFitPopover, restoreInputPopoverFocus } from '../fit-popover.directive';
 
 /**
  * A **time-only** field: a text input showing `HH:mm` plus a popover with the
@@ -26,7 +27,7 @@ import { IconComponent } from '../icon/icon.component';
 @Component({
   selector: 'ndp-time-input',
   standalone: true,
-  imports: [TimePickerComponent, IconComponent],
+  imports: [TimePickerComponent, IconComponent, NdpFitPopover],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './time-input.component.html',
   styleUrl: './time-input.component.css',
@@ -40,6 +41,7 @@ import { IconComponent } from '../icon/icon.component';
   ],
 })
 export class TimeInputComponent implements ControlValueAccessor {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   /** Overrides for the user-facing text; unnamed labels keep their defaults. */
   readonly labels = input<Partial<NdpLabels> | null>(null);
 
@@ -124,10 +126,10 @@ export class TimeInputComponent implements ControlValueAccessor {
   /** Parse `HH:mm` (or `HHmm`, Persian/ASCII digits) as the user types; commit when valid. */
   protected onInput(raw: string): void {
     const masked = this.mask(raw);
-    this.text.set(masked);
+    this.text.set(masked || raw.trim());
 
     const parsed = this.parse(masked);
-    if (masked === '') {
+    if (raw.trim() === '') {
       this.invalid.set(false);
       this.commit(null);
       return;
@@ -159,6 +161,7 @@ export class TimeInputComponent implements ControlValueAccessor {
   }
 
   protected close(): void {
+    restoreInputPopoverFocus(this.host.nativeElement);
     this.open.set(false);
   }
 

@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 **npm:** https://www.npmjs.com/package/@vahidamirian/vue-datepicker
 
+## [1.3.0]
+
+### Added
+- Search for a year from the calendar header using Latin, Persian, or Arabic-Indic digits. Browse nearby years in pages of 12.
+
+### Changed
+- Refresh the light and dark themes, calendar controls, and range styling for RTL and LTR.
+- Require `datepicker-core` 1.3 or newer within major version 1.
+
+### Fixed
+- Keep the bound date while navigating the calendar and avoid echoing external value changes.
+- Enforce date bounds and filters in typed and keyboard selection. Keep the previous date or time after invalid input.
+- Keep popovers in the viewport, restore keyboard focus on dismissal, and close open inputs when disabled.
+- Preserve a tab stop after navigation and allow clearing either endpoint or the entire range.
+
 ## [1.2.0]
 
 ### Added

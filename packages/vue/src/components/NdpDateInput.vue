@@ -17,12 +17,14 @@ import {
   atMidnight,
   dayKey,
   copyTimeOfDay,
+  isDateSelectable,
 } from '@vahidamirian/datepicker-core';
 import { defaultLabelsFor, resolveLabels } from '@vahidamirian/datepicker-core';
 import { useCalendarAdapters, type NdpCalendarAdapterSource } from '../adapters';
 import { NDP_LABELS_KEY } from '../labels';
 import NdpDatepicker from './NdpDatepicker.vue';
 import NdpIcon from './NdpIcon.vue';
+import { restoreInputPopoverFocus, vFitPopover } from './fit-popover';
 
 type Endpoint = 'start' | 'end';
 
@@ -95,6 +97,7 @@ const value = ref<DateRange>(props.modelValue);
 watch(() => props.modelValue, (v) => { if (v !== value.value) value.value = v; });
 
 const open = ref(false);
+const host = ref<HTMLElement | null>(null);
 const startText = ref('');
 const endText = ref('');
 const startInvalid = ref(false);
@@ -148,16 +151,17 @@ function setInvalid(which: Endpoint, invalid: boolean): void {
 
 function onInput(which: Endpoint, raw: string): void {
   const masked = adapter.value.maskInput(raw);
-  if (which === 'start') startText.value = masked;
-  else endText.value = masked;
+  const text = masked || raw.trim();
+  if (which === 'start') startText.value = text;
+  else endText.value = text;
 
-  if (masked === '') {
+  if (raw.trim() === '') {
     setInvalid(which, false);
     commitEndpoint(which, null);
     return;
   }
   const parsed = adapter.value.parse(masked);
-  if (!parsed) {
+  if (!parsed || !isDateSelectable(parsed, props.min, props.max, props.dateFilter)) {
     setInvalid(which, true);
     return;
   }
@@ -199,8 +203,13 @@ function toggle(): void {
 }
 
 function close(): void {
+  if (host.value) restoreInputPopoverFocus(host.value);
   open.value = false;
 }
+
+watch(() => props.disabled, disabled => {
+  if (disabled) close();
+});
 
 function onPanelValue(range: DateRange): void {
   setValue(range);
@@ -214,6 +223,7 @@ function onPanelSelected(range: DateRange): void {
 
 <template>
   <div
+    ref="host"
     class="ndp-root ndp-input"
     :class="{ 'ndp-input--disabled': disabled }"
     :dir="adapter.direction"
@@ -221,6 +231,16 @@ function onPanelSelected(range: DateRange): void {
     @keydown.escape="close()"
   >
     <div class="ndp-input__fields">
+      <button
+        type="button"
+        class="ndp-input__toggle"
+        :aria-label="t.openCalendar"
+        :aria-expanded="open"
+        :disabled="disabled"
+        @click="toggle()"
+      >
+        <NdpIcon name="calendar" />
+      </button>
       <input
         type="text"
         class="ndp-input__field"
@@ -240,7 +260,7 @@ function onPanelSelected(range: DateRange): void {
       />
 
       <template v-if="isRange">
-        <span class="ndp-input__sep" aria-hidden="true">←</span>
+        <NdpIcon name="arrow" class="ndp-input__sep ndp-icon--directional" />
         <input
           type="text"
           class="ndp-input__field"
@@ -259,21 +279,11 @@ function onPanelSelected(range: DateRange): void {
         />
       </template>
 
-      <button
-        type="button"
-        class="ndp-input__toggle"
-        :aria-label="t.openCalendar"
-        :aria-expanded="open"
-        :disabled="disabled"
-        @click="toggle()"
-      >
-        <NdpIcon name="calendar" />
-      </button>
     </div>
 
     <template v-if="open">
-      <button type="button" class="ndp-input__backdrop" :aria-label="t.close" @click="close()"></button>
-      <div class="ndp-input__popover" role="dialog">
+      <button type="button" class="ndp-input__backdrop" tabindex="-1" :aria-label="t.close" @click="close()"></button>
+      <div v-fit-popover class="ndp-input__popover" role="dialog">
         <NdpDatepicker
           :theme="theme"
           :custom-vars="customVars"

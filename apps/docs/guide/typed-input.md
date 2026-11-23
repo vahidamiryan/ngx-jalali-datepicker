@@ -2,8 +2,13 @@
 
 For faster entry than clicking, dates can be typed directly. The field parses
 through the active calendar adapter (`/`, `-`, or `.` separators and
-Persian/Arabic-Indic digits are all accepted); impossible dates are flagged
-`aria-invalid` without changing the value.
+Persian/Arabic-Indic digits are all accepted). Impossible dates and dates
+outside `min`, `max`, or `dateFilter` set `aria-invalid` and preserve the
+last committed value.
+
+Reopening the date input displays the selected month. Both date and time
+popovers fit the viewport, and Escape returns keyboard focus to the toggle
+when focus was inside the panel.
 
 <script setup>
 import { ref } from 'vue'

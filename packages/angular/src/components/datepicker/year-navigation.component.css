@@ -1,0 +1,108 @@
+:host {
+  display: block;
+}
+
+.ndp-year-navigation {
+  position: absolute;
+  inset: calc(100% + 0.25rem) 0 auto;
+  z-index: 30;
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  border: 1px solid var(--ndp-border);
+  border-radius: var(--ndp-radius);
+  background: var(--ndp-surface);
+  box-shadow: var(--ndp-shadow);
+  color: var(--ndp-text);
+}
+
+.ndp-year-search {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: 0;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--ndp-border);
+  border-radius: var(--ndp-control-radius);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.4;
+  text-align: start;
+}
+
+.ndp-year-search::placeholder {
+  color: var(--ndp-muted);
+}
+
+.ndp-year-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+.ndp-year-option {
+  display: grid;
+  place-items: center;
+  min-inline-size: 0;
+  min-block-size: 2.3rem;
+  padding: 0.25rem;
+  border: 0;
+  border-radius: var(--ndp-control-radius);
+  background: var(--ndp-day-hover-bg);
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.ndp-year-option[aria-current="true"] {
+  background: var(--ndp-accent);
+  color: var(--ndp-accent-contrast);
+  font-weight: 650;
+}
+
+.ndp-year-grid--match {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.ndp-year-grid--match .ndp-year-option {
+  background: var(--ndp-accent);
+  color: var(--ndp-accent-contrast);
+  font-weight: 650;
+}
+
+.ndp-year-grid--match .ndp-year-option:hover {
+  background: var(--ndp-accent-hover);
+}
+
+.ndp-year-option:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 1px var(--ndp-focus-ring);
+}
+
+.ndp-year-option:focus-visible,
+.ndp-year-search:focus-visible {
+  outline: 2px solid var(--ndp-focus-ring);
+  outline-offset: 1px;
+}
+
+.ndp-year-option:disabled {
+  cursor: default;
+  opacity: var(--ndp-disabled-opacity);
+}
+
+.ndp-year-pages {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ndp-year-pages button {
+  min-inline-size: 2.3rem;
+}
+
+.ndp-year-empty {
+  margin: 0;
+  padding: 0.4rem 0;
+  color: var(--ndp-muted);
+  line-height: 1.4;
+}

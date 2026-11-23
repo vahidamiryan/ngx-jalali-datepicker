@@ -5,6 +5,7 @@ import {
   DateInputComponent,
   TimeInputComponent,
   NdpDayCellTemplate,
+  NdpFitPopover,
   DateRange,
   DatepickerMode,
   NdpTheme,
@@ -16,6 +17,7 @@ import {
 } from '@vahidamirian/ngx-jalali-datepicker';
 import changelogRaw from '../../../../packages/angular/CHANGELOG.md';
 import { parseChangelog } from './changelog';
+import { CalendarShowcase } from './calendar-showcase';
 
 type PgCalendar = 'jalali' | 'gregorian' | 'hijri';
 type ExampleId = 'single' | 'range' | 'input' | 'time' | 'period' | 'hijri' | 'triple' | 'custom' | 'dropdown' | 'forms';
@@ -24,7 +26,7 @@ type ExampleId = 'single' | 'range' | 'input' | 'time' | 'period' | 'hijri' | 't
   selector: 'app-root',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatepickerComponent, DateInputComponent, TimeInputComponent, NdpDayCellTemplate, ReactiveFormsModule],
+  imports: [CalendarShowcase, DatepickerComponent, DateInputComponent, TimeInputComponent, NdpDayCellTemplate, NdpFitPopover, ReactiveFormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
   host: {
@@ -33,10 +35,8 @@ type ExampleId = 'single' | 'range' | 'input' | 'time' | 'period' | 'hijri' | 't
   },
 })
 export class App {
-  readonly version = '1.3.0';
-
   // ── Theme ───────────────────────────────────────────────────────────────────
-  readonly theme = signal<NdpTheme>('dark');
+  readonly theme = signal<NdpTheme>('light');
   readonly themeLabel = computed(() => {
     const t = this.theme();
     return t === 'light' ? 'Light' : t === 'dark' ? 'Dark' : 'Auto';

@@ -3,10 +3,12 @@
   font-family: var(--ndp-font-family);
   font-size: var(--ndp-font-size);
   color: var(--ndp-text);
-  color-scheme: light;
+  color-scheme: var(--ndp-color-scheme, light);
 }
 
 .ndp-panel {
+  box-sizing: border-box;
+  max-inline-size: var(--ndp-panel-max-width, calc(100vw - 2rem));
   background: var(--ndp-surface);
   border: 1px solid var(--ndp-border);
   border-radius: var(--ndp-radius);
@@ -70,20 +72,41 @@
 
 .ndp-months {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 1.25rem;
+  gap: var(--ndp-space) calc(2 * var(--ndp-space));
 }
 
 .ndp-month-block {
-  min-width: 15rem;
+  position: relative;
+  inline-size: min(
+    var(--ndp-month-width),
+    calc(var(--ndp-panel-max-width, 100vw - 2rem) - 2 * var(--ndp-space) - 2px)
+  );
+  min-inline-size: 0;
+}
+
+.ndp-month-block + .ndp-month-block::before {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(-1 * var(--ndp-space));
+  border-inline-start: 1px solid var(--ndp-border);
+  content: '';
+}
+
+@media (max-width: 42rem) {
+  .ndp-month-block + .ndp-month-block::before {
+    display: none;
+  }
 }
 
 .ndp-month-title {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding-block: 0.25rem 0.5rem;
+  padding-block: 0 0.65rem;
 }
 
 /* ── Quick-navigation dropdowns ──────────────────────────────────────────── */
@@ -106,6 +129,14 @@
   display: inline-flex;
 }
 
+.ndp-dropdown--year {
+  position: static;
+}
+
+.ndp-year-trigger[aria-expanded="true"] {
+  background: var(--ndp-day-hover-bg);
+}
+
 .ndp-title-btn {
   appearance: none;
   border: none;
@@ -114,7 +145,7 @@
   padding: 0.25rem 0.5rem;
   font: inherit;
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   color: var(--ndp-text);
   display: inline-flex;
@@ -164,10 +195,6 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 0.15rem;
   min-width: 11rem;
-}
-
-.ndp-menu--year {
-  min-width: 7rem;
 }
 
 .ndp-menu__item {
@@ -228,9 +255,9 @@
   appearance: none;
   border: none;
   background: var(--ndp-day-hover-bg);
-  width: 2rem;
-  height: 2rem;
-  border-radius: 8px;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border-radius: var(--ndp-control-radius);
   cursor: pointer;
   font-size: 1.1rem;
   line-height: 1;
@@ -259,12 +286,13 @@
 }
 
 .ndp-nav-spacer {
-  width: 2rem;
-  height: 2rem;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
 }
 
 .ndp-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -275,6 +303,7 @@
 
 .ndp-summary {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.4rem;
   font-size: 0.8rem;
@@ -283,6 +312,9 @@
 }
 
 .ndp-summary__chip {
+  border: 1px solid var(--ndp-border);
+  border-radius: var(--ndp-control-radius);
+  padding: 0.25rem 0.45rem;
   color: var(--ndp-text);
   font-weight: 600;
   display: inline-flex;
@@ -325,6 +357,8 @@
 
 .ndp-actions {
   display: flex;
+  flex-wrap: wrap;
+  margin-inline-start: auto;
   gap: 0.4rem;
 }
 
@@ -332,7 +366,7 @@
   appearance: none;
   border: 1px solid var(--ndp-border);
   background: transparent;
-  border-radius: 8px;
+  border-radius: var(--ndp-control-radius);
   padding: 0.3rem 0.7rem;
   font: inherit;
   font-size: 0.78rem;

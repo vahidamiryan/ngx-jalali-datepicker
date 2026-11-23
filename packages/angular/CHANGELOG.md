@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 **npm:** https://www.npmjs.com/package/@vahidamirian/ngx-jalali-datepicker
 
+## [2.3.0]
+
+### Added
+- Search for a year from the calendar header using Latin, Persian, or Arabic-Indic digits. Browse nearby years in pages of 12.
+- Export the token stylesheet as `@vahidamirian/ngx-jalali-datepicker/styles/tokens.css`.
+
+### Changed
+- Refresh the light and dark themes, calendar controls, and range styling for RTL and LTR.
+- Require `datepicker-core` 1.3 or newer within major version 1, and declare the Angular forms peer used by form controls.
+
+### Fixed
+- Reopen the calendar on the selected month. Year navigation preserves the bound selection.
+- Enforce date bounds and filters in typed and keyboard selection. Keep the previous date or time after invalid input.
+- Keep popovers in the viewport and restore keyboard focus on dismissal.
+- Keep calendar controls out of the tab order while disabled, preserve a tab stop after navigation, and allow clearing either endpoint or the entire range.
+
 ## [2.2.0]
 
 ### Added
