@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 **npm:** https://www.npmjs.com/package/@vahidamirian/datepicker-core
 
+## [1.3.0]
+
+### Added
+- Shared helpers for year navigation, date validation, and horizontal popover positioning.
+- Tokens for calendar width, maximum panel width, and control corner radius.
+
+### Changed
+- Light and dark palettes use orange for selected dates, a blue today marker, and neutral range fills.
+- Written-out Jalali dates now include the year. `formatInput()` continues to emit editable `YYYY/MM/DD` text.
+
+### Fixed
+- Parsing an unsupported Jalali year returns `null`.
+
 ## [1.2.0]
 
 ### Added

@@ -25,7 +25,9 @@ export class JalaliCalendarAdapter extends CalendarAdapter {
     super();
     this.monthYearFmt = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' });
     this.dayFmt = new Intl.DateTimeFormat(locale, { day: 'numeric' });
-    this.fullFmt = new Intl.DateTimeFormat(locale, { weekday: 'long', month: 'long', day: 'numeric' });
+    this.fullFmt = new Intl.DateTimeFormat(locale, {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    });
     this.yearFmt = new Intl.DateTimeFormat(locale, { year: 'numeric' });
     // Build the 12 month names once. 1404 is an ordinary Jalali year; any year works.
     const monthFmt = new Intl.DateTimeFormat(locale, { month: 'long' });

@@ -132,11 +132,11 @@ The picker ships with three built-in themes selected via the `theme` input:
 `theme` only swaps the default palette of design tokens — every colour, radius
 and spacing value is a CSS custom property (`--ndp-*`) you can override.
 
-**Override in CSS.** Tokens are defined once on `:root`, so a single global
-override re-themes every picker, date input and time field at once:
+**Override in CSS.** Load the token stylesheet before your own styles. Target
+`[data-ndp-theme]` to override the palette across pickers, date inputs and time fields.
 
 ```css
-:root {
+[data-ndp-theme] {
   --ndp-accent: #8b5cf6;
   --ndp-accent-hover: #7c3aed;
   --ndp-radius: 18px;
@@ -146,7 +146,7 @@ override re-themes every picker, date input and time field at once:
 To scope an override instead, target one instance:
 
 ```css
-ndp-datepicker {
+ndp-datepicker[data-ndp-theme] {
   --ndp-accent: #8b5cf6;
   --ndp-accent-hover: #7c3aed;
   --ndp-range-bg: rgba(139, 92, 246, 0.18); /* translucent → works on any surface */
@@ -185,13 +185,14 @@ readonly brand: Record<string, string> = {
 | `--ndp-range-bg` / `--ndp-range-color` | Committed range band background and text. |
 | `--ndp-preview-bg` | Tentative (hover) range band background. |
 | `--ndp-focus-ring` | Keyboard focus ring. |
-| `--ndp-today-border` | "Today" outline. |
+| `--ndp-today-border` | Today marker on day cells and outline on period cells. |
 | `--ndp-weekend-color` | Weekend day text. |
 | `--ndp-surface` / `--ndp-border` / `--ndp-text` / `--ndp-muted` | Panel background, borders, primary and muted text. |
 | `--ndp-day-color` / `--ndp-weekday-color` / `--ndp-day-outside-color` | Day text, weekday header text, and faded out-of-month days. Default to `--ndp-text` / `--ndp-muted` so they follow the theme automatically. |
 | `--ndp-day-hover-bg` | Day / nav / button hover background. |
 | `--ndp-shadow` | Panel drop shadow. |
-| `--ndp-radius` / `--ndp-day-radius` | Panel and day-cell corner radius. |
+| `--ndp-radius` / `--ndp-day-radius` / `--ndp-control-radius` | Panel, day-cell, and control corner radii. |
+| `--ndp-month-width` / `--ndp-panel-max-width` | Preferred width per month and maximum width of the calendar panel. |
 | `--ndp-font-family` / `--ndp-font-size` | Base font stack and size. |
 | `--ndp-day-font-size` / `--ndp-weekday-font-size` | Day-cell and weekday-header type size. |
 | `--ndp-space` | Panel padding — the main density dial. |
@@ -349,7 +350,7 @@ cal.formatInput(new Date());     // "۱۴۰۴/۰۳/۲۸"
 | `value` (model) | `DateRange` | `{start:null,end:null}` | Two-way; also a `ControlValueAccessor`. |
 | `calendar` (model) | `string` | first registered | Active calendar id. |
 | `mode` | `'single' \| 'range'` | `'single'` | `range` renders two fields. |
-| `min` / `max` / `dateFilter` | — | — | Forwarded to the panel. |
+| `min` / `max` / `dateFilter` | — | — | Restrict dates entered by typing or by selecting in the panel. |
 | `theme` / `animation` / `numberOfMonths` / `showSecondaryDate` / `secondaryCalendar` / `customVars` | — | — | Forwarded to the panel. |
 | `showFooter` | `boolean` | `true` | Panel footer (Today / Clear / toggle). |
 | `showTime` / `minuteStep` | — | — | Forwarded to the panel (single mode). See [Time of day](#time-of-day). The popover stays open while time is on. |
@@ -408,7 +409,7 @@ const g = JalaaliMath.toGregorian(1404, 1, 1);          // { gy: 2025, gm: 3, gd
 const date = new Date(g.gy, g.gm - 1, g.gd);
 
 // Localized, written-out strings via the adapters
-const jalali = new JalaliCalendarAdapter().format(new Date());     // "شنبه ۱۷ خرداد"
+const jalali = new JalaliCalendarAdapter().format(new Date());     // "شنبه ۱۷ خرداد ۱۴۰۴"
 const greg   = new GregorianCalendarAdapter('en-US').format(new Date()); // "Saturday, June 7"
 ```
 
@@ -505,7 +506,7 @@ math, never raw `Intl` formatting.
 | `showFooter` | `boolean` | `true` | Master toggle for the whole footer (summary bar + action buttons). |
 | `showSummary` | `boolean` | `true` | Show the selected-date summary bar inside the footer. Set `false` to hide just the summary while keeping the action buttons. |
 | `showToday` / `showClear` / `showCalendarToggle` | `boolean` | `true` | Footer action buttons. |
-| `showQuickNav` | `boolean` | `true` | Show the month/year quick-navigation dropdowns in the header. Set `false` for a plain, non-interactive month/year label. |
+| `showQuickNav` | `boolean` | `true` | Show month navigation and searchable year navigation in the header. Enter a year in Latin, Persian, or Arabic-Indic digits and press Enter to jump the view. |
 | `showInput` | `boolean` | `false` | Render a typed-date field above the grid (day modes only). See [Typing dates](#typing-dates-input-field). |
 | `showTime` | `boolean` | `false` | Render an hours:minutes time picker under the grid (single mode only). The value's `Date` carries the time. See [Time of day](#time-of-day). |
 | `minuteStep` | `number` | `1` | Minute increment for the time picker's stepper and arrow keys (clamped 1–30). |

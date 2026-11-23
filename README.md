@@ -136,11 +136,28 @@ npm-workspaces monorepo (Node 20+):
 npm install
 npm run build          # core → angular → vue (dependency order)
 npm run test           # core + vue suites
+npx ng test angular --watch=false --browsers=ChromeHeadless
+npx ng test angular-playground --watch=false --browsers=ChromeHeadless
+npm run start:playground # interactive theme and RTL/LTR showcase
 npm run dev:docs       # unified docs with live Angular + Vue examples
 ```
 
-Publishing is automated in [`.github/workflows/release.yml`](.github/workflows/release.yml)
-(core first, then the framework packages).
+## Release
+
+Build and inspect all three packages before publishing. Angular publishes from
+the ng-packagr output in `dist/angular`.
+
+```bash
+npm ci
+npm run build
+npm pack --dry-run -w @vahidamirian/datepicker-core
+npm pack --dry-run ./dist/angular
+npm pack --dry-run -w @vahidamirian/vue-datepicker
+```
+
+The [release workflow](.github/workflows/release.yml) publishes Core first, then
+Angular and Vue. A pushed `v*` tag or a manual run of the workflow starts
+publication. GitHub Pages builds the docs from `main` after a merge.
 
 ## Contributing
 

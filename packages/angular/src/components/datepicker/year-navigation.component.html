@@ -1,0 +1,31 @@
+<div class="ndp-year-navigation" role="group" [attr.aria-label]="labels().findYear">
+  <input #search class="ndp-year-search" type="text" inputmode="numeric"
+    autocomplete="off" spellcheck="false" [attr.aria-label]="labels().findYear ?? 'Find year'"
+    [placeholder]="labels().findYear ?? 'Find year'" [value]="query()"
+    (input)="query.set(search.value)" (keydown.enter)="submit($event)" />
+  <div class="ndp-year-results" aria-live="polite">
+    @if (navigation().options.length) {
+      <div class="ndp-year-grid" [class.ndp-year-grid--match]="navigation().searching">
+        @for (option of navigation().options; track option.year) {
+          <button type="button" class="ndp-year-option"
+            [attr.aria-current]="option.year === navigation().year ? 'true' : null"
+            (click)="jump.emit(option.year)">{{ option.label }}</button>
+        }
+      </div>
+    } @else {
+      <p class="ndp-year-empty">{{ labels().noMatchingYear ?? 'Year unavailable' }}</p>
+    }
+  </div>
+  @if (!navigation().searching) {
+    <div class="ndp-year-pages">
+      <button type="button" class="ndp-year-option" [attr.aria-label]="labels().prev"
+        [disabled]="!navigation().canPrevious" (click)="page(-1)">
+        <ndp-icon name="prev" class="ndp-icon--directional" />
+      </button>
+      <button type="button" class="ndp-year-option" [attr.aria-label]="labels().next"
+        [disabled]="!navigation().canNext" (click)="page(1)">
+        <ndp-icon name="next" class="ndp-icon--directional" />
+      </button>
+    </div>
+  }
+</div>

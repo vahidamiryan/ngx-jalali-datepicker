@@ -19,17 +19,19 @@ through `--ndp-*` CSS custom properties — override any of them in CSS or inlin
 <NdpDatepicker v-model="value" theme="auto" />
 ```
 
-`theme` only swaps the **default palette** of tokens — every colour, radius and
-spacing value stays overridable.
+The built-in palettes use orange for selection, neutral fills for ranges, and a
+blue marker for today. The layout mirrors for RTL calendars. Each token remains
+overridable.
 
 ## Override in CSS
 
-All tokens are defined once on `:root`, so a single global override re-themes
-every picker, input and time field at once — no need to repeat it per component.
+Load the token stylesheet before your overrides. Built-in theme palettes are
+applied on component roots. Use `[data-ndp-theme]` to override palette tokens
+across both frameworks. Size and spacing tokens can also inherit from an ancestor.
 
 ```css
 /* Every NDP component, both frameworks */
-:root {
+[data-ndp-theme] {
   --ndp-accent: #8b5cf6;
   --ndp-accent-hover: #7c3aed;
   --ndp-radius: 18px;
@@ -51,7 +53,7 @@ carries the `.ndp-root` class; in Angular target the `ndp-datepicker` element.
 
 ```css
 /* Angular */
-ndp-datepicker {
+ndp-datepicker[data-ndp-theme] {
   --ndp-accent: #8b5cf6;
   --ndp-range-bg: rgba(139, 92, 246, 0.18);
 }
@@ -59,7 +61,7 @@ ndp-datepicker {
 
 ## Density presets
 
-`data-ndp-preset` swaps spacing and type size in one attribute. Put it on the
+`data-ndp-preset` changes month width, spacing, and type size. Put it on the
 component or any ancestor.
 
 ```html
@@ -105,13 +107,14 @@ const brand: Record<string, string> = {
 | `--ndp-range-bg` / `--ndp-range-color` | Committed range band background and text. |
 | `--ndp-preview-bg` | Tentative (hover) range band background. |
 | `--ndp-focus-ring` | Keyboard focus ring. |
-| `--ndp-today-border` | "Today" outline. |
+| `--ndp-today-border` | Today marker on day cells and outline on period cells. |
 | `--ndp-weekend-color` | Weekend day text. |
 | `--ndp-surface` / `--ndp-border` / `--ndp-text` / `--ndp-muted` | Panel background, borders, primary and muted text. |
 | `--ndp-day-color` / `--ndp-weekday-color` / `--ndp-day-outside-color` | Day text, weekday header, and faded out-of-month days. |
 | `--ndp-day-hover-bg` | Day / nav / button hover background. |
 | `--ndp-shadow` | Panel drop shadow. |
-| `--ndp-radius` / `--ndp-day-radius` | Panel and day-cell corner radius. |
+| `--ndp-radius` / `--ndp-day-radius` / `--ndp-control-radius` | Corner radius for panels, days, and controls. |
+| `--ndp-month-width` / `--ndp-panel-max-width` | Preferred month width and maximum width of the calendar panel. |
 | `--ndp-font-family` / `--ndp-font-size` | Base font stack and size. |
 | `--ndp-day-font-size` / `--ndp-weekday-font-size` | Day-cell and weekday-header type size. |
 | `--ndp-space` | Panel padding — the main density dial. |

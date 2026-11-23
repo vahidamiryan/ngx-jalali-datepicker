@@ -23,6 +23,7 @@ import { useCalendarAdapters, type NdpCalendarAdapterSource } from '../adapters'
 import { NDP_LABELS_KEY } from '../labels';
 import NdpTimePicker from './NdpTimePicker.vue';
 import NdpIcon from './NdpIcon.vue';
+import { restoreInputPopoverFocus, vFitPopover } from './fit-popover';
 
 const props = withDefaults(
   defineProps<{
@@ -71,6 +72,7 @@ const value = ref<Date | null>(props.modelValue);
 watch(() => props.modelValue, (v) => { if (v !== value.value) value.value = v; });
 
 const open = ref(false);
+const host = ref<HTMLElement | null>(null);
 const text = ref('');
 const invalid = ref(false);
 const editing = ref(false);
@@ -133,8 +135,8 @@ function commit(date: Date | null): void {
 
 function onInput(raw: string): void {
   const masked = mask(raw);
-  text.value = masked;
-  if (masked === '') {
+  text.value = masked || raw.trim();
+  if (raw.trim() === '') {
     invalid.value = false;
     commit(null);
     return;
@@ -163,8 +165,13 @@ function toggle(): void {
 }
 
 function close(): void {
+  if (host.value) restoreInputPopoverFocus(host.value);
   open.value = false;
 }
+
+watch(() => props.disabled, disabled => {
+  if (disabled) close();
+});
 
 function onTimeChange(time: TimeOfDay): void {
   const base = value.value ?? atMidnight(new Date());
@@ -180,6 +187,7 @@ function onTimeChange(time: TimeOfDay): void {
 
 <template>
   <div
+    ref="host"
     class="ndp-root ndp-input"
     :class="{ 'ndp-input--disabled': disabled }"
     :dir="adapter.direction"
@@ -209,7 +217,7 @@ function onTimeChange(time: TimeOfDay): void {
       <button
         type="button"
         class="ndp-input__toggle"
-        :aria-label="t.openCalendar"
+        :aria-label="t.openTime ?? t.openCalendar"
         :aria-expanded="open"
         :disabled="disabled"
         @click="toggle()"
@@ -219,8 +227,8 @@ function onTimeChange(time: TimeOfDay): void {
     </div>
 
     <template v-if="open">
-      <button type="button" class="ndp-input__backdrop" :aria-label="t.close" @click="close()"></button>
-      <div class="ndp-input__popover" role="dialog">
+      <button type="button" class="ndp-input__backdrop" tabindex="-1" :aria-label="t.close" @click="close()"></button>
+      <div v-fit-popover class="ndp-input__popover" role="dialog">
         <NdpTimePicker
           :labels="labels"
           :adapter="adapter"

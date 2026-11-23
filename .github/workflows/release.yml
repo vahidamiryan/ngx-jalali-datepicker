@@ -1,14 +1,9 @@
 name: Release (publish to npm)
 
 # Publishes @vahidamirian/datepicker-core, @vahidamirian/ngx-jalali-datepicker and @vahidamirian/vue-datepicker to npm. Trigger manually and
-# choose which packages to publish, or push a tag like v1.2.3 to publish all.
+# publish all three packages, or push a tag like v2.3.0 to start the same workflow.
 on:
   workflow_dispatch:
-    inputs:
-      packages:
-        description: 'Space-separated packages to publish (default: all)'
-        required: false
-        default: '@vahidamirian/datepicker-core @vahidamirian/ngx-jalali-datepicker @vahidamirian/vue-datepicker'
   push:
     tags:
       - 'v*'

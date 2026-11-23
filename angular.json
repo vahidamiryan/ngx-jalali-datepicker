@@ -103,6 +103,9 @@
           "options": {
             "polyfills": [],
             "tsConfig": "apps/angular-playground/tsconfig.spec.json",
+            "loader": {
+              ".md": "text"
+            },
             "assets": [
               {
                 "glob": "**/*",

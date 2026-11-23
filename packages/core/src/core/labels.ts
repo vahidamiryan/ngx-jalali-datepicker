@@ -22,6 +22,10 @@ export interface NdpLabels {
   clearEnd: string;
   /** Opens the calendar popover from an input field. */
   openCalendar: string;
+  openTime?: string;
+  /** Search the calendar's years and report an unavailable result. */
+  findYear?: string;
+  noMatchingYear?: string;
   /** Switches to the secondary calendar (label is the calendar's own name). */
   switchCalendar: string;
   /**
@@ -51,6 +55,9 @@ export const NDP_EN_LABELS: NdpLabels = {
   clearStart: 'Clear start date',
   clearEnd: 'Clear end date',
   openCalendar: 'Open calendar',
+  openTime: 'Open time picker',
+  findYear: 'Find year',
+  noMatchingYear: 'Year unavailable',
   switchCalendar: 'Switch calendar',
   calendars: { gregorian: 'Gregorian', jalali: 'Jalali', hijri: 'Hijri' },
   hours: 'Hours',
@@ -70,6 +77,9 @@ export const NDP_FA_LABELS: NdpLabels = {
   clearStart: 'پاک کردن تاریخ شروع',
   clearEnd: 'پاک کردن تاریخ پایان',
   openCalendar: 'باز کردن تقویم',
+  openTime: 'باز کردن انتخابگر زمان',
+  findYear: 'جست‌وجوی سال',
+  noMatchingYear: 'این سال در دسترس نیست',
   switchCalendar: 'تغییر تقویم',
   calendars: { gregorian: 'میلادی', jalali: 'شمسی', hijri: 'قمری' },
   hours: 'ساعت',

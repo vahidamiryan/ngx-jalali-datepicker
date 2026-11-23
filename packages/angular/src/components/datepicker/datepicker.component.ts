@@ -2,12 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  Injector,
+  afterNextRender,
   contentChild,
   computed,
   effect,
   forwardRef,
   inject,
   input,
+  linkedSignal,
   model,
   output,
   signal,
@@ -27,14 +30,15 @@ import {
   PeriodCell,
 } from '@vahidamirian/datepicker-core';
 import { atMidnight, clampDate, dayKey } from '@vahidamirian/datepicker-core';
-import { applySelection, isSelectionComplete } from '@vahidamirian/datepicker-core';
+import { applySelection, firstSelectableDate, isDateSelectable, isSelectionComplete } from '@vahidamirian/datepicker-core';
 import { buildMonthsView, buildYearsView, YEARS_PER_PAGE } from '@vahidamirian/datepicker-core';
-import { TimeOfDay, getTimeOfDay, withTimeOfDay } from '@vahidamirian/datepicker-core';
+import { TimeOfDay, copyTimeOfDay, getTimeOfDay, withTimeOfDay } from '@vahidamirian/datepicker-core';
 import { CalendarMonthComponent } from '../calendar-month/calendar-month.component';
 import { CalendarPeriodComponent } from '../calendar-period/calendar-period.component';
 import { TimePickerComponent } from '../time-picker/time-picker.component';
 import { NdpDayCellTemplate } from '../day-cell.directive';
 import { IconComponent } from '../icon/icon.component';
+import { YearNavigationComponent } from './year-navigation.component';
 
 /**
  * The orchestrator: owns selection / navigation / focus state as signals, swaps
@@ -45,7 +49,7 @@ import { IconComponent } from '../icon/icon.component';
 @Component({
   selector: 'ndp-datepicker',
   standalone: true,
-  imports: [CalendarMonthComponent, CalendarPeriodComponent, TimePickerComponent, IconComponent],
+  imports: [CalendarMonthComponent, CalendarPeriodComponent, TimePickerComponent, IconComponent, YearNavigationComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './datepicker.component.html',
   styleUrl: './datepicker.component.css',
@@ -60,6 +64,7 @@ import { IconComponent } from '../icon/icon.component';
 })
 export class DatepickerComponent implements ControlValueAccessor {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
   private readonly registry = new Map<string, CalendarAdapter>();
   private readonly calendarIds: string[];
 
@@ -101,9 +106,20 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   // ── Internal state ───────────────────────────────────────────────────────
   private readonly today = signal(atMidnight(new Date()));
-  private readonly activeMonth = signal(atMidnight(new Date()));
+  protected readonly selectedStart = computed(() => {
+    const start = this.value()?.start;
+    return start && Number.isFinite(start.getTime()) ? start : null;
+  });
+  // Seed the view from the selection, then allow navigation to move it independently.
+  private readonly activeMonth = linkedSignal<Date | null, Date>({
+    source: this.selectedStart,
+    computation: (start, previous) => untracked(() => {
+      if (start && previous && this.isVisible(start, previous.value)) return previous.value;
+      return this.adapter().startOfMonth(start ?? this.today());
+    }),
+  });
   protected readonly hovered = signal<Date | null>(null);
-  protected readonly focusedDate = signal<Date | null>(null);
+  protected readonly focusedDate = linkedSignal<Date | null>(() => this.selectedStart() ?? this.today());
   protected readonly disabled = signal(false);
 
   // ── Typed-input state (active only when `showInput` is on, in day modes) ─────
@@ -128,7 +144,7 @@ export class DatepickerComponent implements ControlValueAccessor {
    * current wall-clock time as a sensible default before anything is picked.
    */
   protected readonly currentTime = computed<TimeOfDay>(() => {
-    const start = this.value().start;
+    const start = this.selectedStart();
     return getTimeOfDay(start ?? new Date());
   });
 
@@ -277,26 +293,7 @@ export class DatepickerComponent implements ControlValueAccessor {
     return this.adapter().getMonth(monthStart);
   }
 
-  /** A block's year number, to flag the selected item in its year menu. */
-  protected blockYearNumber(monthStart: Date): number {
-    return this.adapter().getYear(monthStart);
-  }
-
-  /** Active year number for the month-picker header dropdown (single-block period view). */
-  protected readonly activeYearNumber = computed(() => this.adapter().getYear(this.activeMonth()));
-
-  /** Years offered by the year dropdown — bounded by [min, max] or a generous default span. */
-  protected readonly yearOptions = computed(() => {
-    const a = this.adapter();
-    const todayYear = a.getYear(this.today());
-    const min = this.min();
-    const max = this.max();
-    const lo = min ? a.getYear(atMidnight(min)) : todayYear - 100;
-    const hi = max ? a.getYear(atMidnight(max)) : todayYear + 20;
-    const out: { year: number; label: string }[] = [];
-    for (let y = lo; y <= hi; y++) out.push({ year: y, label: a.getYearLabel(a.createDate(y, 1, 1)) });
-    return out;
-  });
+  protected readonly yearNavigationMonth = this.activeMonth.asReadonly();
 
   // ── Navigation guards ───────────────────────────────────────────────────────
   /** Can the view move back? Meaning depends on the active view (month / year / page). */
@@ -358,33 +355,15 @@ export class DatepickerComponent implements ControlValueAccessor {
     this.calendarIds = adapters.map(a => a.id);
     if (!this.calendar()) this.calendar.set(this.calendarIds[0]);
 
-    // Position the view on the current value (or today) and keep it in view as
-    // the value changes from the outside.
-    const start = this.value().start ?? this.today();
-    this.activeMonth.set(this.adapter().startOfMonth(start));
-    this.focusedDate.set(this.value().start ?? this.today());
-
-    // Re-center the view only when the *value* changes from the outside (e.g. a
-    // form patch). The visibility check reads `activeMonth` inside `untracked`
-    // so manual prev/next navigation never re-triggers this and snaps back.
-    effect(() => {
-      const s = this.value().start;
-      if (!s) return;
-      untracked(() => {
-        if (!this.isVisible(s)) {
-          this.activeMonth.set(this.adapter().startOfMonth(s));
-        }
-      });
-    });
-
     // Keep the typed-input field(s) in sync with the value and active calendar,
     // except while the user is typing in them.
     effect(() => {
       const v = this.value();
+      const start = this.selectedStart();
       const a = this.adapter();
       if (this.typingField()) return;
       untracked(() => {
-        this.startText.set(v.start ? a.formatInput(v.start) : '');
+        this.startText.set(start ? a.formatInput(start) : '');
         this.endText.set(v.end ? a.formatInput(v.end) : '');
         this.startInvalid.set(false);
         this.endInvalid.set(false);
@@ -407,6 +386,7 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   // ── Selection ──────────────────────────────────────────────────────────────
   protected onDaySelect(cell: DayCell): void {
+    if (this.disabled() || cell.isDisabled) return;
     let next = applySelection(this.mode(), this.value(), cell.date);
     // In time mode, carry the currently chosen time onto the newly picked day so
     // clicking a date doesn't reset the clock to midnight.
@@ -425,6 +405,7 @@ export class DatepickerComponent implements ControlValueAccessor {
   /** Apply a new time-of-day to the selected day (or today if nothing is picked yet). */
   protected onTimeChange(time: TimeOfDay): void {
     const start = this.value().start ?? atMidnight(this.today());
+    if (this.disabled() || this.isDisabled(atMidnight(start))) return;
     const next: DateRange = { start: withTimeOfDay(start, time.hours, time.minutes), end: null };
     this.value.set(next);
     this.focusedDate.set(next.start);
@@ -440,6 +421,7 @@ export class DatepickerComponent implements ControlValueAccessor {
   // ── Typed input ──────────────────────────────────────────────────────────────
   /** Handle text typed into the start/end field: parse, validate, commit. */
   protected onInputType(which: 'start' | 'end', raw: string): void {
+    if (this.disabled()) return;
     (which === 'start' ? this.startText : this.endText).set(raw);
     const trimmed = raw.trim();
 
@@ -450,7 +432,7 @@ export class DatepickerComponent implements ControlValueAccessor {
     }
 
     const parsed = this.adapter().parse(raw);
-    if (!parsed) {
+    if (!parsed || this.isDisabled(parsed)) {
       this.setInputInvalid(which, true);
       return;
     }
@@ -479,7 +461,9 @@ export class DatepickerComponent implements ControlValueAccessor {
       if (start && end && dayKey(start) > dayKey(end)) [start, end] = [end, start];
       next = { start, end };
     } else {
-      next = { start: date, end: null };
+      const previous = this.selectedStart();
+      const start = date && this.timeVisible() && previous ? copyTimeOfDay(date, previous) : date;
+      next = { start, end: null };
     }
     this.value.set(next);
     this.onChange(next);
@@ -499,14 +483,14 @@ export class DatepickerComponent implements ControlValueAccessor {
   protected goPrev(): void {
     if (!this.canGoPrev()) return;
     this.beginSlide(-1);
-    this.activeMonth.set(this.shiftActive(-1));
+    this.moveView(this.shiftActive(-1));
   }
 
   /** Step the view forward — counterpart to {@link goPrev}. */
   protected goNext(): void {
     if (!this.canGoNext()) return;
     this.beginSlide(1);
-    this.activeMonth.set(this.shiftActive(1));
+    this.moveView(this.shiftActive(1));
   }
 
   /** Arm the slide animation for the upcoming view change (no-op when disabled). */
@@ -539,18 +523,30 @@ export class DatepickerComponent implements ControlValueAccessor {
     }
   }
 
+  private moveView(target: Date, preferred = target): void {
+    this.activeMonth.set(target);
+    if (this.viewMode() !== 'day') {
+      this.focusedDate.set(clampDate(preferred, this.min(), this.max()));
+      return;
+    }
+    const start = this.adapter().startOfMonth(target);
+    const end = this.adapter().addCalendarMonths(start, this.numberOfMonths());
+    this.focusedDate.set(this.isVisible(preferred, target) && !this.isDisabled(preferred)
+      ? preferred
+      : firstSelectableDate(start, end, this.min(), this.max(), this.dateFilter()));
+  }
+
   protected goToToday(): void {
     const t = this.today();
     const target = this.adapter().startOfMonth(t);
     this.beginSlideTowards(target);
-    this.activeMonth.set(target);
-    this.focusedDate.set(t);
+    this.moveView(target, t);
   }
 
   // ── Month / year picker selection ───────────────────────────────────────────
   /** Commit a whole month or year (month/year modes) from the body grid. */
   protected onPeriodSelect(cell: PeriodCell): void {
-    this.commitPeriod(cell.date);
+    if (!this.disabled() && !cell.isDisabled) this.commitPeriod(cell.date);
   }
 
   /** Commit the period containing `date`, snapping to its month/year start. */
@@ -595,7 +591,7 @@ export class DatepickerComponent implements ControlValueAccessor {
     const picked = a.createDate(a.getYear(blockMonth), month, 1);
     const target = a.addCalendarMonths(picked, -index);
     this.beginSlideTowards(target);
-    this.activeMonth.set(target);
+    this.moveView(target, picked);
     this.monthMenuOpen.set(null);
   }
 
@@ -603,11 +599,15 @@ export class DatepickerComponent implements ControlValueAccessor {
   protected pickYear(year: number, index = 0): void {
     const a = this.adapter();
     const blockMonth = a.addCalendarMonths(this.activeMonth(), index);
-    const picked = a.createDate(year, a.getMonth(blockMonth), 1);
-    const target = a.addCalendarMonths(picked, -index);
+    const picked = clampDate(a.createDate(year, a.getMonth(blockMonth), 1), this.min(), this.max());
+    const target = a.addCalendarMonths(a.startOfMonth(picked), -index);
     this.beginSlideTowards(target);
-    this.activeMonth.set(target);
+    this.moveView(target, picked);
     this.yearMenuOpen.set(null);
+    afterNextRender(() => {
+      this.host.nativeElement.querySelectorAll<HTMLButtonElement>('.ndp-year-trigger')[index]
+        ?.focus({ preventScroll: true });
+    }, { injector: this.injector });
   }
 
   protected clear(): void {
@@ -663,17 +663,22 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   // ── Keyboard navigation ──────────────────────────────────────────────────────
   protected onKeydown(event: KeyboardEvent): void {
+    if (this.disabled()) return;
     if (event.key === 'Escape' && this.anyMenuOpen()) {
+      this.host.nativeElement.querySelector<HTMLButtonElement>('.ndp-title-btn[aria-expanded="true"]')
+        ?.focus({ preventScroll: true });
       this.closeMenus();
+      event.stopPropagation();
       return;
     }
+    if ((event.target as HTMLElement | null)?.closest('input, button:not([role="gridcell"])')) return;
     if (this.viewMode() !== 'day') {
       this.onPeriodKeydown(event);
       return;
     }
     const a = this.adapter();
     const rtl = a.direction === 'rtl';
-    const current = this.focusedDate() ?? this.today();
+    const current = this.focusedDate() ?? this.activeMonth();
     let next: Date | null = null;
 
     switch (event.key) {
@@ -705,7 +710,7 @@ export class DatepickerComponent implements ControlValueAccessor {
       case 'Enter':
       case ' ':
         event.preventDefault();
-        this.onDaySelect(this.toCell(current));
+        if (this.isVisible(current)) this.onDaySelect(this.toCell(current));
         return;
       default:
         return;
@@ -757,7 +762,8 @@ export class DatepickerComponent implements ControlValueAccessor {
       case 'Enter':
       case ' ':
         event.preventDefault();
-        this.commitPeriod(current);
+        const cell = this.activePeriodView().cells.find(option => option.key === this.periodFocusedKey());
+        if (cell) this.onPeriodSelect(cell);
         return;
       default:
         return;
@@ -825,20 +831,13 @@ export class DatepickerComponent implements ControlValueAccessor {
   }
 
   private isDisabled(date: Date): boolean {
-    const min = this.min();
-    const max = this.max();
-    const filter = this.dateFilter();
-    const k = dayKey(date);
-    if (min && k < dayKey(atMidnight(min))) return true;
-    if (max && k > dayKey(atMidnight(max))) return true;
-    return filter ? !filter(date) : false;
+    return !isDateSelectable(date, this.min(), this.max(), this.dateFilter());
   }
 
-  private isVisible(date: Date): boolean {
+  private isVisible(date: Date, anchor = this.activeMonth()): boolean {
     const a = this.adapter();
-    const months = this.visibleMonths();
-    const firstStart = months[0];
-    const lastEnd = a.addCalendarMonths(months[months.length - 1], 1);
+    const firstStart = a.startOfMonth(anchor);
+    const lastEnd = a.addCalendarMonths(firstStart, this.numberOfMonths());
     const k = dayKey(date);
     return k >= dayKey(firstStart) && k < dayKey(lastEnd);
   }
@@ -847,9 +846,10 @@ export class DatepickerComponent implements ControlValueAccessor {
   writeValue(value: DateRange | Date | null): void {
     const range = this.normalize(value);
     this.value.set(range);
-    if (range.start) {
-      this.activeMonth.set(this.adapter().startOfMonth(range.start));
-      this.focusedDate.set(range.start);
+    const start = this.selectedStart();
+    if (start) {
+      this.activeMonth.set(this.adapter().startOfMonth(start));
+      this.focusedDate.set(start);
     }
   }
 
@@ -863,6 +863,7 @@ export class DatepickerComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled.set(isDisabled);
+    if (isDisabled) this.closeMenus();
   }
 
   private normalize(value: DateRange | Date | null): DateRange {

@@ -1,5 +1,15 @@
 <div class="ndp-input" [class.ndp-input--disabled]="disabled()">
   <div class="ndp-input__fields">
+    <button
+      type="button"
+      class="ndp-input__toggle"
+      [attr.aria-label]="t().openCalendar"
+      [attr.aria-expanded]="open()"
+      [disabled]="disabled()"
+      (click)="toggle()"
+    >
+      <ndp-icon name="calendar" />
+    </button>
     <input
       #startEl
       type="text"
@@ -20,7 +30,7 @@
     />
 
     @if (isRange()) {
-      <span class="ndp-input__sep" aria-hidden="true">←</span>
+      <ndp-icon name="arrow" class="ndp-input__sep ndp-icon--directional" />
       <input
         #endEl
         type="text"
@@ -40,21 +50,11 @@
       />
     }
 
-    <button
-      type="button"
-      class="ndp-input__toggle"
-      [attr.aria-label]="t().openCalendar"
-      [attr.aria-expanded]="open()"
-      [disabled]="disabled()"
-      (click)="toggle()"
-    >
-      <ndp-icon name="calendar" />
-    </button>
   </div>
 
   @if (open()) {
-    <button type="button" class="ndp-input__backdrop" [attr.aria-label]="t().close" (click)="close()"></button>
-    <div class="ndp-input__popover" role="dialog">
+    <button type="button" class="ndp-input__backdrop" tabindex="-1" [attr.aria-label]="t().close" (click)="close()"></button>
+    <div class="ndp-input__popover" role="dialog" ndpFitPopover>
       <ndp-datepicker
         [theme]="theme()"
         [customVars]="customVars()"

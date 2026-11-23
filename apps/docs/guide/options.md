@@ -87,7 +87,12 @@ month/year quick-nav dropdowns are all individually toggleable:
 | `showFooter` / `show-footer` | `true` | The whole footer. |
 | `showSummary` / `show-summary` | `true` | Just the selected-date summary bar. |
 | `showToday` / `showClear` / `showCalendarToggle` | `true` | Individual footer buttons. |
-| `showQuickNav` / `show-quick-nav` | `true` | The header month/year dropdowns (falls back to a plain label). |
+| `showQuickNav` / `show-quick-nav` | `true` | Month navigation and the searchable year control in the header. |
+
+Open the year control and type the year in Latin, Persian, or Arabic-Indic digits.
+Press Enter or click the matching result to jump the view. The date remains
+unchanged until you select a day, month, or year in the calendar. Escape closes
+the quick navigation and returns focus to its trigger.
 
 Hide the footer entirely when you wrap the picker in your own popover — in single
 mode `dateSelected` / `@date-selected` fires on the first click, the natural

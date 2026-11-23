@@ -24,46 +24,11 @@
 
   <!-- ── Hero ──────────────────────────────────────────────────────────────── -->
   <section class="hero">
-    <div class="hero__inner">
-      <div class="hero__meta">
-        <span class="hero__ver">v{{ version }}</span>
-        <span class="hero__sep">·</span>
-        <span class="hero__fw">Angular 20+</span>
-        <span class="hero__sep">·</span>
-        <span class="hero__fw">Tree-shakeable</span>
-        <span class="hero__sep">·</span>
-        <span class="hero__fw">MIT</span>
-      </div>
-
-      <h1 class="hero__title">ngx-jalali-datepicker</h1>
-      <p class="hero__sub">
-        An Angular date picker built on <strong>signals</strong>, an extensible
-        <strong>adapter</strong> architecture, and a <strong>headless</strong> core —
-        Jalali · Gregorian · Hijri, shipping a tiny bundle with
-        <strong>full tree-shaking</strong>.
-      </p>
-
-      <div class="hero__pills">
-        <span class="pill">⚡ Signals &amp; Zoneless</span>
-        <span class="pill">🌳 Tree-shakeable</span>
-        <span class="pill">🗓 Three calendars</span>
-        <span class="pill">⌨ Full keyboard nav</span>
-        <span class="pill">🌙 Dark mode</span>
-        <span class="pill">🔌 Headless core</span>
-      </div>
-
-      <div class="hero__cta">
-        <a class="btn btn--primary" href="#playground">
-          Try it live
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-        <a class="btn btn--ghost" href="https://github.com/vahidamiryan/ngx-jalali-datepicker" target="_blank" dir="ltr">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
-          GitHub
-        </a>
-      </div>
-    </div>
+    <h1 class="hero__title">Calendar &amp; date picker</h1>
+    <p class="hero__sub">Select a date or a range in the Jalali, Gregorian, and Hijri calendars.</p>
   </section>
+
+  <app-calendar-showcase [theme]="theme()" />
 
   <!-- ── Installation ──────────────────────────────────────────────────────── -->
   <section class="install-strip">
@@ -248,7 +213,7 @@
         @switch (activeExample()) {
 
           @case ('single') {
-            <p class="hint">The Gregorian date appears under each Jalali day. Click the month/year for quick navigation.</p>
+            <p class="hint">The header shows the corresponding Gregorian month. Click the month or year to jump.</p>
             <ndp-datepicker
               [showSummary]="false" [theme]="theme()" animation="slide"
               [showSecondaryDate]="true" [value]="single()" (valueChange)="single.set($event)" />
@@ -390,7 +355,7 @@
               </button>
               @if (dropOpen()) {
                 <div class="dropdown__backdrop" (click)="dropOpen.set(false)"></div>
-                <div class="dropdown__panel">
+                <div class="dropdown__panel" ndpFitPopover>
                   <ndp-datepicker
                     [theme]="theme()" [showSecondaryDate]="true" [showFooter]="false"
                     [value]="dropValue()" (valueChange)="dropValue.set($event)" (dateSelected)="onDropSelected()" />

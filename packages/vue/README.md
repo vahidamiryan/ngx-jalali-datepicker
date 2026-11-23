@@ -338,11 +338,11 @@ Three built-in themes via the `theme` prop:
 `theme` only swaps the default palette of design tokens — **every** colour, radius and
 spacing value is a CSS custom property (`--ndp-*`) you can override.
 
-**Override in CSS.** Tokens are defined once on `:root`, so a single global override
-re-themes every picker, date input and time field at once:
+**Override in CSS.** Load the token stylesheet before your own styles. Target
+`[data-ndp-theme]` to override the palette across pickers, date inputs and time fields.
 
 ```css
-:root {
+[data-ndp-theme] {
   --ndp-accent: #8b5cf6;
   --ndp-accent-hover: #7c3aed;
   --ndp-radius: 18px;
@@ -401,13 +401,14 @@ const brand: Record<string, string> = {
 | `--ndp-range-bg` / `--ndp-range-color` | Committed range band background and text. |
 | `--ndp-preview-bg` | Tentative (hover) range band background. |
 | `--ndp-focus-ring` | Keyboard focus ring. |
-| `--ndp-today-border` | "Today" outline. |
+| `--ndp-today-border` | Today marker on day cells and outline on period cells. |
 | `--ndp-weekend-color` | Weekend day text. |
 | `--ndp-surface` / `--ndp-border` / `--ndp-text` / `--ndp-muted` | Panel background, borders, primary and muted text. |
 | `--ndp-day-color` / `--ndp-weekday-color` / `--ndp-day-outside-color` | Day text, weekday header text, and faded out-of-month days. Default to `--ndp-text` / `--ndp-muted`. |
 | `--ndp-day-hover-bg` | Day / nav / button hover background. |
 | `--ndp-shadow` | Panel drop shadow. |
-| `--ndp-radius` / `--ndp-day-radius` | Panel and day-cell corner radius. |
+| `--ndp-radius` / `--ndp-day-radius` / `--ndp-control-radius` | Panel, day-cell, and control corner radii. |
+| `--ndp-month-width` / `--ndp-panel-max-width` | Preferred width per month and maximum width of the calendar panel. |
 | `--ndp-font-family` / `--ndp-font-size` | Base font stack and size. |
 | `--ndp-day-font-size` / `--ndp-weekday-font-size` | Day-cell and weekday-header type size. |
 | `--ndp-space` | Panel padding — the main density dial. |
@@ -418,6 +419,10 @@ const brand: Record<string, string> = {
 | `--ndp-slide-duration` / `--ndp-slide-easing` / `--ndp-slide-distance` | Tuning for the `animation="slide"` navigation transition. Zeroed automatically under `prefers-reduced-motion`. |
 
 ### Labels & language
+
+The year control in the header opens a year search. Enter a year in Latin, Persian,
+or Arabic-Indic digits and press Enter to jump the view. The bound date stays the same
+until you pick a day, month, or year in the calendar.
 
 Every string — footer buttons, `aria-label`s, calendar names — comes from one set.
 The default follows the **calendar**: Gregorian gets English, Jalali and Hijri get

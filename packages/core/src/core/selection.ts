@@ -1,5 +1,37 @@
-import { DateRange, DatepickerMode } from './types';
-import { dayKey, isSameDay } from './date-key.util';
+import { DateFilterFn, DateRange, DatepickerMode } from './types';
+import { atMidnight, dayKey, isSameDay } from './date-key.util';
+
+/** Shared validation for typed and keyboard date selection. */
+export function isDateSelectable(
+  date: Date,
+  min: Date | null,
+  max: Date | null,
+  filter: DateFilterFn | null,
+): boolean {
+  const key = dayKey(date);
+  return Number.isFinite(key) &&
+    (!min || key >= dayKey(min)) &&
+    (!max || key <= dayKey(max)) &&
+    (!filter || filter(date));
+}
+
+/** First selectable day in a visible window, with an exclusive end. */
+export function firstSelectableDate(
+  start: Date,
+  end: Date,
+  min: Date | null,
+  max: Date | null,
+  filter: DateFilterFn | null,
+): Date | null {
+  const date = atMidnight(min && dayKey(min) > dayKey(start) ? min : start);
+  const endKey = dayKey(end);
+  const maxKey = max ? dayKey(max) : Infinity;
+  for (let key = dayKey(date); key < endKey && key <= maxKey; key = dayKey(date)) {
+    if (!filter || filter(new Date(date))) return date;
+    date.setDate(date.getDate() + 1);
+  }
+  return null;
+}
 
 /**
  * Pure selection reducer. Given the current selection and a newly clicked date,

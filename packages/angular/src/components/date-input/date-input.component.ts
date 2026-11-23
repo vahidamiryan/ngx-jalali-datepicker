@@ -10,10 +10,11 @@ import {
   NdpAnimation,
   NdpTheme,
 } from '@vahidamirian/datepicker-core';
-import { atMidnight, dayKey } from '@vahidamirian/datepicker-core';
+import { atMidnight, dayKey, isDateSelectable } from '@vahidamirian/datepicker-core';
 import { copyTimeOfDay } from '@vahidamirian/datepicker-core';
 import { DatepickerComponent } from '../datepicker/datepicker.component';
 import { IconComponent } from '../icon/icon.component';
+import { NdpFitPopover, restoreInputPopoverFocus } from '../fit-popover.directive';
 
 /** Which endpoint a text field edits. In single mode only `start` is used. */
 type Endpoint = 'start' | 'end';
@@ -30,7 +31,7 @@ type Endpoint = 'start' | 'end';
 @Component({
   selector: 'ndp-date-input',
   standalone: true,
-  imports: [DatepickerComponent, IconComponent],
+  imports: [DatepickerComponent, IconComponent, NdpFitPopover],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './date-input.component.html',
   styleUrl: './date-input.component.css',
@@ -44,6 +45,7 @@ type Endpoint = 'start' | 'end';
   ],
 })
 export class DateInputComponent implements ControlValueAccessor {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   /** Overrides for the user-facing text; unnamed labels keep their defaults. */
   readonly labels = input<Partial<NdpLabels> | null>(null);
 
@@ -141,8 +143,8 @@ export class DateInputComponent implements ControlValueAccessor {
       const editing = this.focusedField();
       if (editing) return;
       untracked(() => {
-        this.startText.set(v.start ? a.formatInput(v.start) : '');
-        this.endText.set(v.end ? a.formatInput(v.end) : '');
+        this.startText.set(v.start && Number.isFinite(v.start.getTime()) ? a.formatInput(v.start) : '');
+        this.endText.set(v.end && Number.isFinite(v.end.getTime()) ? a.formatInput(v.end) : '');
         this.startInvalid.set(false);
         this.endInvalid.set(false);
       });
@@ -155,16 +157,16 @@ export class DateInputComponent implements ControlValueAccessor {
     // adapter inserts the separators (and localizes the numerals). Writing this
     // back into the signal drives the field's `[value]`, so the `/` appears live.
     const masked = this.adapter().maskInput(raw);
-    (which === 'start' ? this.startText : this.endText).set(masked);
+    (which === 'start' ? this.startText : this.endText).set(masked || raw.trim());
 
-    if (masked === '') {
+    if (raw.trim() === '') {
       this.setInvalid(which, false);
       this.commitEndpoint(which, null);
       return;
     }
 
     const parsed = this.adapter().parse(masked);
-    if (!parsed) {
+    if (!parsed || !isDateSelectable(parsed, this.min(), this.max(), this.dateFilter())) {
       this.setInvalid(which, true);
       return;
     }
@@ -217,6 +219,7 @@ export class DateInputComponent implements ControlValueAccessor {
   }
 
   protected close(): void {
+    restoreInputPopoverFocus(this.host.nativeElement);
     this.open.set(false);
   }
 

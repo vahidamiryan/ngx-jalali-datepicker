@@ -79,6 +79,33 @@ describe('DatepickerComponent keyboard navigation bounds', () => {
 
     expect(dayKey(focusedDate()!)).toBe(dayKey(new Date(2026, 4, 15)));
   });
+
+  it('does not select a filtered day through the keyboard', () => {
+    ref.setInput('dateFilter', (date: Date) => date.getDate() !== 15);
+    focusOn(new Date(2026, 5, 14));
+    press('ArrowRight');
+    press('Enter');
+    expect(component.value().start?.getDate()).toBe(14);
+  });
+
+  it('keeps a tabbable day in the displayed month after clicking Next', () => {
+    focusOn(new Date(2026, 5, 15));
+    const root: HTMLElement = fixture.nativeElement;
+    root.querySelector<HTMLButtonElement>('.ndp-nav[aria-label="Next"]')!.click();
+    fixture.detectChanges();
+    expect(root.querySelector('.ndp-day[tabindex="0"]:enabled')).toBeTruthy();
+    expect(component.value().start?.getMonth()).toBe(5);
+  });
+
+  it('removes disabled picker controls from keyboard navigation', () => {
+    ref.setInput('showInput', true);
+    component.setDisabledState(true);
+    fixture.detectChanges();
+    const panel: HTMLElement = fixture.nativeElement.querySelector('.ndp-panel');
+    expect(panel.inert).toBeTrue();
+    press('Enter');
+    expect(component.value().start).toBeNull();
+  });
 });
 
 describe('DatepickerComponent month / year picker modes', () => {
@@ -127,6 +154,34 @@ describe('DatepickerComponent month / year picker modes', () => {
     press('Enter');
 
     expect(dayKey(value().start!)).toBe(dayKey(new Date(2027, 0, 1)));
+  });
+
+  it('does not commit an out-of-bounds period through the keyboard', () => {
+    ref.setInput('mode', 'month');
+    ref.setInput('min', new Date(2026, 5, 10));
+    component.writeValue(new Date(2026, 4, 20));
+    fixture.detectChanges();
+    press('Enter');
+    expect(dayKey(value().start!)).toBe(dayKey(new Date(2026, 4, 20)));
+  });
+
+  it('lets users jump to a year in year mode before committing it', () => {
+    ref.setInput('mode', 'year');
+    fixture.detectChanges();
+    const root: HTMLElement = fixture.nativeElement;
+    root.querySelector<HTMLButtonElement>('.ndp-year-trigger')!.click();
+    fixture.detectChanges();
+    const search = root.querySelector<HTMLInputElement>('.ndp-year-search')!;
+    search.value = '1976';
+    search.dispatchEvent(new Event('input', { bubbles: true }));
+    fixture.detectChanges();
+    search.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    fixture.detectChanges();
+    const year = root.querySelector<HTMLButtonElement>('.ndp-period-cell[data-key="1976"]')!;
+    expect(year).toBeTruthy();
+    expect(value().start).toBeNull();
+    year.click();
+    expect(dayKey(value().start!)).toBe(dayKey(new Date(1976, 0, 1)));
   });
 });
 
